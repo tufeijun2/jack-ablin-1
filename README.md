@@ -1,78 +1,120 @@
+# Stock Trading Web Application
+
 <div align="center">
-<br/>
 
   <h1 align="center">
-    layui vue admin
+    Modern Stock Trading Platform
   </h1>
 
   <h4 align="center">
-     开 箱 即 用 的 layui vue 企 业 级 前 端 模 板
+     A comprehensive stock trading web application with video tutorials and document management
   </h4> 
-
-  [官 网](http://www.layui-vue.com/) |   [预 览](http://admin.layui-vue.com/) 
 
 </div>
 
 <p align="center">
     <a href="#">
-        <img src="https://img.shields.io/badge/layui vue admin-1.0.0-green.svg" alt="Pear Admin Pro Version">
+        <img src="https://img.shields.io/badge/vue-3.3.4-green.svg" alt="Vue Version">
     </a>
     <a href="#">
-        <img src="https://img.shields.io/badge/vue-3.0.0+-green.svg" alt="Vue Version">
+        <img src="https://img.shields.io/badge/layui vue-2.23.2-green.svg" alt="Layui Vue Version">
     </a>
     <a href="#">
-        <img src="https://img.shields.io/badge/layui vue-2.6.3-green.svg" alt="Ant Design Vue Version">
+        <img src="https://img.shields.io/badge/vite-4.3.5-blue.svg" alt="Vite Version">
     </a>
     <a href="#">
-        <img src="https://img.shields.io/badge/node-16.0.0-red.svg" alt="Node Version">
+        <img src="https://img.shields.io/badge/node-16.0.0+-red.svg" alt="Node Version">
     </a>
 </p>
 
-<div align="center">
-  <img  width="92%" style="border-radius:2px;margin-top:20px;margin-bottom:20px;box-shadow: 2px 0 6px gray;" src="resources/1.jpg" />
-</div>
+## 🌈 Project Overview
 
+This is a modern stock trading web application built with Vue 3 and Layui Vue, featuring:
 
-### 🌈 项目概述
+* **Video Tutorials**: Interactive video learning platform with preview and filtering capabilities
+* **Document Management**: Comprehensive document library with preview and download features  
+* **Trading Tools**: Advanced trading interface and analysis tools
+* **User Management**: Complete user authentication and profile management
+* **Responsive Design**: Mobile-friendly interface that works on all devices
 
-* 基于 Layui Vue 实现的通用前端模板。整合最新技术高效快速开发，前后端分离模式，开箱即用。
-* 核心模块包括：登录、工作空间、表单页面、列表页面、结果页面、异常页面 等功能。
-* 代码量少、学习简单、功能强大、轻量级、易扩展，轻松开发从现在开始！
+## ✨ Key Features
 
-### 开始使用
+- 🎥 **Video Tutorial System**: Watch exclusive trading tutorials with modern video player
+- 📚 **Document Library**: Access trading guides, strategies, and educational resources
+- 📊 **Trading Dashboard**: Real-time market data and trading interface
+- 👥 **User Profiles**: Trader profiles with performance tracking
+- 🏆 **Leaderboard**: Community rankings and achievements
+- 🔐 **VIP System**: Premium content and features for subscribers
 
+## 🚀 Getting Started
+
+### Prerequisites
+
+```bash
+# Switch to Node 16+
+nvm install 16.0.0
+nvm use 16.0.0
 ```
 
-切换环境
+### Installation
 
-nvm install 16.0.0
-
-nvm use 16.0.0
-
-安装依赖
-
-npm install -g pnpm
-
+```bash
+# Install dependencies
+npm install
+# or
 pnpm install
 
-启动项目
-
+# Start development server
 npm run dev
 
-打包项目
-
+# Build for production
 npm run build
-
 ```
 
-## 预览截图
+### Development
 
-| 预览                  |                界面   |
-|-----------------------|-----------------------|
-| ![](resources/1.jpg)  | ![](resources/2.jpg)  |
-| ![](resources/3.jpg)  | ![](resources/4.jpg)  |
-| ![](resources/5.jpg)  | ![](resources/6.jpg)  |
-| ![](resources/7.jpg)  | ![](resources/8.jpg)  |
-| ![](resources/9.jpg)  | ![](resources/10.jpg) |
-| ![](resources/11.jpg) | ![](resources/12.jpg) |
-| ![](resources/13.jpg) | ![](resources/14.jpg) |
+```bash
+# Start local development server
+npm run dev
+# Access at http://localhost:5173
+```
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Vue 3, TypeScript, Vite
+- **UI Library**: Layui Vue 2.23.2
+- **State Management**: Pinia
+- **Routing**: Vue Router 4
+- **HTTP Client**: Axios
+- **Charts**: ECharts, Chart.js
+- **Styling**: SCSS, Modern CSS
+
+## 📁 Project Structure
+
+```
+src/
+├── api/           # API modules and HTTP client
+├── assets/        # Static assets (images, icons)
+├── components/    # Reusable Vue components
+├── layouts/       # Layout components
+├── router/        # Vue Router configuration
+├── store/         # Pinia state management
+├── styles/        # Global styles and themes
+├── types/         # TypeScript type definitions
+├── utils/         # Utility functions
+└── views/         # Page components
+    ├── system/    # Admin system pages
+    └── web/       # Public web pages
+```
+
+## 🎯 Recent Updates
+
+- ✅ Redesigned video tutorial interface with modern card layout
+- ✅ Enhanced document preview functionality with web-based viewer
+- ✅ Improved responsive design for mobile devices
+- ✅ Added filtering and search capabilities
+- ✅ Optimized UI/UX with better visual hierarchy
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

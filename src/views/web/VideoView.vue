@@ -99,7 +99,7 @@
                 </svg>
                 VIP
               </div>
-              <div class="video-duration">{{ value.duration || '12:34' }}</div>
+              <div class="video-duration" v-if="value.duration">{{ value.duration }}</div>
             </div>
 
             <!-- Video Info -->
@@ -123,17 +123,11 @@
               </div>
 
               <div class="video-actions">
-                <button class="action-btn primary" @click="watchVideo(value)">
+                <button class="watch-btn" @click="watchVideo(value)">
                   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8 5V19L19 12L8 5Z" fill="currentColor"/>
                   </svg>
                   Watch Now
-                </button>
-                <button class="action-btn secondary">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" fill="currentColor"/>
-                  </svg>
-                  Add to List
                 </button>
               </div>
             </div>
@@ -483,6 +477,7 @@ const watchVideo = (videoData: any) => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 32px;
+  align-items: stretch; /* 让所有卡片高度一致 */
 }
 
 .video-card {
@@ -492,6 +487,9 @@ const watchVideo = (videoData: any) => {
   border: 2px solid rgba(255, 255, 255, 0.08);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 8px 32px rgba(24, 31, 42, 0.4);
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* 确保卡片填满网格高度 */
 }
 
 .video-card:hover {
@@ -602,6 +600,9 @@ const watchVideo = (videoData: any) => {
 /* Video Info */
 .video-info {
   padding: 32px;
+  flex: 1; /* 让信息区域占用剩余空间 */
+  display: flex;
+  flex-direction: column;
 }
 
 .video-title {
@@ -614,6 +615,7 @@ const watchVideo = (videoData: any) => {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-height: 3.6rem; /* 固定标题高度 */
 }
 
 .video-description {
@@ -624,12 +626,16 @@ const watchVideo = (videoData: any) => {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  flex: 1; /* 让描述区域填充剩余空间 */
+  min-height: 4.8rem; /* 固定描述最小高度 */
 }
 
 .video-meta {
   display: flex;
   gap: 24px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+  min-height: 2.5rem; /* 固定元数据区域高度 */
+  align-items: flex-start;
 }
 
 .meta-item {
@@ -648,51 +654,38 @@ const watchVideo = (videoData: any) => {
 /* Video Actions */
 .video-actions {
   display: flex;
-  gap: 16px;
+  justify-content: center;
+  padding: 0 32px 32px 32px;
+  margin-top: auto; /* 将按钮推到底部 */
 }
 
-.action-btn {
-  padding: 14px 28px;
-  border-radius: 16px;
+.watch-btn {
+  padding: 12px 32px;
+  border-radius: 25px;
   border: none;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   transition: all 0.3s ease;
-  flex: 1;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #181F2A;
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+  min-width: 140px;
   justify-content: center;
 }
 
-.action-btn svg {
+.watch-btn svg {
   width: 18px;
   height: 18px;
 }
 
-.action-btn.primary {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  color: #181F2A;
-  box-shadow: 0 6px 24px rgba(255, 215, 0, 0.3);
-}
-
-.action-btn.primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(255, 215, 0, 0.4);
+.watch-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(255, 215, 0, 0.4);
   background: linear-gradient(135deg, #FFE033 0%, #FFB347 100%);
-}
-
-.action-btn.secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: #b0c4e6;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.action-btn.secondary:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
-  transform: translateY(-2px);
 }
 
 /* Responsive Design */
@@ -758,8 +751,8 @@ const watchVideo = (videoData: any) => {
     grid-template-columns: 1fr;
   }
   
-  .video-actions {
-    flex-direction: column;
+  .watch-btn {
+    min-width: 120px;
   }
 }
 
@@ -805,6 +798,12 @@ const watchVideo = (videoData: any) => {
   
   .video-info {
     padding: 24px;
+  }
+  
+  .watch-btn {
+    min-width: 100px;
+    font-size: 0.9rem;
+    padding: 10px 24px;
   }
 }
 </style>

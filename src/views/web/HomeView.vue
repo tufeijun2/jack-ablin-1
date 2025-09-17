@@ -136,11 +136,21 @@
         <div class="col-md-6 col-lg-4" v-for="value in trades">
           <div class="card">
             <div class="stock-info">
-              <span class="badge bg-success">{{value.trade_market.toUpperCase()}}</span>
-              <div>
+              <div class="country-badge-container">
+                <span class="country-badge" :class="getCountryClass(value.trade_market)">
+                  <span class="country-flag">{{ getCountryFlag(value.trade_market) }}</span>
+                  <span class="country-text">{{value.trade_market.toUpperCase()}}</span>
+                </span>
+              </div>
+              <div class="stock-center">
                 <div class="stock-symbol">{{value.symbol}}</div>
               </div>
-              <span class="badge bg-success status-badge">{{value.status}}</span>
+              <div class="status-badge-container">
+                <span class="status-badge-enhanced" :class="getStatusClass(value.status)">
+                  <span class="status-icon">{{ getStatusIcon(value.status) }}</span>
+                  <span class="status-text">{{getStatusText(value.status)}}</span>
+                </span>
+              </div>
             </div>
 
             <img :src="value.image_url" alt="AAPL" class="trade-screenshot" @click="openImageModal(value.symbol,value.image_url)">
@@ -681,6 +691,58 @@ const joinCommunity = () => {
   }, 300);
 };
 
+// 获取国家标识的样式类
+const getCountryClass = (market: string) => {
+  const marketUpper = market.toUpperCase();
+  switch(marketUpper) {
+    case 'USA':
+    case 'NASDAQ':
+    case 'NYSE':
+      return 'country-usa';
+    case 'UK':
+    case 'LSE':
+      return 'country-uk';
+    case 'CN':
+    case 'SSE':
+    case 'SZSE':
+      return 'country-cn';
+    default:
+      return 'country-default';
+  }
+};
+
+// 获取国家旗帜emoji（简化版，返回空字符串）
+const getCountryFlag = (market: string) => {
+  return ''; // 不显示旗帜图标
+};
+
+// 获取状态样式类
+const getStatusClass = (status: string) => {
+  switch(status.toLowerCase()) {
+    case 'active':
+      return 'status-active';
+    case 'closed':
+    case 'completed':
+      return 'status-closed';
+    case 'pending':
+      return 'status-pending';
+    case 'cancelled':
+      return 'status-cancelled';
+    default:
+      return 'status-default';
+  }
+};
+
+// 获取状态图标（简化版，返回空字符串）
+const getStatusIcon = (status: string) => {
+  return ''; // 不显示状态图标
+};
+
+// 获取状态文本（英文）
+const getStatusText = (status: string) => {
+  return status; // 直接返回原始状态文本
+};
+
 
 </script>
 
@@ -741,22 +803,143 @@ body {
 }
 
 .stock-info {
-  padding: 0.75rem 1rem;
-  background: #1a1a2e;
+  padding: 1rem;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 2px solid rgba(255, 215, 0, 0.1);
+}
+
+.stock-center {
+  flex: 1;
+  text-align: center;
 }
 
 .stock-symbol {
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 1.8rem;
+  font-weight: 900;
   color: #ffd700;
+  text-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+  letter-spacing: 1px;
 }
 
 .stock-name {
   font-size: 0.85rem;
   color: #a0a0a0;
+}
+
+/* 国家标识样式 */
+.country-badge-container {
+  display: flex;
+  align-items: center;
+}
+
+.country-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: none;
+  text-align: center;
+  min-width: 50px;
+}
+
+.country-flag {
+  display: none; /* 隐藏旗帜图标 */
+}
+
+.country-text {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* 简洁的国家标识样式 */
+.country-usa {
+  background: #28a745;
+  border-color: #28a745;
+  color: white;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.country-uk {
+  background: #007bff;
+  border-color: #007bff;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.country-cn {
+  background: #dc3545;
+  border-color: #dc3545;
+  color: white;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.country-default {
+  background: #6c757d;
+  border-color: #6c757d;
+  color: white;
+  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* 状态标识样式 */
+.status-badge-container {
+  display: flex;
+  align-items: center;
+}
+
+.status-badge-enhanced {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 2px solid;
+  background: transparent;
+  text-align: center;
+  min-width: 70px;
+}
+
+.status-icon {
+  display: none; /* 隐藏状态图标 */
+}
+
+.status-text {
+  font-weight: 600;
+}
+
+/* 简洁的Active状态样式 */
+.status-active {
+  background: transparent;
+  border-color: #28a745;
+  color: #28a745;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+}
+
+.status-closed {
+  background: linear-gradient(135deg, #888888 0%, #555555 100%);
+  border-color: #888888;
+  color: white;
+}
+
+.status-pending {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border-color: #FFD700;
+  color: #000;
+}
+
+.status-cancelled {
+  background: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
+  border-color: #FF4444;
+  color: white;
+}
+
+.status-default {
+  background: linear-gradient(135deg, #666666 0%, #444444 100%);
+  border-color: #666666;
+  color: white;
 }
 
 .status-badge {

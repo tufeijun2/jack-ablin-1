@@ -439,7 +439,18 @@ onMounted(() => {
   let indexdata=JSON.parse(userStore.indexData || '{}');
   trader_profiles.value=indexdata.trader_profiles;
     strategy_info.value=indexdata.strategy_info;
-    trades.value=indexdata.trades;
+    
+    // 对本地存储的数据也进行排序
+    if(indexdata.trades && Array.isArray(indexdata.trades)) {
+      const sortedTrades = indexdata.trades.sort((a: any, b: any) => {
+        const dateA = new Date(a.entry_date);
+        const dateB = new Date(b.entry_date);
+        return dateB.getTime() - dateA.getTime(); // 倒序：最新的在前
+      });
+      trades.value = sortedTrades;
+    } else {
+      trades.value = indexdata.trades;
+    }
    
     if(trades.value){
     Activecount.value=trades.value.filter((item:any)=>item.status=='Active').length
@@ -626,7 +637,15 @@ const getindexdata= async()=>{
     userStore.indexData=JSON.stringify(res.data);
     trader_profiles.value=res.data.trader_profiles;
     strategy_info.value=res.data.strategy_info;
-    trades.value=res.data.trades;
+    
+    // 按买入时间倒序排序（最新买入的在前面）
+    const sortedTrades = res.data.trades.sort((a: any, b: any) => {
+      const dateA = new Date(a.entry_date);
+      const dateB = new Date(b.entry_date);
+      return dateB.getTime() - dateA.getTime(); // 倒序：最新的在前
+    });
+    
+    trades.value = sortedTrades;
     Activecount.value=trades.value.filter((item:any)=>item.status=='Active').length
     Monthly.value=res.data.Monthly;
     Total.value=res.data.Total;

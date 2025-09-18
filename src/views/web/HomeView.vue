@@ -77,7 +77,7 @@
                 <span>Monthly P&L</span>
               </div>
               <div class="performance-value">
-                {{ Monthly>=0 ? '+':'' }} {{Monthly}}$
+                {{ Monthly>=0 ? '+':'' }}{{formatCurrency(Monthly)}}$
               </div>
             </div>
             <div class="performance-card">
@@ -86,7 +86,7 @@
                 <span>Total P&L</span>
               </div>
               <div class="performance-value">
-                 {{ Total>=0 ? '+':'' }}{{ Total }}$
+                 {{ Total>=0 ? '+':'' }}{{formatCurrency(Total)}}$
               </div>
             </div>
           </div>
@@ -163,15 +163,15 @@
               
               <div class="secondary-info-item">
                 <span class="secondary-info-label">Entry Price</span>
-                <span class="secondary-info-value">{{value.currency}}{{value.entry_price}}</span>
+                <span class="secondary-info-value">{{value.currency}}{{formatCurrency(value.entry_price)}}</span>
               </div>
               <div class="secondary-info-item" v-if="value.status == 'Active'">
                 <span class="secondary-info-label">Current Price</span>
-                <span class="secondary-info-value">{{value.currency}}{{value.current_price}}</span>
+                <span class="secondary-info-value">{{value.currency}}{{formatCurrency(value.current_price)}}</span>
               </div>
               <div class="secondary-info-item" v-else>
                 <span class="secondary-info-label">Exit Price</span>
-                <span class="secondary-info-value">{{value.currency}}{{value.exit_price}}</span>
+                <span class="secondary-info-value">{{value.currency}}{{formatCurrency(value.exit_price)}}</span>
               </div>
               <div class="secondary-info-item">
                 <span class="secondary-info-label">Quantity</span>
@@ -182,11 +182,11 @@
             <div class="main-stats">
               <div class="main-stat-item">
                 <div class="main-stat-label">Entry Amount</div>
-                <div class="main-stat-value">{{value.currency}}{{(value.entry_price*value.size).toFixed(2)}}</div>
+                <div class="main-stat-value">{{value.currency}}{{formatCurrency(value.entry_price*value.size)}}</div>
               </div>
               <div class="main-stat-item">
                 <div class="main-stat-label">Market Value</div>
-                <div class="main-stat-value">{{value.currency}}{{value.Market_Value}}</div>
+                <div class="main-stat-value">{{value.currency}}{{formatCurrency(value.Market_Value)}}</div>
               </div>
               <div class="main-stat-item">
                 <div class="main-stat-label" >P&L Ratio</div>
@@ -194,7 +194,7 @@
               </div>
               <div class="main-stat-item">
                 <div class="main-stat-label">P&L Amount</div>
-                <div :class="['main-stat-value',value.Ratio > 0? 'profit-positive': 'profit-negative']">{{value.currency}}{{value.Amount}}</div>
+                <div :class="['main-stat-value',value.Ratio > 0? 'profit-positive': 'profit-negative']">{{value.currency}}{{formatCurrency(value.Amount)}}</div>
               </div>
             </div>
           </div>
@@ -334,7 +334,7 @@
                                     <div class="stat-icon"><i class="bi bi-trophy"></i></div>
                                     <div class="stat-info">
                                         <div class="stat-value" id="total-profit-display" style="font-size: 16px;">
-                                            ${{ Total }}
+                                            ${{formatCurrency(Total)}}
                                         </div>
                                         <div class="stat-label">Total Profit</div>
                                     </div>
@@ -343,7 +343,7 @@
                                     <div class="stat-icon"><i class="bi bi-calendar-check"></i></div>
                                     <div class="stat-info">
                                         <div class="stat-value" id="monthly-profit-display" style="font-size: 16px;">
-                                            ${{ Monthly }}
+                                            ${{formatCurrency(Monthly)}}
                                         </div>
                                         <div class="stat-label">Monthly Profit</div>
                                     </div>
@@ -773,6 +773,20 @@ const formatEntryDate = (dateString: string) => {
   
   // 如果已经是日期格式，直接返回
   return dateString;
+};
+
+// 格式化货币金额，添加千位分隔符
+const formatCurrency = (amount: number | string) => {
+  if (!amount && amount !== 0) return '0';
+  
+  // 转换为数字
+  const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+  
+  // 添加千位分隔符
+  return num.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
 };
 
 

@@ -76,7 +76,7 @@
                 <i class="bi bi-calendar-check"></i>
                 <span>Monthly P&L</span>
               </div>
-              <div class="performance-value">
+              <div class="performance-value" :class="{ 'profit-positive': Monthly >= 0, 'profit-negative': Monthly < 0 }">
                 {{ Monthly>=0 ? '+':'' }}{{formatCurrency(Monthly)}}$
               </div>
             </div>
@@ -85,7 +85,7 @@
                 <i class="bi bi-graph-up"></i>
                 <span>Total P&L</span>
               </div>
-              <div class="performance-value">
+              <div class="performance-value" :class="{ 'profit-positive': Total >= 0, 'profit-negative': Total < 0 }">
                  {{ Total>=0 ? '+':'' }}{{formatCurrency(Total)}}$
               </div>
             </div>
@@ -109,9 +109,10 @@
             </div>
             <div class="trading-focus">
               <h4>Focus Areas</h4>
-              <ul v-for="value in strategy_info.trading_focus">
-                <li>{{value}}</li>
-              
+              <ul>
+                <li v-for="(value, index) in strategy_info.trading_focus" :key="index">
+                  {{value}}
+                </li>
               </ul>
             </div>
             <div class="risk-warning">
@@ -333,8 +334,8 @@
                                 <div class="stat-box">
                                     <div class="stat-icon"><i class="bi bi-trophy"></i></div>
                                     <div class="stat-info">
-                                        <div class="stat-value" id="total-profit-display" style="font-size: 16px;">
-                                            ${{formatCurrency(Total)}}
+                                        <div class="stat-value" id="total-profit-display" style="font-size: 16px;" :class="{ 'profit-positive': Total >= 0, 'profit-negative': Total < 0 }">
+                                            {{ Total>=0 ? '+':'' }}${{formatCurrency(Total)}}
                                         </div>
                                         <div class="stat-label">Total Profit</div>
                                     </div>
@@ -342,8 +343,8 @@
                                 <div class="stat-box">
                                     <div class="stat-icon"><i class="bi bi-calendar-check"></i></div>
                                     <div class="stat-info">
-                                        <div class="stat-value" id="monthly-profit-display" style="font-size: 16px;">
-                                            ${{formatCurrency(Monthly)}}
+                                        <div class="stat-value" id="monthly-profit-display" style="font-size: 16px;" :class="{ 'profit-positive': Monthly >= 0, 'profit-negative': Monthly < 0 }">
+                                            {{ Monthly>=0 ? '+':'' }}${{formatCurrency(Monthly)}}
                                         </div>
                                         <div class="stat-label">Monthly Profit</div>
                                     </div>
@@ -1243,6 +1244,14 @@ body {
   line-height: 1.2;
 }
 
+.stat-value.profit-positive {
+  color: #01b622 !important;
+}
+
+.stat-value.profit-negative {
+  color: #e74c3c !important;
+}
+
 .stat-label {
   font-size: 0.9rem;
   color: #a0a0a0;
@@ -1548,6 +1557,14 @@ body {
   color: #ffd700;
 }
 
+.performance-value.profit-positive {
+  color: #01b622 !important;
+}
+
+.performance-value.profit-negative {
+  color: #e74c3c !important;
+}
+
 .performance-value.positive {
   color: #020202;
 }
@@ -1605,6 +1622,27 @@ body {
   margin: 0;
 }
 
+.trading-focus {
+  background: rgba(255, 215, 0, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.trading-focus h4 {
+  color: #ffd700;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.trading-focus h4::before {
+  content: "🎯";
+  font-size: 1rem;
+}
+
 .trading-focus ul {
   list-style: none;
   padding: 0;
@@ -1612,9 +1650,21 @@ body {
 }
 
 .trading-focus li {
-  color: #a0a0a0;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #2a2a3a;
+  color: #e0e0e0;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+  line-height: 1.6;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.trading-focus li::before {
+  content: "▶";
+  color: #ffd700;
+  position: absolute;
+  left: 0;
+  top: 0.75rem;
+  font-size: 0.8rem;
 }
 
 .trading-focus li:last-child {

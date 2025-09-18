@@ -47,13 +47,123 @@
       </div>
     </div>
 
-    <!-- VIP Header Section -->
-    <div class="vip-header text-center">
-      <div class="container">
-        <div :class="['vip-title', membershipLevel.toLowerCase().replace(/\s+/g, '-')]">
-          <h1>Welcome to the Member Center</h1>
+    <!-- Dynamic VIP Welcome Zone -->
+    <div class="vip-dynamic-zone">
+      <div class="dynamic-background">
+        <div class="wave-animation"></div>
+        <div class="floating-particles">
+          <div class="particle particle-1">💫</div>
+          <div class="particle particle-2">✨</div>
+          <div class="particle particle-3">🌟</div>
+          <div class="particle particle-4">💎</div>
+          <div class="particle particle-5">⚡</div>
         </div>
-        <h2 class="display-5 mb-5 user-progress">{{ isLoggedIn ? username + ': Your Trading Progress' : 'Your Trading Progress' }}</h2>
+        <div class="gradient-orbs">
+          <div class="orb orb-1"></div>
+          <div class="orb orb-2"></div>
+          <div class="orb orb-3"></div>
+        </div>
+      </div>
+      
+      <div class="welcome-stage">
+        <!-- VIP Crown Animation -->
+        <div class="crown-entrance">
+          <div class="crown-glow-ring"></div>
+          <div class="crown-main">👑</div>
+          <div class="crown-sparkles">
+            <div class="sparkle sparkle-1">✦</div>
+            <div class="sparkle sparkle-2">✧</div>
+            <div class="sparkle sparkle-3">✦</div>
+            <div class="sparkle sparkle-4">✧</div>
+          </div>
+        </div>
+        
+        <!-- Dynamic Welcome Text -->
+        <div class="welcome-text-dynamic">
+          <div class="welcome-line-1">
+            <span class="text-reveal text-greeting">Welcome Back,</span>
+          </div>
+          <div class="welcome-line-2">
+            <span class="text-reveal text-name">{{ isLoggedIn ? username : 'Elite Trader' }}</span>
+            <div class="text-decoration">
+              <div class="name-underline"></div>
+              <div class="name-glow"></div>
+            </div>
+          </div>
+          <div class="welcome-line-3">
+            <span class="text-reveal text-subtitle">Your VIP Trading Sanctuary Awaits</span>
+            <div class="subtitle-effects">
+              <div class="typing-cursor">|</div>
+            </div>
+          </div>
+          
+          <!-- Text Enhancement Effects -->
+          <div class="text-background-effects">
+            <div class="text-shadow-1"></div>
+            <div class="text-shadow-2"></div>
+            <div class="text-shadow-3"></div>
+          </div>
+        </div>
+        
+        <!-- Floating Status Badges -->
+        <div class="floating-badges">
+          <div class="status-badge badge-left">
+            <div class="badge-pulse"></div>
+            <div class="badge-content">
+              <span class="badge-icon">🚀</span>
+              <span class="badge-text">ACTIVE</span>
+            </div>
+          </div>
+          
+          <div class="status-badge badge-center">
+            <div class="badge-pulse"></div>
+            <div class="badge-content">
+              <span class="badge-icon">💰</span>
+              <span class="badge-text">PREMIUM</span>
+            </div>
+          </div>
+          
+          <div class="status-badge badge-right">
+            <div class="badge-pulse"></div>
+            <div class="badge-content">
+              <span class="badge-icon">⭐</span>
+              <span class="badge-text">ELITE</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Meteor Lightsaber Effects -->
+        <div class="meteor-effects">
+          <div class="meteor-trail meteor-1">
+            <div class="meteor-core"></div>
+            <div class="meteor-glow"></div>
+            <div class="meteor-particles">
+              <div class="particle p1"></div>
+              <div class="particle p2"></div>
+              <div class="particle p3"></div>
+            </div>
+          </div>
+          
+          <div class="meteor-trail meteor-2">
+            <div class="meteor-core"></div>
+            <div class="meteor-glow"></div>
+            <div class="meteor-particles">
+              <div class="particle p1"></div>
+              <div class="particle p2"></div>
+              <div class="particle p3"></div>
+            </div>
+          </div>
+          
+          <div class="meteor-trail meteor-3">
+            <div class="meteor-core"></div>
+            <div class="meteor-glow"></div>
+            <div class="meteor-particles">
+              <div class="particle p1"></div>
+              <div class="particle p2"></div>
+              <div class="particle p3"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -121,68 +231,190 @@
       
     </div>
     
-    <!-- Quiz Section -->
-    <div class="container" style="max-width: 1230px; margin-top: 4rem; margin-bottom: 4rem;" v-if="quizQuestions.length>0">
-      <div class="quiz-container p-5">
-        <!-- Quiz Navigation -->
-        <div class="quiz-navigation">
-          <div
-            v-for="(question, index) in quizQuestions"
-            :key="index"
-            class="quiz-nav-indicator"
-            :class="{
-              'active': index === currentQuestionIndex,
-              'completed': index < currentQuestionIndex
-            }"
-          ></div>
+    <!-- Interactive Trading Quiz -->
+    <div class="trading-quiz-arena" v-if="quizQuestions.length>0">
+      <div class="quiz-container-interactive">
+        
+        <!-- Quiz Dashboard -->
+        <div class="quiz-dashboard">
+          <div class="dashboard-left">
+            <div class="quiz-branding">
+              <div class="brand-icon">💰</div>
+              <div class="brand-text">
+                <h2>Trading Mastery Challenge</h2>
+                <p>Prove Your Market Expertise</p>
+              </div>
+            </div>
         </div>
 
-        <!-- Quiz Question -->
-        <div v-if="!quizCompleted" class="quiz-question-container">
-          <h3 class="quiz-question mb-4">
-            {{ String.fromCharCode(65 + currentQuestionIndex) }}. {{ currentQuestion.question }}
-          </h3>
+          <div class="dashboard-center">
+            <div class="question-counter">
+              <div class="counter-display">
+                <span class="current">{{ currentQuestionIndex + 1 }}</span>
+                <span class="divider">/</span>
+                <span class="total">{{ quizQuestions.length }}</span>
+              </div>
+              <div class="counter-label">Questions</div>
+            </div>
+          </div>
           
-          <!-- Quiz Options -->
-          <div class="quiz-options">
-            <button
+          <div class="dashboard-right">
+            <div class="score-tracker">
+              <div class="score-display">
+                <span class="score-number">{{ score }}</span>
+                <span class="score-label">Score</span>
+              </div>
+              <div class="accuracy-ring">
+                <svg width="60" height="60" class="ring-svg">
+                  <circle cx="30" cy="30" r="25" class="ring-bg"></circle>
+                  <circle cx="30" cy="30" r="25" class="ring-progress" 
+                    :stroke-dasharray="157" 
+                    :stroke-dashoffset="157 - (157 * (currentQuestionIndex > 0 ? score / currentQuestionIndex : 0))"></circle>
+                </svg>
+                <div class="ring-text">{{ currentQuestionIndex > 0 ? Math.round((score / currentQuestionIndex) * 100) : 0 }}%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question Area -->
+        <div class="question-arena" v-if="!quizCompleted">
+          <div class="question-stage">
+            <div class="question-badge">
+              <span class="badge-icon">🎯</span>
+              <span class="badge-text">Financial Strategy</span>
+            </div>
+            
+            <div class="question-content">
+              <h3 class="main-question">{{ currentQuestion.question }}</h3>
+            </div>
+          </div>
+          
+          <!-- Interactive Answer Cards -->
+          <div class="answer-battlefield">
+            <div
               v-for="(option, index) in currentQuestion.options"
               :key="index"
-              class="quiz-option mb-3 d-block w-full text-left"
+              class="answer-card"
               :class="{
-                'correct': showResult && index === currentQuestion.correctAnswer,
-                'incorrect': showResult && selectedAnswer === index && index !== currentQuestion.correctAnswer,
-                'selected': selectedAnswer === index
+                'selected': selectedAnswer === index,
+                'correct-answer': showResult && index === currentQuestion.correctAnswer,
+                'wrong-answer': showResult && selectedAnswer === index && index !== currentQuestion.correctAnswer,
+                'revealed': showResult
               }"
               @click="handleSelectAnswer(index)"
-              :disabled="selectedAnswer !== null || showResult"
+              @mouseenter="playHoverSound"
             >
-              <span class="option-letter mr-2">{{ String.fromCharCode(65 + index) }}.</span>
-              {{ option }}
+              <div class="card-header">
+                <div class="option-badge">{{ String.fromCharCode(65 + index) }}</div>
+                <div class="card-status">
+                  <div v-if="showResult && index === currentQuestion.correctAnswer" class="status-icon correct">✓</div>
+                  <div v-else-if="showResult && selectedAnswer === index && index !== currentQuestion.correctAnswer" class="status-icon wrong">✗</div>
+                </div>
+              </div>
+              
+              <div class="card-content">
+                <p class="answer-text">{{ option }}</p>
+              </div>
+              
+              <div class="card-glow"></div>
+            </div>
+          </div>
+          
+          <!-- Next Question Button -->
+          <div v-if="showResult" class="next-question-zone">
+            <button @click="goToNextQuestion" class="next-question-btn">
+              <span class="btn-icon">{{ currentQuestionIndex < quizQuestions.length - 1 ? '🚀' : '🏁' }}</span>
+              <span class="btn-text">{{ currentQuestionIndex < quizQuestions.length - 1 ? 'Next Challenge' : 'See Results' }}</span>
+              <div class="btn-shine"></div>
             </button>
           </div>
+          </div>
 
-          <!-- Quiz Result -->
-          <div v-if="showResult" class="quiz-result">
-            <h3>{{ isAnswerCorrect ? 'Correct!' : 'Incorrect!' }}</h3>
-            <p>{{ isAnswerCorrect ? 'Well done!' : 'The correct answer is ' + String.fromCharCode(65 + currentQuestion.correctAnswer) + '. ' + currentQuestion.options[currentQuestion.correctAnswer] }}</p>
-            <button @click="goToNextQuestion">
-              {{ currentQuestionIndex < quizQuestions.length - 1 ? 'Next Question' : 'Finish' }}
+        <!-- Victory Screen -->
+        <div v-else class="victory-screen">
+          <div class="victory-animation">
+            <div class="trophy-container">
+              <div class="trophy-glow"></div>
+              <div class="trophy">🏆</div>
+              <div class="victory-particles"></div>
+            </div>
+            
+            <h2 class="victory-title">Trading Challenge Complete!</h2>
+            
+            <div class="final-stats">
+              <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value">{{ score }}/{{ quizQuestions.length }}</div>
+                <div class="stat-label">Correct Answers</div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value">{{ Math.round((score / quizQuestions.length) * 100) }}%</div>
+                <div class="stat-label">Accuracy Rate</div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value">{{ getPerformanceRating() }}</div>
+                <div class="stat-label">Performance</div>
+              </div>
+            </div>
+            
+            <div class="victory-message">
+              <div v-if="score === quizQuestions.length" class="perfect-message">
+                <h4>🌟 PERFECT SCORE! 🌟</h4>
+                <p>You're a true trading master! Your market knowledge is exceptional and ready for real trading!</p>
+              </div>
+              <div v-else-if="score >= quizQuestions.length * 0.8" class="excellent-message">
+                <h4>🎯 EXCELLENT PERFORMANCE!</h4>
+                <p>Outstanding! You have strong trading fundamentals. You're well-prepared for market challenges!</p>
+              </div>
+              <div v-else-if="score >= quizQuestions.length * 0.6" class="good-message">
+                <h4>📈 SOLID PROGRESS!</h4>
+                <p>Good work! You're building solid knowledge. Keep learning to become a trading expert!</p>
+              </div>
+              <div v-else class="improve-message">
+                <h4>💪 KEEP GROWING!</h4>
+                <p>Every successful trader started here. Focus on learning and you'll see amazing progress!</p>
+              </div>
+            </div>
+            
+            <div class="victory-actions">
+              <button @click="restartQuiz" class="action-button primary">
+                <span class="btn-icon">🔥</span>
+                <span>New Challenge</span>
+                <div class="button-ripple"></div>
+              </button>
+              
+              <button @click="restartQuiz" class="action-button secondary">
+                <span class="btn-icon">📚</span>
+                <span>Change Topic</span>
             </button>
+            </div>
+          </div>
           </div>
         </div>
 
-        <!-- Quiz Completed -->
-        <div v-else class="quiz-completed">
-          <h2>Quiz Completed!</h2>
-          <p>Congratulations on completing the quiz.</p>
-          <div class="score">{{ score }}/{{ quizQuestions.length }}</div>
-          <button @click="restartQuiz">Restart Quiz</button>
-          <button @click="restartQuiz" class="reset-quiz-btn mt-3">Change Topic</button>
+      <!-- Floating Success/Error Notifications -->
+      <div v-if="showNotification" class="floating-notification" :class="notificationType">
+        <div class="notification-bubble">
+          <div class="bubble-icon">
+            {{ notificationType === 'success' ? '🎉' : '💡' }}
         </div>
+          <div class="bubble-text">{{ notificationMessage }}</div>
+          <div class="bubble-progress"></div>
       </div>
-        <!-- Firework Container -->
-    <div id="firework-container" class="firework-container"></div>
+      </div>
+      
+      <!-- Background Effects -->
+      <div class="quiz-background-effects">
+        <div class="floating-coin coin-1">💰</div>
+        <div class="floating-coin coin-2">📈</div>
+        <div class="floating-coin coin-3">💎</div>
+        <div class="floating-coin coin-4">🚀</div>
+      </div>
     </div>
 
   
@@ -394,6 +626,10 @@ const quizCompleted = ref(false);
 const score = ref(0);
 const isLoading = ref(false);
 const isFireworkActive = ref(false);
+const answersHistory = ref<boolean[]>([]);
+const showNotification = ref(false);
+const notificationType = ref('success');
+const notificationMessage = ref('');
 let fireworkInterval: number | null = null;
 
 // Function to fetch quiz questions from API
@@ -435,10 +671,16 @@ const handleSelectAnswer = (index: number) => {
   selectedAnswer.value = index;
   isAnswerCorrect.value = index === currentQuestion.value.correctAnswer;
   
+  // 记录答题历史
+  answersHistory.value[currentQuestionIndex.value] = isAnswerCorrect.value;
+  
   // 如果回答正确，增加分数
   if (isAnswerCorrect.value) {
     score.value++;
   }
+  
+  // 显示通知
+  showAnswerNotification();
   
   // 显示结果
   setTimeout(() => {
@@ -447,16 +689,76 @@ const handleSelectAnswer = (index: number) => {
     // 答案正确时，开始持续播放烟花效果
     if (isAnswerCorrect.value) {
       isFireworkActive.value = true;
-      // 立即播放一次烟花
       createFirework();
-      // 设置间隔，持续播放烟花
       fireworkInterval = window.setInterval(() => {
         if (isFireworkActive.value) {
           createFirework();
         }
-      }, 1000); // 每秒播放一次
+      }, 800);
     }
-  }, 500);
+  }, 300);
+};
+
+// 显示答题通知
+const showAnswerNotification = () => {
+  if (isAnswerCorrect.value) {
+    notificationType.value = 'success';
+    const successMessages = [
+      '🎉 Correct! +1 Point',
+      '✨ Great! Keep it up!',
+      '🏆 Perfect! Well done!',
+      '💰 Excellent! You\'re learning!',
+      '🚀 Amazing! Next question!'
+    ];
+    notificationMessage.value = successMessages[Math.floor(Math.random() * successMessages.length)];
+  } else {
+    notificationType.value = 'error';
+    const encouragementMessages = [
+      '📚 Not quite! Keep learning!',
+      '💪 Try again! You can do it!',
+      '🎯 Close! Study more!',
+      '📈 Learning opportunity!',
+      '🌟 Keep practicing!'
+    ];
+    notificationMessage.value = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
+  }
+  
+  showNotification.value = true;
+  setTimeout(() => {
+    showNotification.value = false;
+  }, 2500);
+};
+
+// 获取表现评级
+const getPerformanceRating = () => {
+  const percentage = (score.value / quizQuestions.value.length) * 100;
+  if (percentage === 100) return 'Master';
+  if (percentage >= 80) return 'Expert';
+  if (percentage >= 60) return 'Advanced';
+  if (percentage >= 40) return 'Intermediate';
+  return 'Beginner';
+};
+
+// 播放悬停音效（模拟）
+const playHoverSound = () => {
+  // 这里可以添加实际的音效播放逻辑
+  console.log('Hover sound effect');
+};
+
+// 播放点击音效（模拟）
+const playClickSound = () => {
+  // 这里可以添加实际的音效播放逻辑
+  console.log('Click sound effect');
+};
+
+// 格式化货币显示
+const formatCurrency = (amount) => {
+  if (amount >= 1000000) {
+    return (amount / 1000000).toFixed(1) + 'M';
+  } else if (amount >= 1000) {
+    return (amount / 1000).toFixed(1) + 'K';
+  }
+  return amount.toLocaleString();
 };
 
 // 进入下一题
@@ -502,14 +804,17 @@ const restartQuiz = () => {
       fireworkContainer.removeChild(fireworkContainer.firstChild);
     }
   }
-  fetchQuizQuestions()
   
+  // 重置所有状态
+  fetchQuizQuestions();
   currentQuestionIndex.value = 0;
   selectedAnswer.value = null;
   showResult.value = false;
   isAnswerCorrect.value = false;
   quizCompleted.value = false;
   score.value = 0;
+  answersHistory.value = [];
+  showNotification.value = false;
 };
 
 // 创建烟花效果
@@ -796,11 +1101,821 @@ const createFirework = () => {
   box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
 }
 
-.vip-header {
-  padding: 3rem 0;
+/* Dynamic VIP Welcome Zone */
+.vip-dynamic-zone {
+  background: linear-gradient(135deg, 
+    #0a0a1a 0%, 
+    #1a1a2e 30%, 
+    #16213e 60%, 
+    #0f1419 100%);
+  padding: 40px 0 50px 0;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(145deg, #181c2b 0%, #13141f 100%);
+  min-height: 220px;
+}
+
+/* Dynamic Background Effects */
+.dynamic-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.wave-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    transparent 40%, 
+    rgba(255, 215, 0, 0.03) 50%, 
+    transparent 60%);
+  animation: waveMove 8s ease-in-out infinite;
+}
+
+@keyframes waveMove {
+  0%, 100% { transform: translateX(-100%) skewX(-10deg); }
+  50% { transform: translateX(100%) skewX(10deg); }
+}
+
+.floating-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.particle {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0.6;
+  animation: particleDance 12s linear infinite;
+}
+
+.particle-1 {
+  top: 10%;
+  left: 15%;
+  animation-delay: 0s;
+}
+
+.particle-2 {
+  top: 25%;
+  right: 20%;
+  animation-delay: 2s;
+}
+
+.particle-3 {
+  bottom: 30%;
+  left: 25%;
+  animation-delay: 4s;
+}
+
+.particle-4 {
+  top: 60%;
+  right: 15%;
+  animation-delay: 6s;
+}
+
+.particle-5 {
+  bottom: 15%;
+  right: 30%;
+  animation-delay: 8s;
+}
+
+@keyframes particleDance {
+  0% { transform: translateY(0px) rotate(0deg) scale(1); opacity: 0.3; }
+  25% { transform: translateY(-30px) rotate(90deg) scale(1.1); opacity: 0.8; }
+  50% { transform: translateY(-10px) rotate(180deg) scale(0.9); opacity: 0.4; }
+  75% { transform: translateY(-40px) rotate(270deg) scale(1.2); opacity: 0.7; }
+  100% { transform: translateY(0px) rotate(360deg) scale(1); opacity: 0.3; }
+}
+
+.gradient-orbs {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: orbFloat 10s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(255, 165, 0, 0.15) 0%, transparent 70%);
+  bottom: 20%;
+  right: 20%;
+  animation-delay: 3s;
+}
+
+.orb-3 {
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: 6s;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translateY(0px) scale(1); opacity: 0.4; }
+  33% { transform: translateY(-20px) scale(1.1); opacity: 0.7; }
+  66% { transform: translateY(10px) scale(0.9); opacity: 0.5; }
+}
+
+/* Welcome Stage */
+.welcome-stage {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Crown Entrance Animation */
+.crown-entrance {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 20px;
+  animation: crownEntrance 2s ease-out;
+}
+
+@keyframes crownEntrance {
+  0% { opacity: 0; transform: translateY(-100px) scale(0.3) rotate(-180deg); }
+  60% { transform: translateY(10px) scale(1.2) rotate(10deg); }
+  80% { transform: translateY(-5px) scale(0.95) rotate(-5deg); }
+  100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+}
+
+.crown-glow-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  border-radius: 50%;
+  animation: ringPulse 3s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1); 
+    border-color: rgba(255, 215, 0, 0.4); 
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.2); 
+    border-color: rgba(255, 215, 0, 0.8); 
+  }
+}
+
+.crown-main {
+  font-size: 3rem;
+  position: relative;
+  z-index: 2;
+  animation: crownFloat 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+}
+
+@keyframes crownFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(5deg); }
+}
+
+.crown-sparkles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;
+  height: 150px;
+}
+
+.sparkle {
+  position: absolute;
+  color: #FFD700;
+  font-size: 1.2rem;
+  animation: sparkleRotate 6s linear infinite;
+}
+
+.sparkle-1 {
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 0s;
+}
+
+.sparkle-2 {
+  right: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  animation-delay: 1.5s;
+}
+
+.sparkle-3 {
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 3s;
+}
+
+.sparkle-4 {
+  left: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  animation-delay: 4.5s;
+}
+
+@keyframes sparkleRotate {
+  0% { opacity: 0.3; transform: translateX(-50%) scale(0.5); }
+  25% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+  50% { opacity: 0.5; transform: translateX(-50%) scale(0.8); }
+  75% { opacity: 0.8; transform: translateX(-50%) scale(1.1); }
+  100% { opacity: 0.3; transform: translateX(-50%) scale(0.5); }
+}
+
+/* Dynamic Welcome Text */
+.welcome-text-dynamic {
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.welcome-line-1,
+.welcome-line-2,
+.welcome-line-3 {
+  margin-bottom: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.text-reveal {
+  display: inline-block;
+  animation: textReveal 1.2s ease-out forwards;
+  opacity: 0;
+  transform: translateY(50px);
+  position: relative;
+}
+
+/* Greeting Text - "Welcome Back," */
+.text-greeting {
+  animation-delay: 0.5s;
+  font-size: 1.6rem;
+  font-weight: 300;
+  background: linear-gradient(135deg, #b0c4e6 0%, #8a9bb8 50%, #b0c4e6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  position: relative;
+  text-shadow: 0 4px 12px rgba(176, 196, 230, 0.3);
+}
+
+.text-greeting::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #b0c4e6, transparent);
+  animation: greetingUnderline 1.5s ease-out 1s forwards;
+}
+
+@keyframes greetingUnderline {
+  to { width: 100%; }
+}
+
+/* Name Text - Main Highlight */
+.text-name {
+  animation-delay: 0.8s;
+  font-size: 3.2rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, 
+    #FFD700 0%, 
+    #FFA500 25%, 
+    #FFD700 50%, 
+    #FF8C00 75%, 
+    #FFD700 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: nameGradientShift 3s ease-in-out infinite, textReveal 1.2s ease-out forwards;
+  text-shadow: 
+    0 8px 24px rgba(255, 215, 0, 0.4),
+    0 0 40px rgba(255, 215, 0, 0.2);
+  letter-spacing: 2px;
+  position: relative;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+@keyframes nameGradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.text-decoration {
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 20px;
+}
+
+.name-underline {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    #FFD700 25%, 
+    #FFA500 50%, 
+    #FFD700 75%, 
+    transparent 100%);
+  animation: nameUnderlineExpand 2s ease-out 1.3s forwards;
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+@keyframes nameUnderlineExpand {
+  to { width: 80%; }
+}
+
+.name-glow {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 15px;
+  background: radial-gradient(ellipse, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+  animation: nameGlowPulse 2s ease-in-out infinite 1.5s;
+  border-radius: 50%;
+}
+
+@keyframes nameGlowPulse {
+  0%, 100% { opacity: 0.3; transform: translateX(-50%) scaleX(1); }
+  50% { opacity: 0.8; transform: translateX(-50%) scaleX(1.2); }
+}
+
+/* Subtitle Text */
+.text-subtitle {
+  animation-delay: 1.1s;
+  font-size: 1.3rem;
+  font-weight: 400;
+  background: linear-gradient(135deg, #8a9bb8 0%, #b0c4e6 50%, #8a9bb8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 1.5px;
+  text-transform: capitalize;
+  position: relative;
+  text-shadow: 0 2px 8px rgba(138, 155, 184, 0.2);
+}
+
+.subtitle-effects {
+  display: inline-block;
+  position: relative;
+}
+
+.typing-cursor {
+  display: inline-block;
+  font-size: 1.8rem;
+  color: #FFD700;
+  font-weight: 300;
+  animation: cursorBlink 1.5s infinite 2s;
+  margin-left: 5px;
+}
+
+@keyframes cursorBlink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Text Background Effects */
+.text-background-effects {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.text-shadow-1,
+.text-shadow-2,
+.text-shadow-3 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(30px);
+  animation: textShadowFloat 6s ease-in-out infinite;
+}
+
+.text-shadow-1 {
+  top: 20%;
+  left: 10%;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+  animation-delay: 0s;
+}
+
+.text-shadow-2 {
+  top: 40%;
+  right: 15%;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(255, 165, 0, 0.08) 0%, transparent 70%);
+  animation-delay: 2s;
+}
+
+.text-shadow-3 {
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 100px;
+  background: radial-gradient(ellipse, rgba(255, 215, 0, 0.06) 0%, transparent 70%);
+  animation-delay: 4s;
+}
+
+@keyframes textShadowFloat {
+  0%, 100% { transform: translateY(0px) scale(1); opacity: 0.3; }
+  50% { transform: translateY(-20px) scale(1.1); opacity: 0.6; }
+}
+
+@keyframes textReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Floating Status Badges */
+.floating-badges {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-bottom: 20px;
+}
+
+.status-badge {
+  position: relative;
+  animation: badgeFloat 1.5s ease-out forwards;
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+.badge-left {
+  animation-delay: 1.4s;
+}
+
+.badge-center {
+  animation-delay: 1.7s;
+}
+
+.badge-right {
+  animation-delay: 2s;
+}
+
+@keyframes badgeFloat {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.badge-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 50%;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1); 
+    border-color: rgba(255, 215, 0, 0.3); 
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.3); 
+    border-color: rgba(255, 215, 0, 0.6); 
+  }
+}
+
+.badge-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.4s ease;
+  cursor: pointer;
+}
+
+.badge-content:hover {
+  background: rgba(255, 215, 0, 0.1);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+}
+
+.badge-icon {
+  font-size: 1.8rem;
+}
+
+.badge-text {
+  font-size: 0.75rem;
+  color: #b0c4e6;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Meteor Lightsaber Effects */
+.meteor-effects {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.meteor-trail {
+  position: absolute;
+  width: 100%;
+  height: 8px;
+  animation: meteorSweep 4s ease-in-out infinite;
+}
+
+.meteor-1 {
+  top: 25%;
+  animation-delay: 0s;
+}
+
+.meteor-2 {
+  top: 50%;
+  animation-delay: 1.5s;
+}
+
+.meteor-3 {
+  top: 75%;
+  animation-delay: 3s;
+}
+
+.meteor-core {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 600px;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    transparent 0%,
+    rgba(255, 255, 255, 0.9) 8%,
+    rgba(255, 215, 0, 1) 20%,
+    rgba(255, 165, 0, 1) 35%,
+    rgba(255, 140, 0, 0.8) 50%,
+    rgba(255, 215, 0, 0.6) 70%,
+    rgba(255, 215, 0, 0.3) 85%,
+    transparent 100%);
+  border-radius: 2px;
+  box-shadow: 
+    0 0 8px rgba(255, 215, 0, 0.8),
+    0 0 16px rgba(255, 165, 0, 0.6),
+    0 0 24px rgba(255, 215, 0, 0.4);
+}
+
+.meteor-glow {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 800px;
+  height: 12px;
+  background: linear-gradient(90deg, 
+    transparent 0%,
+    rgba(255, 215, 0, 0.1) 15%,
+    rgba(255, 215, 0, 0.3) 25%,
+    rgba(255, 165, 0, 0.4) 40%,
+    rgba(255, 215, 0, 0.3) 60%,
+    rgba(255, 215, 0, 0.2) 75%,
+    rgba(255, 215, 0, 0.1) 90%,
+    transparent 100%);
+  filter: blur(4px);
+  border-radius: 6px;
+}
+
+.meteor-particles {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 20px;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 1) 0%, rgba(255, 165, 0, 0.8) 50%, transparent 100%);
+  border-radius: 50%;
+  animation: particleTrail 4s ease-in-out infinite;
+}
+
+.particle.p1 {
+  top: 2px;
+  animation-delay: 0.1s;
+}
+
+.particle.p2 {
+  top: 50%;
+  transform: translateY(-50%);
+  animation-delay: 0.2s;
+}
+
+.particle.p3 {
+  bottom: 2px;
+  animation-delay: 0.3s;
+}
+
+@keyframes meteorSweep {
+  0% {
+    transform: translateX(-120%) skewX(-15deg);
+    opacity: 0;
+  }
+  2% {
+    opacity: 0.2;
+  }
+  5% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  98% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateX(120%) skewX(-15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes particleTrail {
+  0% {
+    transform: translateX(-50px) scale(0);
+    opacity: 0;
+  }
+  5% {
+    transform: translateX(0px) scale(0.8);
+    opacity: 0.6;
+  }
+  15% {
+    transform: translateX(100px) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(400px) scale(0.9);
+    opacity: 0.8;
+  }
+  85% {
+    transform: translateX(700px) scale(0.6);
+    opacity: 0.4;
+  }
+  95% {
+    transform: translateX(850px) scale(0.3);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateX(900px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .vip-dynamic-zone {
+    padding: 30px 0 40px 0;
+    min-height: 180px;
+  }
+  
+  .crown-main {
+    font-size: 2.5rem;
+  }
+  
+  /* Mobile Text Sizes */
+  .text-greeting {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+  }
+  
+  .text-name {
+    font-size: 2.5rem;
+    letter-spacing: 1px;
+  }
+  
+  .text-subtitle {
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+  
+  .typing-cursor {
+    font-size: 1rem;
+  }
+  
+  .floating-badges {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .badge-content {
+    padding: 16px;
+  }
+  
+  .text-shadow-1,
+  .text-shadow-2,
+  .text-shadow-3 {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .welcome-text-dynamic {
+    margin-bottom: 20px;
+  }
+  
+  .welcome-line-1,
+  .welcome-line-2,
+  .welcome-line-3 {
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vip-dynamic-zone {
+    padding: 25px 0 35px 0;
+    min-height: 160px;
+  }
+  
+  .text-greeting {
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+  
+  .text-name {
+    font-size: 2rem;
+  }
+  
+  .text-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .typing-cursor {
+    font-size: 0.9rem;
+  }
+  
+  .crown-main {
+    font-size: 2rem;
+  }
 }
 
 .vip-title {
@@ -1766,15 +2881,742 @@ html {
   padding: 0.5rem 0;
 }
 
-/* 当前题目指示器 */
-.current-question-indicator {
-  display: inline-block;
-  background: linear-gradient(90deg, #ffd700 0%, #b8860b 100%);
-  color: #000;
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
+/* Interactive Trading Quiz Arena */
+.trading-quiz-arena {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 20px;
+  position: relative;
+  min-height: 600px;
+}
+
+.quiz-container-interactive {
+  background: linear-gradient(135deg, rgba(24, 31, 42, 0.98) 0%, rgba(16, 21, 35, 0.95) 100%);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 215, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.quiz-container-interactive::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #FFD700 50%, transparent 100%);
+  animation: topGlow 3s ease-in-out infinite;
+}
+
+@keyframes topGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* Quiz Dashboard */
+.quiz-dashboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.quiz-branding {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.brand-icon {
+  font-size: 3rem;
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.brand-text h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #FFD700;
+  margin: 0 0 4px 0;
+  text-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+.brand-text p {
   font-size: 1rem;
+  color: #b0c4e6;
+  margin: 0;
+  font-weight: 500;
+}
+
+.question-counter {
+  text-align: center;
+}
+
+.counter-display {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #FFD700;
+  margin-bottom: 8px;
+  text-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.divider {
+  color: #b0c4e6;
+  margin: 0 8px;
+}
+
+.counter-label {
+  font-size: 0.9rem;
+  color: #b0c4e6;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.score-tracker {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.score-display {
+  text-align: center;
+}
+
+.score-number {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #00FF88;
+  text-shadow: 0 4px 12px rgba(0, 255, 136, 0.4);
+}
+
+.score-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #b0c4e6;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.accuracy-ring {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+
+.ring-svg {
+  transform: rotate(-90deg);
+}
+
+.ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 4;
+}
+
+.ring-progress {
+  fill: none;
+  stroke: #FFD700;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.ring-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #FFD700;
+}
+
+/* Question Arena */
+.question-arena {
+  margin-bottom: 40px;
+}
+
+.question-stage {
+  margin-bottom: 40px;
+}
+
+.question-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #000;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+  animation: badgeFloat 3s ease-in-out infinite;
+}
+
+@keyframes badgeFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.badge-icon {
+  font-size: 1.2rem;
+}
+
+.main-question {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.5;
+  margin: 0;
+  padding: 32px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-radius: 20px;
+  border: 2px solid rgba(255, 215, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.main-question::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%);
+}
+
+/* Answer Battlefield */
+.answer-battlefield {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.answer-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+}
+
+.answer-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 215, 0, 0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.answer-card:hover::before {
+  transform: translateX(100%);
+}
+
+.answer-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  border-color: rgba(255, 215, 0, 0.5);
+  box-shadow: 
+    0 20px 40px rgba(255, 215, 0, 0.2),
+    0 0 30px rgba(255, 215, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.option-badge {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.status-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.2rem;
+  opacity: 0;
+  animation: statusPop 0.5s ease forwards;
+}
+
+.status-icon.correct {
+  background: #00FF88;
+  color: #000;
+}
+
+.status-icon.wrong {
+  background: #FF6B6B;
+  color: #fff;
+}
+
+@keyframes statusPop {
+  0% { opacity: 0; transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.card-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.answer-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.answer-card.selected {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%);
+  border-color: #FFD700;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(255, 215, 0, 0.3);
+}
+
+.answer-card.correct-answer {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.25) 0%, rgba(0, 204, 102, 0.15) 100%);
+  border-color: #00FF88;
+  animation: correctCelebration 1s ease;
+}
+
+.answer-card.wrong-answer {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.25) 0%, rgba(255, 68, 68, 0.15) 100%);
+  border-color: #FF6B6B;
+  animation: wrongReaction 0.6s ease;
+}
+
+@keyframes correctCelebration {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.05) rotate(1deg); }
+  75% { transform: scale(1.05) rotate(-1deg); }
+}
+
+@keyframes wrongReaction {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+/* Next Question Zone */
+.next-question-zone {
+  text-align: center;
+  margin-top: 40px;
+  animation: fadeInUp 0.5s ease 0.3s both;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.next-question-btn {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #000;
+  border: none;
+  padding: 18px 48px;
+  border-radius: 30px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(255, 215, 0, 0.4);
+}
+
+.next-question-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 16px 48px rgba(255, 215, 0, 0.5);
+}
+
+.btn-icon {
+  font-size: 1.4rem;
+  animation: iconBounce 2s ease-in-out infinite;
+}
+
+@keyframes iconBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.btn-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: btnShine 2s ease-in-out infinite;
+}
+
+@keyframes btnShine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Victory Screen */
+.victory-screen {
+  text-align: center;
+  padding: 60px 40px;
+  animation: victoryEntrance 1s ease;
+}
+
+@keyframes victoryEntrance {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.trophy-container {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.trophy {
+  font-size: 6rem;
+  animation: trophyRotate 4s ease-in-out infinite;
+  filter: drop-shadow(0 10px 20px rgba(255, 215, 0, 0.4));
+}
+
+@keyframes trophyRotate {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(5deg) scale(1.05); }
+}
+
+.victory-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #FFD700;
+  margin-bottom: 48px;
+  text-shadow: 0 4px 16px rgba(255, 215, 0, 0.4);
+  animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+  from { text-shadow: 0 4px 16px rgba(255, 215, 0, 0.4); }
+  to { text-shadow: 0 8px 24px rgba(255, 215, 0, 0.6); }
+}
+
+.final-stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  min-width: 120px;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(255, 215, 0, 0.2);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #FFD700;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #b0c4e6;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.victory-message {
+  margin-bottom: 48px;
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.victory-message h4 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  font-weight: 800;
+}
+
+.victory-message p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #b0c4e6;
+  margin: 0;
+}
+
+.victory-actions {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+
+.action-button {
+  padding: 16px 32px;
+  border-radius: 25px;
+  border: none;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-button.primary {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #000;
+  box-shadow: 0 8px 24px rgba(255, 215, 0, 0.3);
+}
+
+.action-button.primary:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 32px rgba(255, 215, 0, 0.4);
+}
+
+.action-button.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #b0c4e6;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.action-button.secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Floating Notification */
+.floating-notification {
+  position: fixed;
+  top: 100px;
+  right: 30px;
+  z-index: 9999;
+  animation: bounceIn 0.6s ease;
+}
+
+@keyframes bounceIn {
+  0% { opacity: 0; transform: translateX(100%) scale(0.3); }
+  50% { transform: translateX(-10%) scale(1.05); }
+  70% { transform: translateX(5%) scale(0.95); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.notification-bubble {
+  background: linear-gradient(135deg, rgba(24, 31, 42, 0.95) 0%, rgba(35, 43, 62, 0.9) 100%);
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(20px);
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 320px;
+  position: relative;
+  overflow: hidden;
+}
+
+.floating-notification.success .notification-bubble {
+  border-color: #00FF88;
+  box-shadow: 0 12px 40px rgba(0, 255, 136, 0.2);
+}
+
+.floating-notification.error .notification-bubble {
+  border-color: #FF6B6B;
+  box-shadow: 0 12px 40px rgba(255, 107, 107, 0.2);
+}
+
+.bubble-icon {
+  font-size: 1.5rem;
+  animation: iconSpin 1s ease;
+}
+
+@keyframes iconSpin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+.bubble-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.4;
+}
+
+.bubble-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+  animation: progressShrink 2.5s linear;
+}
+
+@keyframes progressShrink {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+/* Background Effects */
+.quiz-background-effects {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.floating-coin {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.1;
+  animation: floatAround 15s linear infinite;
+}
+
+.coin-1 {
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.coin-2 {
+  top: 20%;
+  right: 15%;
+  animation-delay: 3s;
+}
+
+.coin-3 {
+  bottom: 30%;
+  left: 20%;
+  animation-delay: 6s;
+}
+
+.coin-4 {
+  bottom: 15%;
+  right: 10%;
+  animation-delay: 9s;
+}
+
+@keyframes floatAround {
+  0% { transform: translateY(0px) rotate(0deg); opacity: 0.1; }
+  25% { transform: translateY(-20px) rotate(90deg); opacity: 0.3; }
+  50% { transform: translateY(0px) rotate(180deg); opacity: 0.1; }
+  75% { transform: translateY(-15px) rotate(270deg); opacity: 0.2; }
+  100% { transform: translateY(0px) rotate(360deg); opacity: 0.1; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .trading-quiz-arena {
+    margin: 40px auto;
+    padding: 0 16px;
+  }
+  
+  .quiz-container-interactive {
+    padding: 24px;
+  }
+  
+  .quiz-dashboard {
+    flex-direction: column;
+    gap: 24px;
+    text-align: center;
+  }
+  
+  .answer-battlefield {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .final-stats {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .victory-actions {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .floating-notification {
+    right: 16px;
+    left: 16px;
+  }
+  
+  .notification-bubble {
+    max-width: none;
+  }
 }
 </style>

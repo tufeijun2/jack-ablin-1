@@ -158,7 +158,7 @@
             <div class="secondary-info">
               <div class="secondary-info-item" >
                 <span class="secondary-info-label">Entry Date</span>
-                <span class="secondary-info-value">{{value.entry_date}}</span>
+                <span class="secondary-info-value">{{formatEntryDate(value.entry_date)}}</span>
               </div>
               
               <div class="secondary-info-item">
@@ -760,6 +760,19 @@ const getStatusIcon = (status: string) => {
 // 获取状态文本（英文）
 const getStatusText = (status: string) => {
   return status; // 直接返回原始状态文本
+};
+
+// 格式化买入日期，只显示日期部分
+const formatEntryDate = (dateString: string) => {
+  if (!dateString) return '';
+  
+  // 如果包含T，说明是完整的ISO格式，提取日期部分
+  if (dateString.includes('T')) {
+    return dateString.split('T')[0];
+  }
+  
+  // 如果已经是日期格式，直接返回
+  return dateString;
 };
 
 

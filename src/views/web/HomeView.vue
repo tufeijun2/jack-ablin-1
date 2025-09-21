@@ -77,7 +77,7 @@
                 <span>Monthly P&L</span>
               </div>
               <div class="performance-value" :class="{ 'profit-positive': Monthly >= 0, 'profit-negative': Monthly < 0 }">
-                {{ Monthly>=0 ? '+':'' }}{{formatCurrency(Monthly)}}$
+                {{ Monthly>=0 ? '+':'' }}${{formatCurrency(Monthly)}}
               </div>
             </div>
             <div class="performance-card">
@@ -86,7 +86,7 @@
                 <span>Total P&L</span>
               </div>
               <div class="performance-value" :class="{ 'profit-positive': Total >= 0, 'profit-negative': Total < 0 }">
-                 {{ Total>=0 ? '+':'' }}{{formatCurrency(Total)}}$
+                 {{ Total>=0 ? '+':'' }}${{formatCurrency(Total)}}
               </div>
             </div>
           </div>
@@ -1071,25 +1071,6 @@ body {
   position: relative;
 }
 
-.profit-positive::before,
-.profit-negative::before {
-  content: '';
-  position: absolute;
-  left: -1.2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-}
-
-.profit-positive::before {
-  background-color: #01b622;
-}
-
-.profit-negative::before {
-  background-color: #e74c3c;
-}
 
 .bg-success {
   background: rgba(46, 204, 113, 0.1) !important;
@@ -1631,7 +1612,8 @@ body {
 
 .trading-focus h4 {
   color: #ffd700;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
@@ -1656,6 +1638,8 @@ body {
   line-height: 1.6;
   position: relative;
   padding-left: 1.5rem;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 .trading-focus li::before {

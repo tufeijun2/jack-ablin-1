@@ -1234,7 +1234,7 @@ body {
 
 .performance-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -1248,6 +1248,8 @@ body {
   border: 1px solid rgba(255,215,0,0.1);
   border-radius: 12px;
   transition: all 0.3s ease;
+  min-width: 0;
+  flex: 1;
 }
 
 .stat-box:hover {
@@ -1272,6 +1274,8 @@ body {
 .stat-info {
   text-align: left;
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .stat-value {
@@ -1279,6 +1283,12 @@ body {
   font-weight: 800;
   color: #ffd700;
   line-height: 1.2;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stat-value.profit-positive {

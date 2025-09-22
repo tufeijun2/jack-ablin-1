@@ -147,9 +147,9 @@
                 <div class="stock-symbol">{{value.symbol}}</div>
               </div>
               <div class="status-badge-container">
-                <span class="status-badge-enhanced" :class="getStatusClass(value.status)">
+                <span class="status-badge-enhanced" :class="getStatusClass(value.status, value.Ratio)">
                   <span class="status-icon">{{ getStatusIcon(value.status) }}</span>
-                  <span class="status-text">{{getStatusText(value.status)}}</span>
+                  <span class="status-text">{{getStatusText(value.status, value.Ratio)}}</span>
                 </span>
               </div>
             </div>
@@ -444,9 +444,26 @@ onMounted(() => {
     // 对本地存储的数据也进行排序
     if(indexdata.trades && Array.isArray(indexdata.trades)) {
       const sortedTrades = indexdata.trades.sort((a: any, b: any) => {
-        const dateA = new Date(a.entry_date);
-        const dateB = new Date(b.entry_date);
-        return dateB.getTime() - dateA.getTime(); // 倒序：最新的在前
+        // 首先按状态排序：Active在前，平仓在后
+        const isActiveA = a.status === 'Active';
+        const isActiveB = b.status === 'Active';
+        
+        if (isActiveA !== isActiveB) {
+          return isActiveA ? -1 : 1; // Active在前
+        }
+        
+        // 同状态内按时间排序
+        if (isActiveA) {
+          // 持仓的按买入时间排序（最新的在前）
+          const dateA = new Date(a.entry_date);
+          const dateB = new Date(b.entry_date);
+          return dateB.getTime() - dateA.getTime();
+        } else {
+          // 平仓的按退出时间排序（最新的在前）
+          const dateA = new Date(a.exit_date || a.entry_date);
+          const dateB = new Date(b.exit_date || b.entry_date);
+          return dateB.getTime() - dateA.getTime();
+        }
       });
       trades.value = sortedTrades;
     } else {
@@ -639,11 +656,28 @@ const getindexdata= async()=>{
     trader_profiles.value=res.data.trader_profiles;
     strategy_info.value=res.data.strategy_info;
     
-    // 按买入时间倒序排序（最新买入的在前面）
+    // 复杂排序：首先按状态，然后按时间
     const sortedTrades = res.data.trades.sort((a: any, b: any) => {
-      const dateA = new Date(a.entry_date);
-      const dateB = new Date(b.entry_date);
-      return dateB.getTime() - dateA.getTime(); // 倒序：最新的在前
+      // 首先按状态排序：Active在前，平仓在后
+      const isActiveA = a.status === 'Active';
+      const isActiveB = b.status === 'Active';
+      
+      if (isActiveA !== isActiveB) {
+        return isActiveA ? -1 : 1; // Active在前
+      }
+      
+      // 同状态内按时间排序
+      if (isActiveA) {
+        // 持仓的按买入时间排序（最新的在前）
+        const dateA = new Date(a.entry_date);
+        const dateB = new Date(b.entry_date);
+        return dateB.getTime() - dateA.getTime();
+      } else {
+        // 平仓的按退出时间排序（最新的在前）
+        const dateA = new Date(a.exit_date || a.entry_date);
+        const dateB = new Date(b.exit_date || b.entry_date);
+        return dateB.getTime() - dateA.getTime();
+      }
     });
     
     trades.value = sortedTrades;
@@ -737,19 +771,16 @@ const getCountryFlag = (market: string) => {
 };
 
 // 获取状态样式类
-const getStatusClass = (status: string) => {
-  switch(status.toLowerCase()) {
-    case 'active':
-      return 'status-active';
-    case 'closed':
-    case 'completed':
-      return 'status-closed';
-    case 'pending':
-      return 'status-pending';
-    case 'cancelled':
-      return 'status-cancelled';
-    default:
-      return 'status-default';
+const getStatusClass = (status: string, ratio: number) => {
+  if (status.toLowerCase() === 'active') {
+    return 'status-active';
+  } else {
+    // 对于所有非Active状态，根据盈亏情况判断是止盈还是止损
+    if (ratio > 0) {
+      return 'status-take-profit';
+    } else {
+      return 'status-stop-loss';
+    }
   }
 };
 
@@ -758,9 +789,18 @@ const getStatusIcon = (status: string) => {
   return ''; // 不显示状态图标
 };
 
-// 获取状态文本（英文）
-const getStatusText = (status: string) => {
-  return status; // 直接返回原始状态文本
+// 获取状态文本（根据盈亏情况显示止盈/止损）
+const getStatusText = (status: string, ratio: number) => {
+  if (status.toLowerCase() === 'active') {
+    return 'Active';
+  } else {
+    // 对于所有非Active状态，根据盈亏情况判断是止盈还是止损
+    if (ratio > 0) {
+      return 'Take Profit';
+    } else {
+      return 'Stop Loss';
+    }
+  }
 };
 
 // 格式化买入日期，只显示日期部分
@@ -963,6 +1003,22 @@ body {
   border-color: #28a745;
   color: #28a745;
   box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+}
+
+/* 止盈状态样式 */
+.status-take-profit {
+  background: transparent;
+  border-color: #01b622;
+  color: #01b622;
+  box-shadow: 0 2px 8px rgba(1, 182, 34, 0.2);
+}
+
+/* 止损状态样式 */
+.status-stop-loss {
+  background: transparent;
+  border-color: #e74c3c;
+  color: #e74c3c;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
 }
 
 .status-closed {

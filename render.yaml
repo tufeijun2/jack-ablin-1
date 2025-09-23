@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: stock-trading-web
+    env: node
+    buildCommand: pnpm install --no-frozen-lockfile && pnpm run build
+    startCommand: pnpm run serve
+    envVars:
+      - key: NODE_ENV
+        value: production

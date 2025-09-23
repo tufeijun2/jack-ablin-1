@@ -18,9 +18,11 @@
         </div>
         <div class="header-right">
           <div class="stats-summary">
-            <span class="stat-item">{{ Object.keys(documentslist).length || 0 }} Documents</span>
+            <span class="stat-item">{{ Object.keys(filteredDocuments).length || 0 }} Documents</span>
             <span class="stat-divider">•</span>
-            <span class="stat-item vip">{{ Object.values(documentslist).filter(d => !d.ispublic).length || 0 }} VIP</span>
+            <span class="stat-item vip">{{ Object.values(filteredDocuments).filter(d => !d.ispublic).length || 0 }} VIP</span>
+            <span class="stat-divider">•</span>
+            <span class="stat-item recent">Last 30 Days</span>
           </div>
         </div>
       </div>
@@ -104,7 +106,7 @@
                   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2ZM13 17H11V11H13V17ZM13 9H11V7H13V9Z" fill="#b0c4e6"/>
                   </svg>
-                  <span>{{ value.last_update }}</span>
+                  <span>{{ formatUSDate(value.last_update) }}</span>
                 </div>
                 <div class="meta-item">
                   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -199,26 +201,65 @@ const getVipDashboardData = async () => {
   const res = await getdocuments(null);
   if (res.success) {
     documentslist.value = res.data;
-    filteredDocuments.value = res.data; // 初始显示所有文档
+    // 过滤出最近30天的文档
+    filteredDocuments.value = filterDocumentsByDate(res.data, 30);
   }
+};
+
+// 过滤文档：只显示最近N天的文档，并按时间排序
+const filterDocumentsByDate = (documents: any, days: number) => {
+  if (!documents || typeof documents !== 'object') return {};
+  
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - days);
+  
+  const filteredDocs: any = {};
+  
+  Object.keys(documents).forEach(key => {
+    const doc = documents[key];
+    if (doc && doc.last_update) {
+      const docDate = new Date(doc.last_update);
+      if (docDate >= cutoffDate) {
+        filteredDocs[key] = doc;
+      }
+    }
+  });
+  
+  // 按上传时间排序（最新的在前）
+  const sortedEntries = Object.entries(filteredDocs).sort((a, b) => {
+    const dateA = new Date(a[1].last_update);
+    const dateB = new Date(b[1].last_update);
+    return dateB.getTime() - dateA.getTime(); // 降序排列，最新的在前
+  });
+  
+  // 重新构建排序后的对象
+  const sortedDocs: any = {};
+  sortedEntries.forEach(([key, doc]) => {
+    sortedDocs[key] = doc;
+  });
+  
+  return sortedDocs;
 };
 
 const setFilter = (filter: string) => {
   activeFilter.value = filter;
   
+  // 首先应用30天过滤
+  const recentDocs = filterDocumentsByDate(documentslist.value, 30);
+  
   if (filter === 'all') {
-    filteredDocuments.value = documentslist.value;
+    filteredDocuments.value = recentDocs;
   } else if (filter === 'free') {
-    filteredDocuments.value = Object.keys(documentslist.value).reduce((acc, key) => {
-      if (documentslist.value[key].ispublic) {
-        acc[key] = documentslist.value[key];
+    filteredDocuments.value = Object.keys(recentDocs).reduce((acc, key) => {
+      if (recentDocs[key].ispublic) {
+        acc[key] = recentDocs[key];
       }
       return acc;
     }, {} as any);
   } else if (filter === 'vip') {
-    filteredDocuments.value = Object.keys(documentslist.value).reduce((acc, key) => {
-      if (!documentslist.value[key].ispublic) {
-        acc[key] = documentslist.value[key];
+    filteredDocuments.value = Object.keys(recentDocs).reduce((acc, key) => {
+      if (!recentDocs[key].ispublic) {
+        acc[key] = recentDocs[key];
       }
       return acc;
     }, {} as any);
@@ -236,6 +277,25 @@ const getFileSize = (size: number) => {
   if (size < 1024) return size + ' KB';
   if (size < 1024 * 1024) return Math.round(size / 1024) + ' KB';
   return Math.round(size / (1024 * 1024)) + ' MB';
+};
+
+// 格式化日期为美国时间格式
+const formatUSDate = (dateString: string) => {
+  if (!dateString) return '';
+  
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  } catch (error) {
+    return dateString; // 如果解析失败，返回原始字符串
+  }
 };
 
 const previewDocument = (document: any) => {
@@ -515,6 +575,12 @@ const previewDocument = (document: any) => {
 
 .stat-item.vip {
   color: #FFD700;
+}
+
+.stat-item.recent {
+  color: #4CAF50;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .stat-divider {

@@ -96,7 +96,7 @@
         <div class="strategy-update">
           <div class="strategy-header">
             <h3><i class="bi bi-lightbulb glow-bulb"></i> Today's Trading Strategy</h3>
-            <span class="update-time">Updated at:  {{moment(strategy_info.updated_at).format('HH:mm')}}</span>
+            <span class="update-time">Updated at: {{formatUSTime(strategy_info.updated_at)}}</span>
           </div>
           <div class="strategy-content">
             <div class="market-analysis">
@@ -803,17 +803,38 @@ const getStatusText = (status: string, ratio: number) => {
   }
 };
 
-// 格式化买入日期，只显示日期部分
+// 格式化买入日期，使用美国时间格式
 const formatEntryDate = (dateString: string) => {
   if (!dateString) return '';
   
-  // 如果包含T，说明是完整的ISO格式，提取日期部分
-  if (dateString.includes('T')) {
-    return dateString.split('T')[0];
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  } catch (error) {
+    // 如果解析失败，返回原始字符串
+    return dateString;
   }
+};
+
+// 格式化时间，使用美国时间格式
+const formatUSTime = (dateString: string) => {
+  if (!dateString) return '';
   
-  // 如果已经是日期格式，直接返回
-  return dateString;
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  } catch (error) {
+    // 如果解析失败，返回原始字符串
+    return dateString;
+  }
 };
 
 // 格式化货币金额，添加千位分隔符

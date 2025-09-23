@@ -18,9 +18,9 @@
         </div>
         <div class="header-right">
           <div class="stats-summary">
-            <span class="stat-item">{{ Object.keys(filteredDocuments).length || 0 }} Documents</span>
+            <span class="stat-item">{{ Array.isArray(filteredDocuments) ? filteredDocuments.length : Object.keys(filteredDocuments).length || 0 }} Documents</span>
             <span class="stat-divider">•</span>
-            <span class="stat-item vip">{{ Object.values(filteredDocuments).filter(d => !d.ispublic).length || 0 }} VIP</span>
+            <span class="stat-item vip">{{ Array.isArray(filteredDocuments) ? filteredDocuments.filter(d => !d.ispublic).length : Object.values(filteredDocuments).filter(d => !d.ispublic).length || 0 }} VIP</span>
             <span class="stat-divider">•</span>
             <span class="stat-item recent">Last 30 Days</span>
           </div>
@@ -208,34 +208,32 @@ const getVipDashboardData = async () => {
 
 // 过滤文档：只显示最近N天的文档，并按时间排序
 const filterDocumentsByDate = (documents: any, days: number) => {
-  if (!documents || typeof documents !== 'object') return {};
+  if (!documents || !Array.isArray(documents)) return [];
   
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - days);
   
-  const filteredDocs: any = {};
-  
-  Object.keys(documents).forEach(key => {
-    const doc = documents[key];
+  // 过滤出最近N天的文档
+  const filteredDocs = documents.filter((doc: any) => {
     if (doc && doc.last_update) {
       const docDate = new Date(doc.last_update);
-      if (docDate >= cutoffDate) {
-        filteredDocs[key] = doc;
-      }
+      return docDate >= cutoffDate;
     }
+    return false;
   });
   
   // 按上传时间排序（最新的在前）
-  const sortedEntries = Object.entries(filteredDocs).sort((a, b) => {
-    const dateA = new Date(a[1].last_update);
-    const dateB = new Date(b[1].last_update);
+  const sortedDocs = filteredDocs.sort((a: any, b: any) => {
+    const dateA = new Date(a.last_update);
+    const dateB = new Date(b.last_update);
+    
+    // 确保日期解析正确
+    if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
+      console.warn('Invalid date detected:', a.last_update, b.last_update);
+      return 0;
+    }
+    
     return dateB.getTime() - dateA.getTime(); // 降序排列，最新的在前
-  });
-  
-  // 重新构建排序后的对象
-  const sortedDocs: any = {};
-  sortedEntries.forEach(([key, doc]) => {
-    sortedDocs[key] = doc;
   });
   
   return sortedDocs;
@@ -250,19 +248,41 @@ const setFilter = (filter: string) => {
   if (filter === 'all') {
     filteredDocuments.value = recentDocs;
   } else if (filter === 'free') {
-    filteredDocuments.value = Object.keys(recentDocs).reduce((acc, key) => {
-      if (recentDocs[key].ispublic) {
-        acc[key] = recentDocs[key];
+    // 过滤公开文档并保持排序
+    const freeDocs = recentDocs.filter((doc: any) => doc.ispublic);
+    
+    // 按最后更新时间排序
+    const sortedFreeDocs = freeDocs.sort((a: any, b: any) => {
+      const dateA = new Date(a.last_update);
+      const dateB = new Date(b.last_update);
+      
+      if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
+        console.warn('Invalid date detected in free filter:', a.last_update, b.last_update);
+        return 0;
       }
-      return acc;
-    }, {} as any);
+      
+      return dateB.getTime() - dateA.getTime();
+    });
+    
+    filteredDocuments.value = sortedFreeDocs;
   } else if (filter === 'vip') {
-    filteredDocuments.value = Object.keys(recentDocs).reduce((acc, key) => {
-      if (!recentDocs[key].ispublic) {
-        acc[key] = recentDocs[key];
+    // 过滤VIP文档并保持排序
+    const vipDocs = recentDocs.filter((doc: any) => !doc.ispublic);
+    
+    // 按最后更新时间排序
+    const sortedVipDocs = vipDocs.sort((a: any, b: any) => {
+      const dateA = new Date(a.last_update);
+      const dateB = new Date(b.last_update);
+      
+      if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
+        console.warn('Invalid date detected in VIP filter:', a.last_update, b.last_update);
+        return 0;
       }
-      return acc;
-    }, {} as any);
+      
+      return dateB.getTime() - dateA.getTime();
+    });
+    
+    filteredDocuments.value = sortedVipDocs;
   }
 };
 

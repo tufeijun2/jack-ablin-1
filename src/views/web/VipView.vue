@@ -105,32 +105,7 @@
           </div>
         </div>
         
-        <!-- Floating Status Badges -->
-        <div class="floating-badges">
-          <div class="status-badge badge-left">
-            <div class="badge-pulse"></div>
-            <div class="badge-content">
-              <span class="badge-icon">🚀</span>
-              <span class="badge-text">ACTIVE</span>
-            </div>
-          </div>
-          
-          <div class="status-badge badge-center">
-            <div class="badge-pulse"></div>
-            <div class="badge-content">
-              <span class="badge-icon">💰</span>
-              <span class="badge-text">PREMIUM</span>
-            </div>
-          </div>
-          
-          <div class="status-badge badge-right">
-            <div class="badge-pulse"></div>
-            <div class="badge-content">
-              <span class="badge-icon">⭐</span>
-              <span class="badge-text">ELITE</span>
-            </div>
-          </div>
-        </div>
+      
         
         <!-- Meteor Lightsaber Effects -->
         <div class="meteor-effects">
@@ -608,8 +583,9 @@ const get_current_level=async()=>{
       nowLevelInfo.value.nextname=item.name
     }
   });
+  if(userStore.token){
   await updateUserLevel({levelname:nowLevelInfo.value.currlevelname})
-  console.log(nowLevelInfo.value)
+  }
 
 }
 
@@ -1108,7 +1084,7 @@ const createFirework = () => {
     #1a1a2e 30%, 
     #16213e 60%, 
     #0f1419 100%);
-  padding: 40px 0 50px 0;
+  padding: 40px 0 20px 0;
   position: relative;
   overflow: hidden;
   min-height: 220px;
@@ -1245,9 +1221,9 @@ const createFirework = () => {
   position: relative;
   z-index: 10;
   text-align: center;
-  max-width: 1000px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 0px;
 }
 
 /* Crown Entrance Animation */
@@ -1270,8 +1246,8 @@ const createFirework = () => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   border: 2px solid rgba(255, 215, 0, 0.4);
   border-radius: 50%;
   animation: ringPulse 3s ease-in-out infinite;
@@ -1303,8 +1279,8 @@ const createFirework = () => {
 
 .crown-sparkles {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 40%;
+  left: 40%;
   transform: translate(-50%, -50%);
   width: 150px;
   height: 150px;
@@ -1355,6 +1331,7 @@ const createFirework = () => {
 
 /* Dynamic Welcome Text */
 .welcome-text-dynamic {
+  margin-top: 30px;
   margin-bottom: 30px;
   position: relative;
 }
@@ -1582,7 +1559,7 @@ const createFirework = () => {
   display: flex;
   justify-content: center;
   gap: 50px;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
 }
 
 .status-badge {
@@ -1833,7 +1810,7 @@ const createFirework = () => {
 /* Responsive Design */
 @media (max-width: 768px) {
   .vip-dynamic-zone {
-    padding: 30px 0 40px 0;
+    padding: 10px 0 10px 0;
     min-height: 180px;
   }
   

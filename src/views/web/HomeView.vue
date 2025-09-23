@@ -176,7 +176,7 @@
               </div>
               <div class="secondary-info-item">
                 <span class="secondary-info-label">Quantity</span>
-                <span class="secondary-info-value">{{value.size}}</span>
+                <span class="secondary-info-value">{{formatQuantity(value.size)}}</span>
               </div>
             </div>
 
@@ -184,18 +184,22 @@
               <div class="main-stat-item">
                 <div class="main-stat-label">Entry Amount</div>
                 <div class="main-stat-value">{{value.currency}}{{formatCurrency(value.entry_price*value.size)}}</div>
+               
               </div>
               <div class="main-stat-item">
                 <div class="main-stat-label">Market Value</div>
                 <div class="main-stat-value">{{value.currency}}{{formatCurrency(value.Market_Value)}}</div>
+               
               </div>
               <div class="main-stat-item">
                 <div class="main-stat-label" >P&L Ratio</div>
                 <div :class="['main-stat-value',value.Ratio > 0? 'profit-positive': 'profit-negative']">{{value.Ratio}}%</div>
+               
               </div>
               <div class="main-stat-item">
                 <div class="main-stat-label">P&L Amount</div>
                 <div :class="['main-stat-value',value.Ratio > 0? 'profit-positive': 'profit-negative']">{{value.currency}}{{formatCurrency(value.Amount)}}</div>
+               
               </div>
             </div>
           </div>
@@ -848,6 +852,20 @@ const formatCurrency = (amount: number | string) => {
   return num.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
+  });
+};
+
+// 格式化数量，添加千位分隔符
+const formatQuantity = (quantity: number | string) => {
+  if (!quantity && quantity !== 0) return '0';
+  
+  // 转换为数字
+  const num = typeof quantity === 'string' ? parseFloat(quantity) : quantity;
+  
+  // 添加千位分隔符，不显示小数位
+  return num.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
   });
 };
 

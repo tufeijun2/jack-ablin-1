@@ -10,7 +10,7 @@ NProgress.configure({ showSpinner: false });
 
 // 创建路由实例
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 });
 

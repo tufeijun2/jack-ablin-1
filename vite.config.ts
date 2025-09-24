@@ -16,6 +16,26 @@ export default defineConfig({
       }
     ]
   },
+  build: {
+    // 启用代码分割
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['vue', 'vue-router'],
+          ui: ['@layui/layui-vue', 'bootstrap'],
+          charts: ['echarts', 'chart.js']
+        }
+      }
+    },
+    // 压缩配置
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    }
+  },
   plugins: [
     AutoImport({
       resolvers: [

@@ -48,43 +48,101 @@
             <label class="form-label">Market Sector</label>
             <select class="form-select" v-model="stockPickerCriteria.sector">
               <option value="">All Sectors</option>
-              <option value="technology">Technology</option>
-              <option value="healthcare">Healthcare</option>
-              <option value="finance">Finance</option>
-              <option value="energy">Energy</option>
-              <option value="consumer">Consumer Goods</option>
-              <option value="industrial">Industrial</option>
-              <option value="utilities">Utilities</option>
-              <option value="materials">Materials</option>
+              <option value="AI Technology">AI Technology</option>
+              <option value="Semiconductors">Semiconductors</option>
+              <option value="Technology">Technology</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Biotechnology">Biotechnology</option>
+              <option value="Finance">Finance</option>
+              <option value="Energy">Energy</option>
+              <option value="Renewable Energy">Renewable Energy</option>
+              <option value="Consumer Goods">Consumer Goods</option>
+              <option value="Industrial">Industrial</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Materials">Materials</option>
+              <option value="Real Estate">Real Estate</option>
+              <option value="Communication">Communication</option>
             </select>
             
             <label class="form-label">Investment Style</label>
             <select class="form-select" v-model="stockPickerCriteria.style">
-              <option value="growth">Growth</option>
-              <option value="value">Value</option>
-              <option value="momentum">Momentum</option>
-              <option value="dividend">Dividend</option>
-              <option value="balanced">Balanced</option>
+              <option value="Long-term investment">Long-term investment</option>
+              <option value="Short-term trading">Short-term trading</option>
+              <option value="Growth">Growth</option>
+              <option value="Value">Value</option>
+              <option value="Momentum">Momentum</option>
+              <option value="Dividend">Dividend</option>
+              <option value="Balanced">Balanced</option>
             </select>
             
             <label class="form-label">Risk Level</label>
             <select class="form-select" v-model="stockPickerCriteria.risk">
-              <option value="low">Conservative</option>
-              <option value="medium">Moderate</option>
-              <option value="high">Aggressive</option>
+              <option value="Low">Low Risk</option>
+              <option value="Medium">Medium Risk</option>
+              <option value="High">High Risk</option>
             </select>
             
             <label class="form-label">Time Horizon</label>
             <select class="form-select" v-model="stockPickerCriteria.timeHorizon">
-              <option value="short">Short-term (1-3 months)</option>
-              <option value="medium">Medium-term (3-12 months)</option>
-              <option value="long">Long-term (1+ years)</option>
+              <option value="Short-term (1-3 months)">Short-term (1-3 months)</option>
+              <option value="Medium-term (3-12 months)">Medium-term (3-12 months)</option>
+              <option value="Long-term (1-3 years)">Long-term (1-3 years)</option>
             </select>
+            
+            <label class="form-label">Investment Amount (USD)</label>
+            <input type="number" class="form-control" v-model="stockPickerCriteria.investmentAmount" 
+                   placeholder="Enter investment amount (e.g., 100000)" min="1000" step="1000">
+            
+            <label class="form-label">Investment Goal</label>
+            <select class="form-select" v-model="stockPickerCriteria.investmentGoal">
+              <option value="Capital Appreciation">Capital Appreciation</option>
+              <option value="Income Generation">Income Generation</option>
+              <option value="Capital Preservation">Capital Preservation</option>
+              <option value="Speculation">Speculation</option>
+              <option value="Diversification">Diversification</option>
+            </select>
+            
+            <label class="form-label">Risk Tolerance</label>
+            <div class="risk-tolerance-slider">
+              <input type="range" class="form-range" v-model="stockPickerCriteria.riskTolerance" 
+                     min="1" max="10" step="1" id="riskSlider">
+              <div class="slider-labels">
+                <span>Conservative (1)</span>
+                <span>Moderate (5)</span>
+                <span>Aggressive (10)</span>
+              </div>
+              <div class="current-value">Current: {{ stockPickerCriteria.riskTolerance }}/10</div>
+            </div>
             
             <button class="btn btn-ai" @click="runStockPicker" :disabled="isStockPickerLoading">
               <i class="bi bi-magic"></i>
               Generate AI Recommendations
             </button>
+            
+            <!-- 整体投资策略区域 - 移动到左侧 -->
+            <div v-if="overallStrategy && !isStockPickerLoading" class="investment-summary-section">
+              <h4><i class="bi bi-clipboard-data"></i> Overall Investment Strategy</h4>
+              <div class="strategy-content">
+                <div class="strategy-item">
+                  <h5>Position Allocation</h5>
+                  <div class="allocation-content">
+                    <div class="strategy-paragraph" v-html="formatStrategyText(overallStrategy.positionAllocation)"></div>
+                  </div>
+                </div>
+                <div class="strategy-item">
+                  <h5>Risk Management</h5>
+                  <div class="risk-management-content">
+                    <div class="strategy-paragraph" v-html="formatStrategyText(overallStrategy.riskManagement)"></div>
+                  </div>
+                </div>
+                <div class="strategy-item">
+                  <h5>Trading Strategy</h5>
+                  <div class="trading-strategy-content">
+                    <div class="strategy-paragraph" v-html="formatStrategyText(overallStrategy.tradingStrategy)"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
            
           </div>
           
@@ -101,41 +159,135 @@
               </div>
               <div v-for="(stock, index) in stockRecommendations" :key="stock.symbol" 
                    class="stock-recommendation result-item" :style="{ animationDelay: `${index * 0.1}s` }">
+                
+                <!-- 股票基本信息 -->
                 <div class="stock-header">
                   <div class="stock-symbol">{{ stock.symbol }}</div>
                   <div class="stock-price-info">
-                    <span class="current-price">${{ formatPrice(stock.current_price) }}</span>
-                    <span class="price-change" :class="{ positive: stock.change_percent >= 0, negative: stock.change_percent < 0 }">
-                      {{ stock.change_percent >= 0 ? '+' : '' }}{{ formatPercent(stock.change_percent) }}
+                    <span class="current-price">${{ formatPrice(stock.currentPrice) }}</span>
+                    <span class="price-change" :class="{ positive: stock.week52Change && stock.week52Change.includes('+'), negative: stock.week52Change && stock.week52Change.includes('-') }">
+                      {{ stock.week52Change || 'N/A' }}
                     </span>
                   </div>
                 </div>
                 
-                <div class="stock-name">{{ stock.name }}</div>
+                <div class="stock-name">{{ stock.companyName }}</div>
+                <div class="stock-industry">{{ stock.industry }}</div>
                 
-                <div class="stock-score">
-                  <span class="score-badge">AI Score: {{ stock.score }}/100</span>
-                  <span class="badge" :class="`bg-${getScoreColor(stock.score)}`">{{ getScoreLabel(stock.score) }}</span>
-                </div>
-                
+                <!-- 基础指标 -->
                 <div class="stock-metrics">
                   <div class="metric-item">
                     <span class="metric-label">Market Cap:</span>
-                    <span class="metric-value">{{ formatMarketCap(stock.market_cap) }}</span>
+                    <span class="metric-value">{{ stock.marketCap }}</span>
                   </div>
-                  <div v-if="stock.pe_ratio > 0" class="metric-item">
+                  <div v-if="stock.peRatio > 0" class="metric-item">
                     <span class="metric-label">P/E Ratio:</span>
-                    <span class="metric-value">{{ stock.pe_ratio.toFixed(1) }}</span>
+                    <span class="metric-value">{{ stock.peRatio.toFixed(1) }}</span>
                   </div>
                   <div class="metric-item">
-                    <span class="metric-label">Volume:</span>
-                    <span class="metric-value" :class="{ 'high-volume': stock.volume_ratio > 1.5 }">
-                      {{ stock.volume_ratio.toFixed(1) }}x
+                    <span class="metric-label">52W Change:</span>
+                    <span class="metric-value" :class="{ positive: stock.week52Change && stock.week52Change.includes('+'), negative: stock.week52Change && stock.week52Change.includes('-') }">
+                      {{ stock.week52Change || 'N/A' }}
                     </span>
                   </div>
                 </div>
+
+                <!-- 增强的6维度分析显示 -->
+                <div v-if="stock.analysis && Object.keys(stock.analysis).length > 0" class="enhanced-analysis">
+                  <div class="analysis-tabs">
+                    <button v-for="(analysis, key) in stock.analysis" :key="key" 
+                            class="analysis-tab" 
+                            :class="{ active: activeTab[stock.symbol] === key }"
+                            @click="setActiveTab(stock.symbol, key)">
+                      <i :class="getAnalysisIcon(key)"></i>
+                      {{ getAnalysisTitle(key) }}
+                    </button>
+                  </div>
+                  
+                  <div class="analysis-content">
+                    <div v-for="(analysis, key) in stock.analysis" :key="key" 
+                         v-show="activeTab[stock.symbol] === key"
+                         class="analysis-panel">
+                      <div class="analysis-header">
+                        <h6>{{ getAnalysisTitle(key) }}</h6>
+                        <span class="analysis-score" :class="`score-${getScoreLevel(analysis.score)}`">
+                          {{ analysis.score }}/100
+                        </span>
+                      </div>
+                      <div class="analysis-text" v-html="formatAnalysisContent(analysis.content)"></div>
+                    </div>
+                  </div>
+                </div>
                 
-                <div class="stock-reason">{{ stock.reason }}</div>
+                <!-- 兼容旧数据结构：显示reason字段 -->
+                <div v-else-if="stock.reason" class="basic-analysis">
+                  <h6><i class="bi bi-robot"></i> AI Professional Analysis Report</h6>
+                  <div class="analysis-text gpt-analysis" v-html="formatGPTAnalysis(stock.reason)"></div>
+                </div>
+                
+                <!-- 兼容sections数据结构 -->
+                <div v-else-if="stock.sections" class="sections-analysis">
+                  <div v-for="(section, index) in stock.sections" :key="index" class="analysis-section">
+                    <div class="analysis-header">
+                      <h6>{{ section.title }}</h6>
+                      <span class="analysis-score" :class="`score-${getScoreLevel(section.score)}`">
+                        {{ section.score }}/100
+                      </span>
+                    </div>
+                    <div class="analysis-text" v-html="formatAnalysisContent(section.content)"></div>
+                  </div>
+                </div>
+                
+                <!-- 投资建议 -->
+                <div v-if="stock.investmentAdvice" class="investment-advice">
+                  <h6><i class="bi bi-lightbulb"></i> Investment Advice</h6>
+                  <div class="advice-grid">
+                    <div class="advice-item">
+                      <span class="advice-label">Action:</span>
+                      <span class="advice-value action-buy">{{ stock.investmentAdvice.recommendedAction }}</span>
+                    </div>
+                    <div class="advice-item">
+                      <span class="advice-label">Target Price:</span>
+                      <span class="advice-value">${{ stock.investmentAdvice.targetPrice }}</span>
+                    </div>
+                    <div class="advice-item">
+                      <span class="advice-label">Stop Loss:</span>
+                      <span class="advice-value">${{ stock.investmentAdvice.stopLoss }}</span>
+                    </div>
+                    <div class="advice-item">
+                      <span class="advice-label">Position:</span>
+                      <span class="advice-value">{{ stock.investmentAdvice.suggestedPosition }}%</span>
+                    </div>
+                    <div class="advice-item">
+                      <span class="advice-label">Holding Period:</span>
+                      <span class="advice-value">{{ stock.investmentAdvice.holdingPeriod }}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- 风险评估 -->
+                <div v-if="stock.riskAssessment" class="risk-assessment">
+                  <h6><i class="bi bi-shield-exclamation"></i> Risk Assessment</h6>
+                  <div class="risk-level">
+                    <span class="risk-badge" :class="stock.riskAssessment.riskLevel.toLowerCase()">
+                      {{ stock.riskAssessment.riskLevel }} Risk
+                    </span>
+                  </div>
+                  <div class="risk-details">
+                    <p><strong>Short-term:</strong> {{ stock.riskAssessment.shortTermRisks }}</p>
+                    <p><strong>Long-term:</strong> {{ stock.riskAssessment.longTermRisks }}</p>
+                  </div>
+                </div>
+                
+                <!-- 公司基本面 -->
+                <div v-if="stock.fundamentals" class="fundamentals-section">
+                  <h6><i class="bi bi-building"></i> Company Fundamentals</h6>
+                  <div class="fundamentals-content">
+                    <p><strong>Main Business:</strong> {{ stock.fundamentals.mainBusiness }}</p>
+                    <p><strong>Financial Performance:</strong> {{ stock.fundamentals.financialPerformance }}</p>
+                    <p><strong>Competitive Advantages:</strong> {{ stock.fundamentals.competitiveAdvantages }}</p>
+                  </div>
+                </div>
                 
                 <div class="stock-footer">
                   <span class="sector-tag">
@@ -156,6 +308,7 @@
               </div>
               <p style="margin-top: 1rem;">AI is analyzing market data...</p>
             </div>
+            
           </div>
         </div>
       </div>
@@ -272,7 +425,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="diagnosis-content mt-3" v-html="stockDiagnosis.summary"></div>
+                  <div class="diagnosis-content mt-3 gpt-analysis" v-html="formatGPTAnalysis(stockDiagnosis.summary)"></div>
                 </div>
                 <!-- Stock analysis without portfolio performance -->
                 <div v-else class="diagnosis-section result-item">
@@ -282,7 +435,18 @@
                       {{ stockDiagnosis.overallScore }}/100
                     </span>
                   </div>
-                  <div class="diagnosis-content" v-html="stockDiagnosis.summary"></div>
+                  <div class="diagnosis-content gpt-analysis" v-html="formatGPTAnalysis(stockDiagnosis.summary)"></div>
+                </div>
+                
+                <!-- GPT增强分析结果 -->
+                <div v-if="stockDiagnosis.gptAnalysis" class="gpt-diagnosis-section result-item">
+                  <div class="diagnosis-header">
+                    <h6 class="diagnosis-title">
+                      <i class="bi bi-robot"></i> AI Professional Diagnosis Analysis
+                    </h6>
+                    <span class="badge bg-info">GPT Enhanced</span>
+                  </div>
+                  <div class="diagnosis-content gpt-analysis" v-html="formatGPTAnalysis(stockDiagnosis.gptAnalysis)"></div>
                 </div>
                 
                 <!-- Analysis sections -->
@@ -295,7 +459,7 @@
                       {{ section.score }}/100
                     </span>
                   </div>
-                  <div class="diagnosis-content" v-html="section.content"></div>
+                  <div class="diagnosis-content gpt-analysis" v-html="formatGPTAnalysis(section.content)"></div>
                 </div>
               </div>
             </div>
@@ -327,13 +491,18 @@ const traderInfo = ref({
 // Stock Picker related data
 const stockPickerCriteria = ref({
   sector: '',
-  style: 'growth',
-  risk: 'medium',
-  timeHorizon: 'medium'
+  style: 'Long-term investment',
+  risk: 'Medium',
+  timeHorizon: 'Medium-term (3-12 months)',
+  investmentAmount: 100000,
+  investmentGoal: 'Capital Appreciation',
+  riskTolerance: 5
 });
 const stockRecommendations = ref<any[]>([]);
 const isStockPickerLoading = ref(false);
 const stockPickerError = ref('');
+const investmentSummary = ref<string>('');
+const overallStrategy = ref<any>(null);
 
 // Stock Diagnosis related data
 const portfolioData = ref({
@@ -346,6 +515,9 @@ const portfolioData = ref({
 const stockDiagnosis = ref<any>(null);
 const isDiagnosisLoading = ref(false);
 const diagnosisError = ref('');
+
+// 新增：分析标签页管理
+const activeTab = ref<Record<string, string>>({});
 
 // Helper methods
 function formatPrice(price: number) {
@@ -377,10 +549,132 @@ function getScoreLabel(score: number) {
   return 'Sell';
 }
 
+// 新增：分析相关方法
+function setActiveTab(symbol: string, tabKey: string) {
+  activeTab.value[symbol] = tabKey;
+}
+
+function getAnalysisIcon(key: string) {
+  const icons: Record<string, string> = {
+    'businessAnalysis': 'bi bi-building',
+    'financialAnalysis': 'bi bi-graph-up',
+    'technicalAnalysis': 'bi bi-bar-chart',
+    'investmentAdvice': 'bi bi-lightbulb',
+    'riskAssessment': 'bi bi-shield-exclamation',
+    'positionAdvice': 'bi bi-pie-chart'
+  };
+  return icons[key] || 'bi bi-info-circle';
+}
+
+function getAnalysisTitle(key: string) {
+  const titles: Record<string, string> = {
+    'businessAnalysis': '公司业务分析',
+    'financialAnalysis': '财务表现评估',
+    'technicalAnalysis': '技术面分析',
+    'investmentAdvice': '投资建议',
+    'riskAssessment': '风险评估',
+    'positionAdvice': '仓位建议'
+  };
+  return titles[key] || key;
+}
+
+function getScoreLevel(score: number) {
+  if (score >= 80) return 'excellent';
+  if (score >= 60) return 'good';
+  if (score >= 40) return 'fair';
+  return 'poor';
+}
+
+function formatAnalysisContent(content: string) {
+  if (!content) return '';
+  
+  // 格式化内容，支持换行和重点标记
+  return content
+    .replace(/\n/g, '<br>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>');
+}
+
+// 新增：格式化策略文本为段落
+function formatStrategyText(content: string) {
+  if (!content) return '';
+  
+  // 将策略内容按段落分割并格式化
+  const paragraphs = content.split('\n').filter(p => p.trim());
+  
+  return paragraphs.map(paragraph => {
+    const trimmed = paragraph.trim();
+    
+    // 检查是否是标题（包含冒号且较短）
+    if (trimmed.includes(':') && trimmed.length < 100) {
+      const parts = trimmed.split(':');
+      if (parts.length === 2) {
+        return `<div class="strategy-title"><strong>${parts[0]}:</strong> ${parts[1].trim()}</div>`;
+      }
+    }
+    // 检查是否是列表项（以-开头）
+    else if (trimmed.startsWith('-')) {
+      return `<div class="strategy-list-item">${trimmed.replace(/^-\s*/, '')}</div>`;
+    }
+    // 检查是否是粗体标题（**包围）
+    else if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
+      return `<div class="strategy-title"><strong>${trimmed.replace(/\*\*/g, '')}</strong></div>`;
+    }
+    // 检查是否包含粗体文本
+    else if (trimmed.includes('**')) {
+      return `<div class="strategy-paragraph-text">${trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
+    }
+    // 普通段落
+    else {
+      return `<div class="strategy-paragraph-text">${trimmed}</div>`;
+    }
+  }).join('');
+}
+
 function formatStockSymbol(event: Event) {
   const input = event.target as HTMLInputElement;
   input.value = input.value.toUpperCase();
   portfolioData.value.symbol = input.value;
+}
+
+// 格式化GPT分析内容
+function formatGPTAnalysis(content: string): string {
+  if (!content) return '';
+  
+  // 将内容按段落分割
+  const paragraphs = content.split('\n').filter(p => p.trim());
+  
+  return paragraphs.map(paragraph => {
+    const trimmed = paragraph.trim();
+    
+    // 检查是否是标题（包含冒号且较短）
+    if (trimmed.includes(':') && trimmed.length < 100) {
+      const parts = trimmed.split(':');
+      if (parts.length === 2) {
+        return `<div class="gpt-title"><strong>${parts[0]}:</strong> ${parts[1].trim()}</div>`;
+      }
+    }
+    // 检查是否是列表项（以-开头）
+    else if (trimmed.startsWith('-')) {
+      return `<div class="gpt-list-item">${trimmed.replace(/^-\s*/, '')}</div>`;
+    }
+    // 检查是否是数字列表（以数字开头）
+    else if (/^\d+\./.test(trimmed)) {
+      return `<div class="gpt-numbered-item">${trimmed}</div>`;
+    }
+    // 检查是否是粗体标题（**包围）
+    else if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
+      return `<div class="gpt-title"><strong>${trimmed.replace(/\*\*/g, '')}</strong></div>`;
+    }
+    // 检查是否包含粗体文本
+    else if (trimmed.includes('**')) {
+      return `<div class="gpt-paragraph">${trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
+    }
+    // 普通段落
+    else {
+      return `<div class="gpt-paragraph">${trimmed}</div>`;
+    }
+  }).join('');
 }
 
 // API Functions
@@ -437,6 +731,33 @@ async function runStockPicker() {
     }
     
     stockRecommendations.value = data.recommendations || [];
+    investmentSummary.value = data.investmentSummary || '';
+    overallStrategy.value = data.overallStrategy || null;
+    
+    // 调试：打印返回的数据结构
+    console.log('AI选股返回数据:', data);
+    console.log('推荐股票数据:', stockRecommendations.value);
+    console.log('投资摘要:', investmentSummary.value);
+    console.log('整体策略:', overallStrategy.value);
+    
+    // 为每个股票设置默认激活的分析标签页
+    stockRecommendations.value.forEach((stock: any) => {
+      console.log('股票数据:', stock.symbol, stock);
+      
+      // 检查各种可能的数据结构
+      if (stock.analysis && Object.keys(stock.analysis).length > 0) {
+        const firstKey = Object.keys(stock.analysis)[0];
+        activeTab.value[stock.symbol] = firstKey;
+        console.log('设置分析标签页:', stock.symbol, firstKey);
+      } else if (stock.sections) {
+        // 兼容旧的数据结构
+        console.log('使用sections数据结构');
+      } else if (stock.reason) {
+        // 显示reason字段作为基础分析
+        console.log('使用reason字段:', stock.reason);
+      }
+    });
+    
     localStorage.setItem('runStock', JSON.stringify(stockRecommendations.value));
     
   } catch (error) {
@@ -1017,6 +1338,711 @@ onMounted(() => {
   }
 }
 
+/* 增强分析样式 */
+.enhanced-analysis {
+  margin-top: 1rem;
+  border-top: 1px solid #e9ecef;
+  padding-top: 1rem;
+}
+
+.analysis-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.analysis-tab {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.analysis-tab:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.analysis-tab.active {
+  background: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.analysis-panel {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+}
+
+.analysis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.analysis-header h6 {
+  margin: 0;
+  color: #495057;
+  font-weight: 600;
+}
+
+.analysis-score {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.score-excellent {
+  background: #d4edda;
+  color: #155724;
+}
+
+.score-good {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.score-fair {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.score-poor {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.analysis-text {
+  line-height: 1.6;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* 投资建议样式 */
+.investment-advice {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  border-radius: 8px;
+  border-left: 4px solid #2196f3;
+}
+
+.investment-advice h6 {
+  color: #1976d2;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.advice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.advice-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.advice-label {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.advice-value {
+  font-size: 0.95rem;
+  color: #333;
+  font-weight: 600;
+}
+
+/* 风险评估样式 */
+.risk-assessment {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%);
+  border-radius: 8px;
+  border-left: 4px solid #ff9800;
+}
+
+.risk-assessment h6 {
+  color: #f57c00;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.risk-content {
+  line-height: 1.6;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.risk-details p {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.risk-details strong {
+  color: #f57c00;
+  font-weight: 700;
+}
+
+/* 基础分析样式 */
+.basic-analysis {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #6c757d;
+}
+
+.basic-analysis h6 {
+  color: #495057;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.basic-analysis .analysis-text {
+  color: #2c3e50;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* sections分析样式 */
+.sections-analysis {
+  margin-top: 1rem;
+}
+
+.analysis-section {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.analysis-section:last-child {
+  margin-bottom: 0;
+}
+
+.analysis-section .analysis-text {
+  color: #2c3e50;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* GPT分析样式 */
+.gpt-analysis {
+  line-height: 1.6;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.analysis-paragraph-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffd700;
+  margin: 1rem 0 0.5rem 0;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid rgba(255, 215, 0, 0.5);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.analysis-paragraph-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f1c40f;
+  margin: 0.75rem 0 0.25rem 0;
+  padding-left: 1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.analysis-paragraph {
+  margin: 0.5rem 0;
+  padding: 0.5rem 0;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+
+.gpt-diagnosis-section {
+  background: rgba(52, 152, 219, 0.1);
+  border: 1px solid #3498db;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.gpt-diagnosis-section .diagnosis-title {
+  color: #3498db;
+}
+
+.bg-info {
+  background-color: #3498db !important;
+}
+
+/* 风险容忍度滑块样式 */
+.risk-tolerance-slider {
+  margin: 1rem 0;
+}
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.current-value {
+  text-align: center;
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: #007bff;
+}
+
+/* 股票行业样式 */
+.stock-industry {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+/* 投资建议样式增强 */
+.action-buy {
+  background: #28a745;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* 风险等级徽章 */
+.risk-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.risk-badge.low {
+  background: #d4edda;
+  color: #155724;
+}
+
+.risk-badge.medium {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.risk-badge.high {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* 公司基本面样式 */
+.fundamentals-section {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0f8ff 100%);
+  border-radius: 8px;
+  border-left: 4px solid #28a745;
+}
+
+.fundamentals-section h6 {
+  color: #28a745;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.fundamentals-content p {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.fundamentals-content strong {
+  color: #28a745;
+  font-weight: 700;
+}
+
+/* 左侧投资策略样式 */
+.investment-summary-section {
+  background: rgba(46, 204, 113, 0.15);
+  border: 2px solid #2ecc71;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 8px rgba(46, 204, 113, 0.2);
+}
+
+.investment-summary-section h4 {
+  color: #2ecc71;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.strategy-content {
+  display: grid;
+  gap: 1rem;
+}
+
+.strategy-item {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #2ecc71;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.strategy-item h5 {
+  color: #2ecc71;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.strategy-item p {
+  margin: 0;
+  line-height: 1.6;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* 策略内容样式 */
+.allocation-content,
+.risk-management-content,
+.trading-strategy-content {
+  margin-top: 0.5rem;
+}
+
+.allocation-summary {
+  padding: 0.75rem;
+  background: rgba(46, 204, 113, 0.15);
+  border-radius: 6px;
+  border-left: 3px solid #2ecc71;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* 策略段落样式优化 */
+.strategy-paragraph {
+  margin-top: 0.5rem;
+}
+
+.strategy-title {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(46, 204, 113, 0.08));
+  border-radius: 8px;
+  border-left: 4px solid #2ecc71;
+  color: #1a252f;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(46, 204, 113, 0.1);
+  transition: all 0.3s ease;
+}
+
+.strategy-title:hover {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.12));
+  transform: translateX(2px);
+}
+
+.strategy-title strong {
+  color: #27ae60;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.strategy-list-item {
+  margin-bottom: 0.6rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 0.95rem;
+  position: relative;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 4px;
+  border-left: 2px solid #2ecc71;
+  transition: all 0.2s ease;
+}
+
+.strategy-list-item:hover {
+  background: rgba(46, 204, 113, 0.08);
+  transform: translateX(3px);
+}
+
+.strategy-list-item::before {
+  content: "▶";
+  color: #2ecc71;
+  font-weight: bold;
+  font-size: 0.8rem;
+  position: absolute;
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+.strategy-paragraph-text {
+  margin-bottom: 0.8rem;
+  color: #34495e;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  padding: 0.6rem 0.8rem;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 6px;
+  border-left: 3px solid #3498db;
+  text-align: justify;
+  transition: all 0.2s ease;
+}
+
+/* AI诊股结果文字优化 */
+.diagnosis-content {
+  color: #ffffff !important;
+  font-weight: 500;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.diagnosis-content p {
+  color: #ffffff !important;
+  margin-bottom: 0.8rem;
+  font-weight: 500;
+}
+
+.diagnosis-content strong {
+  color: #4fc3f7 !important;
+  font-weight: 700;
+}
+
+.diagnosis-content h1,
+.diagnosis-content h2,
+.diagnosis-content h3,
+.diagnosis-content h4,
+.diagnosis-content h5,
+.diagnosis-content h6 {
+  color: #4fc3f7 !important;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* GPT分析内容优化 */
+.gpt-analysis {
+  background: rgba(79, 195, 247, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  border-left: 4px solid #4fc3f7;
+}
+
+.gpt-analysis p {
+  color: #ffffff !important;
+  margin-bottom: 0.8rem;
+  font-weight: 500;
+  line-height: 1.7;
+}
+
+.gpt-analysis strong {
+  color: #4fc3f7 !important;
+  font-weight: 700;
+}
+
+/* 诊断标题优化 */
+.diagnosis-title {
+  color: #4fc3f7 !important;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.diagnosis-header {
+  border-bottom: 2px solid rgba(79, 195, 247, 0.3);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* 诊断卡片背景优化 */
+.diagnosis-section {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(79, 195, 247, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+/* GPT分析段落样式优化 */
+.gpt-title {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(79, 195, 247, 0.15);
+  border-radius: 8px;
+  border-left: 4px solid #4fc3f7;
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(79, 195, 247, 0.1);
+  transition: all 0.3s ease;
+}
+
+.gpt-title:hover {
+  background: rgba(79, 195, 247, 0.2);
+  transform: translateX(2px);
+}
+
+.gpt-title strong {
+  color: #4fc3f7 !important;
+  font-weight: 800;
+}
+
+.gpt-list-item {
+  margin-bottom: 0.6rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+  color: #ffffff !important;
+  font-weight: 500;
+  font-size: 0.95rem;
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  border-left: 2px solid #4fc3f7;
+  transition: all 0.2s ease;
+}
+
+.gpt-list-item:hover {
+  background: rgba(79, 195, 247, 0.15);
+  transform: translateX(3px);
+}
+
+.gpt-list-item::before {
+  content: "▶";
+  color: #4fc3f7;
+  font-weight: bold;
+  font-size: 0.8rem;
+  position: absolute;
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+.gpt-numbered-item {
+  margin-bottom: 0.6rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+  color: #ffffff !important;
+  font-weight: 500;
+  font-size: 0.95rem;
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  border-left: 2px solid #ff9800;
+  transition: all 0.2s ease;
+}
+
+.gpt-numbered-item:hover {
+  background: rgba(255, 152, 0, 0.15);
+  transform: translateX(3px);
+}
+
+.gpt-numbered-item::before {
+  content: "🔢";
+  font-size: 0.7rem;
+  position: absolute;
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+.gpt-paragraph {
+  margin-bottom: 0.8rem;
+  color: #ffffff !important;
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  padding: 0.6rem 0.8rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  border-left: 3px solid #4fc3f7;
+  text-align: justify;
+  transition: all 0.2s ease;
+}
+
+.gpt-paragraph:hover {
+  background: rgba(79, 195, 247, 0.1);
+  transform: translateX(2px);
+}
+
+/* 强制应用策略段落样式 - 使用深度选择器 */
+.strategy-paragraph :deep(.strategy-title) {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(46, 204, 113, 0.08));
+  border-radius: 8px;
+  border-left: 4px solid #2ecc71;
+  color: #1a252f !important;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(46, 204, 113, 0.1);
+  transition: all 0.3s ease;
+}
+
+.strategy-paragraph :deep(.strategy-title strong) {
+  color: #27ae60 !important;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.strategy-paragraph :deep(.strategy-list-item) {
+  margin-bottom: 0.6rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+  color: #2c3e50 !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  position: relative;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 4px;
+  border-left: 2px solid #2ecc71;
+  transition: all 0.2s ease;
+}
+
+.strategy-paragraph :deep(.strategy-list-item::before) {
+  content: "▶";
+  color: #2ecc71;
+  font-weight: bold;
+  font-size: 0.8rem;
+  position: absolute;
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+.strategy-paragraph :deep(.strategy-paragraph-text) {
+  margin-bottom: 0.8rem;
+  color: #34495e !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  padding: 0.6rem 0.8rem;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 6px;
+  border-left: 3px solid #3498db;
+  text-align: justify;
+  transition: all 0.2s ease;
+}
+  
 @media (max-width: 768px) {
   .ai-header h1 {
     font-size: 2rem;

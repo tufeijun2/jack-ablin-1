@@ -9,7 +9,7 @@ type TAxiosOption = {
 }
  
 const config: TAxiosOption = {
-    timeout: 5000,
+    timeout: 15000, // 增加到15秒
     baseURL: import.meta.env.VITE_API_URL+"/api"
 }
  

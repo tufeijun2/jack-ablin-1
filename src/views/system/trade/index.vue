@@ -397,31 +397,49 @@ function toRemove() {
       {
         text: '确定',
         callback: async (id: any) => {
-        
+          loading.value = true
           try {
             // 批量删除交易记录
-            let allSuccess = true
+            let successCount = 0
+            let failCount = 0
+            const errors: string[] = []
+            
             for (const tradeId of selectedKeys.value) {
-              const result = await deleteTrade(tradeId)
-              if (result && result.error) {
-                allSuccess = false
-                break
+              try {
+                const result = await deleteTrade(tradeId)
+                
+                if (result && result.success) {
+                  successCount++
+                } else if (result && result.success === false) {
+                  failCount++
+                  errors.push(result.message || `记录 ${tradeId} 删除失败`)
+                } else if (result && !result.error) {
+                  successCount++
+                } else {
+                  failCount++
+                  errors.push(result?.error || result?.message || `记录 ${tradeId} 删除失败`)
+                }
+              } catch (error: any) {
+                failCount++
+                errors.push(`记录 ${tradeId}: ${error.message || '删除异常'}`)
               }
             }
             
-            if (allSuccess) {
-              layer.msg('删除成功', { icon: 1 })
+            if (failCount === 0) {
+              layer.msg(`成功删除 ${successCount} 条记录`, { icon: 1 })
+            } else if (successCount === 0) {
+              layer.msg(`删除失败: ${errors[0]}`, { icon: 2 })
             } else {
-              layer.msg('部分记录删除失败', { icon: 2 })
+              layer.msg(`成功删除 ${successCount} 条，失败 ${failCount} 条`, { icon: 2 })
             }
-              loading.value = true
+            
             // 刷新数据
             change(page)
             // 清空选择
             selectedKeys.value = []
-          } catch (error) {
-            console.error('删除交易记录异常:', error)
-            layer.msg('删除失败', { icon: 2 })
+          } catch (error: any) {
+            console.error('批量删除交易记录异常:', error)
+            layer.msg('批量删除失败: ' + (error.message || '未知错误'), { icon: 2 })
           } finally {
             loading.value = false
             layer.close(id)
@@ -440,21 +458,51 @@ function toRemove() {
 
 // 确认删除单个交易记录
 async function confirmDelete(id: string) {
- 
+  loading.value = true
   try {
     const result = await deleteTrade(id)
     
-    if (result && !result.error) {
+    // 检查响应格式
+    if (result && result.success) {
       layer.msg('删除成功', { icon: 1 })
       // 刷新数据
-      loading.value = true
+      change(page)
+    } else if (result && result.success === false) {
+      layer.msg(result.message || '删除失败', { icon: 2 })
+    } else if (result && !result.error) {
+      layer.msg('删除成功', { icon: 1 })
+      // 刷新数据
       change(page)
     } else {
-      layer.msg(result?.error || '删除失败', { icon: 2 })
+      layer.msg(result?.error || result?.message || '删除失败', { icon: 2 })
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('删除交易记录异常:', error)
-    layer.msg('删除异常', { icon: 2 })
+    
+    // 更详细的错误信息
+    let errorMessage = '删除异常'
+    if (error.response) {
+      const status = error.response.status
+      const message = error.response.data?.message || error.response.data?.msg
+      
+      if (status === 401) {
+        errorMessage = '未授权，请重新登录'
+      } else if (status === 403) {
+        errorMessage = '没有权限删除此记录'
+      } else if (status === 404) {
+        errorMessage = '记录不存在'
+      } else if (status >= 500) {
+        errorMessage = '服务器错误'
+      } else if (message) {
+        errorMessage = message
+      }
+    } else if (error.request) {
+      errorMessage = '网络连接失败'
+    } else if (error.message) {
+      errorMessage = error.message
+    }
+    
+    layer.msg(errorMessage, { icon: 2 })
   } finally {
     loading.value = false
   }

@@ -339,7 +339,9 @@
                    placeholder="Enter purchase price (e.g., 150.50)" step="0.01" min="0">
             
             <label class="form-label">Purchase Date</label>
-            <input type="date" class="form-control" v-model="portfolioData.purchaseDate">
+            <input type="date" class="form-control" v-model="portfolioData.purchaseDate" 
+                   :max="new Date().toISOString().split('T')[0]" lang="en-US" 
+                   data-lang="en" data-format="MM/DD/YYYY">
             
             <label class="form-label">Purchase Market</label>
             <select class="form-select" v-model="portfolioData.purchaseMarket">
@@ -508,7 +510,7 @@ const overallStrategy = ref<any>(null);
 const portfolioData = ref({
   symbol: '',
   purchasePrice: '',
-  purchaseDate: '',
+  purchaseDate: new Date().toISOString().split('T')[0], // 设置为当前日期
   purchaseMarket: 'NASDAQ',
   analysisType: 'portfolio'
 });
@@ -676,6 +678,48 @@ function formatGPTAnalysis(content: string): string {
     }
   }).join('');
 }
+
+// 强制设置日期选择器为英文显示
+function setDatePickerLocale() {
+  const dateInputs = document.querySelectorAll('input[type="date"]');
+  dateInputs.forEach(input => {
+    // 设置语言属性
+    input.setAttribute('lang', 'en-US');
+    input.setAttribute('data-lang', 'en');
+    
+    // 强制设置语言环境
+    if (input.style) {
+      input.style.setProperty('-webkit-locale', 'en-US');
+      input.style.setProperty('locale', 'en-US');
+    }
+    
+    // 尝试强制设置浏览器语言环境
+    try {
+      // 创建新的日期对象来测试语言环境
+      const testDate = new Date();
+      const options = { 
+        weekday: 'short', 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric',
+        locale: 'en-US'
+      };
+      testDate.toLocaleDateString('en-US', options);
+    } catch (e) {
+      console.log('Language setting not fully supported');
+    }
+  });
+}
+
+// 在组件挂载后设置
+onMounted(() => {
+  setDatePickerLocale();
+  // 监听DOM变化，确保新添加的日期选择器也被设置
+  const observer = new MutationObserver(() => {
+    setDatePickerLocale();
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
 
 // API Functions
 async function checkLoginStatus() {
@@ -2043,19 +2087,34 @@ onMounted(() => {
   transition: all 0.2s ease;
 }
   
-@media (max-width: 768px) {
-  .ai-header h1 {
-    font-size: 2rem;
-  }
-  
-  .tool-content {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .tool-header {
-    flex-direction: column;
-    text-align: center;
-  }
+/* 日期选择器优化 - 强制英文显示 */
+input[type="date"] {
+  color-scheme: dark;
+  font-family: inherit;
+  direction: ltr;
+  /* 强制使用英文语言环境 */
+  -webkit-locale: "en-US";
+  locale: "en-US";
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+/* 强制日期选择器使用英文星期显示 */
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-year-field {
+  color: #ffffff;
+  font-family: inherit;
+}
+
+/* 确保日期格式为美国格式 */
+input[type="date"] {
+  text-align: left;
+  unicode-bidi: bidi-override;
+  direction: ltr;
 }
 </style>

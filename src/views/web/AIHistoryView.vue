@@ -146,8 +146,101 @@ export default {
     return {
       isLoading: false,
       errorMessage: '',
-      recommendations: []
+      recommendations: [],
+      // 新增的筛选和分页功能
+      searchTerm: '',
+      selectedTimeframe: '',
+      sortBy: 'date',
+      currentPage: 1,
+      itemsPerPage: 10
     };
+  },
+  computed: {
+    // 筛选后的推荐记录
+    filteredRecommendations() {
+      let filtered = this.recommendations;
+      
+      // 搜索筛选
+      if (this.searchTerm) {
+        const term = this.searchTerm.toLowerCase();
+        filtered = filtered.filter(item => 
+          item.out_info.symbol.toLowerCase().includes(term) ||
+          item.out_info.name.toLowerCase().includes(term)
+        );
+      }
+      
+      // 时间筛选
+      if (this.selectedTimeframe) {
+        const days = parseInt(this.selectedTimeframe);
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - days);
+        filtered = filtered.filter(item => {
+          const itemDate = new Date(item.put_time);
+          return itemDate >= cutoffDate;
+        });
+      }
+      
+      // 排序
+      filtered.sort((a, b) => {
+        switch (this.sortBy) {
+          case 'symbol':
+            return a.out_info.symbol.localeCompare(b.out_info.symbol);
+          case 'performance':
+            return this.calculateRatio(b) - this.calculateRatio(a);
+          case 'score':
+            return (b.out_info.score || 0) - (a.out_info.score || 0);
+          case 'date':
+          default:
+            return new Date(b.put_time) - new Date(a.put_time);
+        }
+      });
+      
+      return filtered;
+    },
+    
+    // 分页后的数据
+    paginatedRecommendations() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredRecommendations.slice(start, end);
+    },
+    
+    // 总页数
+    totalPages() {
+      return Math.ceil(this.filteredRecommendations.length / this.itemsPerPage);
+    },
+    
+    // 可见页码
+    visiblePages() {
+      const pages = [];
+      const start = Math.max(1, this.currentPage - 2);
+      const end = Math.min(this.totalPages, this.currentPage + 2);
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      return pages;
+    },
+    
+    // 统计信息
+    positiveRecommendations() {
+      return this.recommendations.filter(item => this.calculateRatio(item) > 0).length;
+    },
+    
+    negativeRecommendations() {
+      return this.recommendations.filter(item => this.calculateRatio(item) < 0).length;
+    },
+    
+    averagePerformance() {
+      if (this.recommendations.length === 0) return 0;
+      const total = this.recommendations.reduce((sum, item) => sum + this.calculateRatio(item), 0);
+      return total / this.recommendations.length;
+    },
+    
+    averageScore() {
+      if (this.recommendations.length === 0) return 0;
+      const total = this.recommendations.reduce((sum, item) => sum + (item.out_info.score || 0), 0);
+      return total / this.recommendations.length;
+    }
   },
   mounted() {
     this.loadRecommendations();
@@ -194,6 +287,64 @@ export default {
       if (score >= 60) return 'Buy';
       if (score >= 40) return 'Hold';
       return 'Sell';
+    },
+    
+    // 新增的方法
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    },
+    
+    getDaysAgo(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffTime = Math.abs(now - date);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return `${diffDays} days ago`;
+    },
+    
+    getPerformanceLabel(performance) {
+      if (performance > 10) return 'Excellent';
+      if (performance > 5) return 'Good';
+      if (performance > 0) return 'Positive';
+      if (performance > -5) return 'Neutral';
+      return 'Poor';
+    },
+    
+    getStatusBadge(performance) {
+      if (performance > 10) return 'bg-success';
+      if (performance > 5) return 'bg-info';
+      if (performance > 0) return 'bg-primary';
+      if (performance > -5) return 'bg-warning';
+      return 'bg-danger';
+    },
+    
+    getStatusText(performance) {
+      if (performance > 10) return 'Outstanding';
+      if (performance > 5) return 'Good';
+      if (performance > 0) return 'Profitable';
+      if (performance > -5) return 'Neutral';
+      return 'Loss';
+    },
+    
+    changePage(page) {
+      this.currentPage = page;
+    },
+    
+    viewDetails(item) {
+      // 查看详细信息
+      console.log('View details for:', item);
+      // 这里可以添加模态框或跳转到详情页面
+    },
+    
+    addToWatchlist(item) {
+      // 添加到观察列表
+      console.log('Add to watchlist:', item);
+      // 这里可以添加API调用
     }
   }
 };

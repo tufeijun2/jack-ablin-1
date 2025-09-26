@@ -38,7 +38,7 @@
           <button class="btn btn-login ms-2" @click="loginto">
             <i class="bi bi-person-fill me-1"></i>{{ logintext }}
           </button>
-           <button class="btn btn-login ms-2" v-if="userrole=='admin'" @click="toadmin">
+           <button class="btn btn-login ms-2" v-if="userrole=='admin' || userrole=='superadmin'" @click="toadmin">
             <i class="bi bi-person-fill me-1"></i>Admin Panel
           </button>
         </div>

@@ -1,6 +1,7 @@
 import BasicLayout from '../../layouts/BasicLayout.vue';
 import Login from '../../views/login/index.vue';
 import Home from '../../views/web/HomeView.vue';
+import BasicLayout from '../../layouts/BasicLayout.vue';
 
 export default [
   {
@@ -170,7 +171,12 @@ export default [
       {
         path: '/system/questionBank',
         component: () => import('../../views/system/questionBank/index.vue'),
-        meta: { title: '题库管理', requireAuth: true },
+        meta: { title: '题库管理', requireAuth: true }
+      },
+      {
+        path: '/system/membershipPointsRules',
+        component: () => import('../../views/system/membershipPointsRules/index.vue'),
+        meta: { title: '积分规则管理', requireAuth: true }
       }
     ]
   },

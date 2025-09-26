@@ -400,7 +400,7 @@
 import { ref, onMounted,computed } from 'vue';
 import { useRouter } from 'vue-router';
 import navcomponent from '../component/nav/nav.vue'
-import{ get_userinfo,get_membership_levels,updateUserLevel, get_random_questions } from '../../api/module/web/vip'
+import{ get_userinfo,get_membership_levels,updateUserLevel, get_random_questions,startquestions } from '../../api/module/web/vip'
 import { useUserStore } from '@/store';
 const userStore = useUserStore()
 const router = useRouter();
@@ -607,10 +607,11 @@ const showNotification = ref(false);
 const notificationType = ref('success');
 const notificationMessage = ref('');
 let fireworkInterval: number | null = null;
-
+const startQuestion=ref(false)
 // Function to fetch quiz questions from API
 const fetchQuizQuestions = async () => {
   try {
+    startQuestion.value=false;
     isLoading.value = true;
     const response = await get_random_questions();
     if (response.success && response.data && response.data.length > 0) {
@@ -654,7 +655,32 @@ const handleSelectAnswer = (index: number) => {
   if (isAnswerCorrect.value) {
     score.value++;
   }
-  
+  console.log(startQuestion.value)
+  //todo 处理用户扣分
+    if(!startQuestion.value){
+    startquestions({stype:'start'}).then(res=>{
+      if(res.success)
+      {
+      
+      }
+    })
+  }
+  startQuestion.value=true;
+
+  //判断是否以及答题完成 完成后进行加分
+  if(currentQuestionIndex.value==quizQuestions.value.length-1)
+  {
+    //todo 处理用户加分
+    if(score.value/quizQuestions.value.length>=0.6)
+    {
+      startquestions({stype:'end'}).then(res=>{
+      if(res.success)
+      {
+      
+      }
+      })
+    }
+  }
   // 显示通知
   showAnswerNotification();
   
@@ -662,16 +688,7 @@ const handleSelectAnswer = (index: number) => {
   setTimeout(() => {
     showResult.value = true;
     
-    // 答案正确时，开始持续播放烟花效果
-    if (isAnswerCorrect.value) {
-      isFireworkActive.value = true;
-      createFirework();
-      fireworkInterval = window.setInterval(() => {
-        if (isFireworkActive.value) {
-          createFirework();
-        }
-      }, 800);
-    }
+   
   }, 300);
 };
 
@@ -766,6 +783,7 @@ const goToNextQuestion = () => {
 
 // 重新开始答题
 const restartQuiz = () => {
+  startQuestion.value=false;
   // 停止烟花效果
   isFireworkActive.value = false;
   if (fireworkInterval) {
@@ -791,6 +809,7 @@ const restartQuiz = () => {
   score.value = 0;
   answersHistory.value = [];
   showNotification.value = false;
+  startQuestion.value=false;
 };
 
 // 创建烟花效果

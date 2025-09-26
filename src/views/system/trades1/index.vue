@@ -71,10 +71,7 @@
             <lay-icon class="layui-icon-addition"></lay-icon>
             新增</lay-button
           >
-          <lay-button size="sm" @click="toRemove">
-            <lay-icon class="layui-icon-delete"></lay-icon>
-            删除
-          </lay-button>
+        
         </template>
         <template v-slot:direction="{ row }">
           <span v-if="row.direction === 1" style="color: green">买入</span>
@@ -245,7 +242,7 @@ const mockData: Trade1[] = [
 
 // 表格列配置
 const columns = ref([
-  { title: '选项', width: '60px', type: 'checkbox', fixed: 'left' },
+  
   { title: 'ID', width: '80px', key: 'id' },
   { title: '股票代码', width: '120px', key: 'symbol', sort: 'desc' },
   { title: '入场价格', width: '120px', key: 'entry_price' },

@@ -128,7 +128,7 @@ const dataSource = ref<InvitationCode[]>([])
 
 // 表格列配置
 const columns = ref([
-  { title: '选项', width: '60px', type: 'checkbox', fixed: 'left' },
+  
   { title: 'ID', width: '80px', key: 'id' },
   { title: '邀请码', width: '180px', key: 'code', sort: 'desc' },
   { title: '状态', width: '100px', key: 'isuse', customSlot: 'status' },

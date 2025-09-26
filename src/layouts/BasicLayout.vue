@@ -244,7 +244,7 @@ export default {
       if (document.body.clientWidth < 768) {
         appStore.collapse = true
       }
-      if(userInfoStore.userInfo.role!='admin')
+      if(userInfoStore.userInfo.role!='admin' && userInfoStore.userInfo.role!='superadmin')
       {
         router.push('/vip')
         return;

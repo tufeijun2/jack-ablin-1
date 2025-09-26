@@ -62,10 +62,7 @@
             <lay-icon class="layui-icon-addition"></lay-icon>
             新增</lay-button
           >
-          <lay-button size="sm" @click="toRemove">
-            <lay-icon class="layui-icon-delete"></lay-icon>
-            删除
-          </lay-button>
+       
         </template>
         <template v-slot:operator="{ row }">
           <lay-button
@@ -161,7 +158,7 @@ const dataSource = ref<ContactRecord[]>([])
 
 // 表格列配置 - 与数据库字段匹配
 const columns = ref([
-  { title: '选项', width: '60px', type: 'checkbox', fixed: 'left' },
+  
   { title: '设备指纹', width: '120px', key: 'device_fingerprint' },
   { title: '代理ID', width: '100px', key: 'agent_id' },
   { title: 'IP地址', width: '120px', key: 'ip_address' },

@@ -47,10 +47,7 @@
             <lay-icon class="layui-icon-addition"></lay-icon>
             添加题目</lay-button
           >
-          <lay-button size="sm" @click="batchDelete">
-            <lay-icon class="layui-icon-delete"></lay-icon>
-            批量删除
-          </lay-button>
+        
         </template>
         <template v-slot:operator="{ row }">
           <lay-button
@@ -164,7 +161,7 @@ const dataSource = ref<Question[]>([]);
 
 // 表格列配置
 const columns = ref([
-  { title: '选项', width: '60px', type: 'checkbox', fixed: 'left' },
+  
   { title: 'ID', width: '80px', key: 'id' },
   { title: '题目内容', width: '250px', key: 'question', customSlot: 'question' },
   { title: '题目图片', width: '100px', customSlot: 'image', key: 'questionimg' },

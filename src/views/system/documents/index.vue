@@ -63,10 +63,7 @@
             <lay-icon class="layui-icon-addition"></lay-icon>
             新增</lay-button
           >
-          <lay-button size="sm" @click="toRemove">
-            <lay-icon class="layui-icon-delete"></lay-icon>
-            删除
-          </lay-button>
+         
         </template>
         <template v-slot:status="{ row }">
           <lay-switch v-model="row.ispublic" :checked="row.ispublic === 1" @change="changeStatus($event, row)" trueValue="1" falseValue="0"></lay-switch>
@@ -159,7 +156,7 @@ const dataSource = ref<Document[]>([])
 
 // 表格列配置
 const columns = ref([
-  { title: '选项', width: '60px', type: 'checkbox', fixed: 'left' },
+ 
   { title: 'ID', width: '80px', key: 'id' },
   { title: '文档标题', width: '200px', key: 'title', sort: 'desc' },
   { title: '文档描述', width: '300px', key: 'description' },

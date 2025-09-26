@@ -45,3 +45,7 @@ export const updateUserLevel = function(levelData: any) {
 export const get_random_questions = function() {
     return Http.get('/web/vip/random-questions')
 }
+// 开始答题接口
+export const startquestions = function(questionData: any) {
+    return Http.post('/web/vip/startquestions', questionData)
+}

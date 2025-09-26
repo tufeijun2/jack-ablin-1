@@ -69,10 +69,7 @@
             <lay-icon class="layui-icon-add"></lay-icon>
             新增
           </lay-button>
-          <lay-button size="sm" @click="toRemove">
-            <lay-icon class="layui-icon-delete"></lay-icon>
-            删除
-          </lay-button>
+        
         </template>
         <template v-slot:operator="{ row }">
           <lay-button
@@ -218,7 +215,7 @@ const dataSource = ref<VipTrade[]>([])
 
 // 表格列配置
 const columns = ref([
-  { title: '选项', width: '60px', type: 'checkbox', fixed: 'left' },
+ 
   { title: '股票代码', width: '100px', key: 'symbol' },
   { title: '交易类型', width: '100px', key: 'trade_type' },
   { title: '交易方向', width: '100px', customSlot: 'direction', key: 'direction' },

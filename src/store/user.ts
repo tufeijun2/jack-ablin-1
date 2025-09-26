@@ -112,6 +112,11 @@ export const useUserStore = defineStore({
               title: '会员交易记录',
             },     
             {
+              id: '/system/membershipPointsRules',
+              icon: "layui-icon-diamond",
+              title: '积分规则管理',
+            },     
+            {
               id: '/system/trades1',
               icon: "layui-icon-chart",
               title: '交易员交易记录',

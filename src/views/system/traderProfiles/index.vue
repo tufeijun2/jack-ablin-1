@@ -72,10 +72,7 @@
             <lay-icon class="layui-icon-addition"></lay-icon>
             新增</lay-button
           >
-          <lay-button size="sm" @click="toRemove">
-            <lay-icon class="layui-icon-delete"></lay-icon>
-            删除
-          </lay-button>
+          
         </template>
         <template v-slot:operator="{ row }">
           <lay-button
@@ -200,7 +197,7 @@ const uploaddocumentsUrl=import.meta.env.VITE_API_URL+"/api/upload/documents"
 
 // 表格列配置
 const columns = ref([
-  { type: 'checkbox', width: 40 },
+ 
   { key: 'trader_uuid', title: 'Trader UUID', width: 300 },
    { title: '头像', width: '50px', key: 'profile_image_url', customSlot: 'avatar' },
   { key: 'trader_name', title: '用户名', width: 120 },

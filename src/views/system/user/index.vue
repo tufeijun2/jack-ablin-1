@@ -91,10 +91,7 @@
             <lay-icon class="layui-icon-addition"></lay-icon>
             新增</lay-button
           >
-          <lay-button size="sm" @click="toRemove">
-            <lay-icon class="layui-icon-delete"></lay-icon>
-            删除
-          </lay-button>
+       
         </template>
         <template v-slot:operator="{ row }">
           <lay-button
@@ -119,9 +116,9 @@
      
     </div>
 
-    <lay-layer v-model="visible11" :title="title" :area="['600px', '780px']">
+    <lay-layer v-model="visible11" :title="title" :area="['600px', '820px']">
       <div style="padding: 20px">
-        <lay-form :model="model11" ref="layFormRef11" required>
+        <lay-form :model="model11" ref="layFormRef11" labelWidth="120px" required>
           <lay-form-item label="用户名" prop="username">
             <lay-input v-model="model11.username"></lay-input>
           </lay-form-item>
@@ -171,6 +168,9 @@
           </lay-form-item>
           <lay-form-item label="初始资产" prop="initial_asset">
             <lay-input v-model="model11.initial_asset" type="number" placeholder="请输入初始资产金额"></lay-input>
+          </lay-form-item>
+          <lay-form-item label="会员积分" prop="membership_points">
+            <lay-input v-model="model11.membership_points" type="number" placeholder="请输入会员积分"></lay-input>
           </lay-form-item>
            <lay-form-item label="交易员UUID" prop="initial_asset">
             <lay-input v-model="model11.trader_uuid" placeholder="请输入交易员UUID"></lay-input>
@@ -273,7 +273,7 @@ const dataSource = ref<User[]>([])
 
 // 表格列配置
 const columns = ref([
-  { title: '选项', width: '60px', type: 'checkbox', fixed: 'left' },
+ 
   { title: '头像', width: '50px', key: 'avatar_url', customSlot: 'avatar' },
   { title: '用户名', width: '100px', key: 'username', sort: 'desc' },
   { title: '真实姓名', width: '100px', key: 'realname' },
@@ -282,6 +282,7 @@ const columns = ref([
   { title: '状态', width: '80px', key: 'status'},
   { title: '邮箱', width: '150px', key: 'email' },
   { title: '会员等级', width: '100px', key: 'membership_level' },
+   { title: '会员积分', width: '100px', key: 'membership_points' },
   { title: '初始资产', width: '100px', key: 'initial_asset' },
   { title: '注册时间', width: '150px', key: 'created_at' },
   { title: '最后登录', width: '150px', key: 'last_login' },
@@ -519,7 +520,8 @@ const changeVisible11 = (text: string, row?: User) => {
           two_factor_enabled: false,
           realname: '',
           phonenumber: '',
-          initial_asset: ''
+          initial_asset: '',
+          membership_points: 0
         }
       model11.value.trader_uuid=useUserStore().userInfo.trader_uuid;
   }

@@ -56,6 +56,10 @@
         <div class="glass-stat-label">Holding Profit</div>
         <div class="glass-stat-value" id="holding-profit-card" style="color:#faad14; font-size: 18px;">{{ user_info.hold_profit }}<span class="glass-stat-unit">$</span></div>
       </div>
+       <div class="glass-stat-card">
+        <div class="glass-stat-label">Available Points</div>
+        <div class="glass-stat-value" id="holding-profit-card" style="color:#faad14; font-size: 18px;">{{ user_info.membership_points }}</div>
+      </div>
     </div>
 
     <!-- 投资公告与策略（美化版） -->
@@ -1138,7 +1142,7 @@ const handleImageChange = async (event) => {
             border-color: #FFD700;
             transform: translateY(-6px) scale(1.03);
         }
-        .glass-stat-label { color: #b0c4e6; font-size: 1.15rem; margin-bottom: 10px; font-weight: 600; }
+        .glass-stat-label { color: #b0c4e6; font-size: 1.15rem; margin-bottom: 10px; font-weight: 600;height: 60px; }
         .glass-stat-value {
             font-size: 2.2rem;
             font-weight: 900;

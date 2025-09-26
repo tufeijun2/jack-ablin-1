@@ -60,10 +60,7 @@
             <lay-icon class="layui-icon-addition"></lay-icon>
             新增</lay-button
           >
-          <lay-button size="sm" @click="toRemove">
-            <lay-icon class="layui-icon-delete"></lay-icon>
-            删除
-          </lay-button>
+         
         </template>
         <template v-slot:operator="{ row }">
           <lay-button
@@ -155,7 +152,7 @@ const dataSource = ref<MembershipLevel[]>([])
 
 // 表格列配置
 const columns = ref([
-  { title: '选项', width: '60px', type: 'checkbox', fixed: 'left' },
+
   { title: 'ID', width: '80px', key: 'id' },
   { title: '等级', width: '80px', key: 'level', sort: 'asc' },
   { title: '等级名称', width: '150px', key: 'name' },

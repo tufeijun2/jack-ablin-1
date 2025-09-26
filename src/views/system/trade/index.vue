@@ -90,12 +90,7 @@
         @change="change"
         @sortChange="sortChange"
       >
-        <template v-slot:toolbar>
-          <lay-button size="sm" @click="toRemove">
-            <lay-icon class="layui-icon-delete"></lay-icon>
-            删除
-          </lay-button>
-        </template>
+     
         <template v-slot:operator="{ row }">
           <lay-button
             size="xs"
@@ -254,7 +249,7 @@ const dataSource = ref<Trade[]>([])
 
 // 表格列配置
 const columns = ref([
-  { title: '选项', width: '60px', type: 'checkbox', fixed: 'left' },
+ 
   { title: '股票代码', width: '100px', key: 'symbol' },
   { title: '用户名', width: '120px', key: 'username' },
   { title: '交易类型', width: '100px', key: 'trade_type' },

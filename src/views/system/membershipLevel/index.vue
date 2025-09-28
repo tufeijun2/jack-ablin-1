@@ -92,7 +92,13 @@
             <lay-input v-model="model11.name"></lay-input>
           </lay-form-item>
           <lay-form-item label="会员权益" prop="benefits">
-            <lay-textarea v-model="model11.benefits" :rows="5" placeholder="每行输入一个权益，例如：&#10;Basic Trading Tools&#10;Standard Market Analysis&#10;Community Access&#10;Standard Support"></lay-textarea>
+            <div class="benefits-container">
+              <div v-for="(benefit, index) in benefitsList" :key="index" class="benefit-item">
+                <lay-input v-model="benefitsList[index]" :placeholder="`权益 ${index + 1}`"></lay-input>
+                <lay-button size="sm" type="danger" @click="removeBenefit(index)" v-if="benefitsList.length > 1">删除</lay-button>
+              </div>
+              <lay-button size="sm" type="primary" @click="addBenefit">添加权益</lay-button>
+            </div>
           </lay-form-item>
           <lay-form-item label="最低交易量" prop="min_trading_volume">
             <lay-input v-model="model11.min_trading_volume" type="number"></lay-input>
@@ -171,6 +177,19 @@ const model11 = ref<any>({})
 const layFormRef11 = ref()
 const visible11 = ref(false)
 const title = ref('新增')
+
+// 会员权益列表
+const benefitsList = ref<string[]>([''])
+
+// 添加权益
+const addBenefit = () => {
+  benefitsList.value.push('')
+}
+
+// 删除权益
+const removeBenefit = (index: number) => {
+  benefitsList.value.splice(index, 1)
+}
 
 // 初始化加载数据
 onMounted(() => {
@@ -321,9 +340,11 @@ const changeVisible11 = (text: string, row?: MembershipLevel) => {
   if (row) {
     // 编辑模式，复制行数据
     model11.value = { ...row }
-    // 将逗号分隔的权益转换为换行符分隔，便于编辑
+    // 将逗号分隔的权益转换为数组
     if (model11.value.benefits) {
-      model11.value.benefits = model11.value.benefits.split(',').join('\n');
+      benefitsList.value = model11.value.benefits.split(',').filter(b => b.trim());
+    } else {
+      benefitsList.value = [''];
     }
   } else {
     // 新增模式，清空表单
@@ -337,6 +358,7 @@ const changeVisible11 = (text: string, row?: MembershipLevel) => {
       risk_ratio: 0,
       compensation_ratio: 0
     }
+    benefitsList.value = [''];
   }
   visible11.value = true
 }
@@ -352,10 +374,10 @@ async function toSubmit() {
       return;
     }
     
-    // 处理会员权益：将换行符转换为逗号分隔
-    const processedBenefits = model11.value.benefits
-      ? model11.value.benefits.split('\n').filter(line => line.trim()).join(',')
-      : '';
+    // 处理会员权益：将数组转换为逗号分隔
+    const processedBenefits = benefitsList.value
+      .filter(benefit => benefit.trim())
+      .join(',');
     
     // 创建提交数据对象，确保与后端接口匹配
     const submitData = {
@@ -459,5 +481,20 @@ function cancel() {
   display: inline-block;
   background-color: #e8f1ff;
   color: red;
+}
+
+.benefits-container {
+  width: 100%;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.benefit-item .lay-input {
+  flex: 1;
 }
 </style>

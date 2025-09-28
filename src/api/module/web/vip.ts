@@ -49,3 +49,8 @@ export const get_random_questions = function() {
 export const startquestions = function(questionData: any) {
     return Http.post('/web/vip/startquestions', questionData)
 }
+
+// 获取股票实时价格接口
+export const get_stock_prices = function(symbols: string[]) {
+    return Http.post('/web/vip/stock-prices', { symbols })
+}

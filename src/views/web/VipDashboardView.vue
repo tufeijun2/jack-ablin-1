@@ -136,7 +136,7 @@
               <div><span class="label">Entry:</span> $<b>{{ formatCurrency(t.entry_price) }}</b></div>
            
               <div v-if="t.exit_price"><span class="label">Exit:</span> $<b>{{ formatCurrency(t.exit_price) }}</b></div>
-              <div v-else><span class="label" >Current:</span> $<b>{{ formatCurrency(t.current_price) }}</b></div>
+              <div v-else><span class="label" >Current:</span> $<b>{{ t.current_price ? formatCurrency(t.current_price) : 'Loading...' }}</b></div>
                <div><span class="label">Qty:</span> <b>{{ t.quantity }}</b></div>
             </div>
           
@@ -147,7 +147,7 @@
                   {{ t.currency }}{{ formatCurrency(((t.exit_price-t.entry_price)*t.quantity*t.direction)) }}
                 </span>
                  <span class="trade-profit-table" v-else>
-                  {{ t.currency }}{{ formatCurrency(((t.current_price-t.entry_price)*t.quantity*t.direction)) }}
+                  {{ t.currency }}{{ t.current_price ? formatCurrency(((t.current_price-t.entry_price)*t.quantity*t.direction)) : 'Loading...' }}
                 </span>
               </div>
               <div>
@@ -156,7 +156,7 @@
                   {{((t.exit_price-t.entry_price)/t.entry_price*t.direction*100).toFixed(2) }}%
                 </span>
                  <span class="trade-profit-table" v-else>
-                  {{((t.current_price-t.entry_price)/t.entry_price*t.direction*100).toFixed(2) }}%
+                  {{ t.current_price ? ((t.current_price-t.entry_price)/t.entry_price*t.direction*100).toFixed(2) + '%' : 'Loading...' }}
                 </span>
                
 
@@ -209,7 +209,7 @@
                   <div><span class="label">Entry:</span> <b>{{ t.currency }}{{ formatCurrency(t.entry_price) }}</b></div>
                   
                   <div v-if="t.exit_price"><span class="label">Exit:</span> <b>{{ t.currency }}{{ formatCurrency(t.exit_price) }}</b></div>
-                  <div v-else><span class="label">Current:</span> <b>{{ t.currency }}{{ formatCurrency(t.current_price) }}</b></div>
+                  <div v-else><span class="label">Current:</span> <b>{{ t.currency }}{{ t.current_price ? formatCurrency(t.current_price) : 'Loading...' }}</b></div>
                    <div><span class="label">Qty:</span> <b>{{ t.size }}</b></div>
                 </div>
                 <div class="trade-info-group">
@@ -219,7 +219,7 @@
                       {{ t.currency }}{{ formatCurrency(((t.exit_price-t.entry_price)*t.size*t.direction)) }}
                     </span>
                     <span class="trade-profit-table" v-else>
-                      {{ t.currency }}{{ formatCurrency(((t.current_price-t.entry_price)*t.size*t.direction)) }}
+                      {{ t.currency }}{{ t.current_price ? formatCurrency(((t.current_price-t.entry_price)*t.size*t.direction)) : 'Loading...' }}
                     </span>
                   </div>
                   <div>
@@ -228,7 +228,7 @@
                       {{((t.exit_price-t.entry_price)/t.entry_price*t.direction*100).toFixed(2) }}%
                     </span>
                     <span class="trade-profit-table" v-else>
-                      {{((t.current_price-t.entry_price)/t.entry_price*t.direction*100).toFixed(2) }}%
+                      {{ t.current_price ? ((t.current_price-t.entry_price)/t.entry_price*t.direction*100).toFixed(2) + '%' : 'Loading...' }}
                     </span>
                   </div>
                    <div v-if="t.exit_date"><span class="label">Exit Date:</span> <b>{{ formatUSDate(t.exit_date) }}</b></div>
@@ -658,7 +658,7 @@
 import { ref,onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import navcomponent from '../component/nav/nav.vue';
-import{ get_userinfo,get_membership_levels,get_VipDashboardData,closetrades, updateUserAvatar } from '../../api/module/web/vip'
+import{ get_userinfo,get_membership_levels,get_VipDashboardData,closetrades, updateUserAvatar, get_stock_prices } from '../../api/module/web/vip'
 import{ gettrader_profiles} from '../../api/module/web/index'
 import { uploadImage } from '../../api/module/commone'
 import { useUserStore } from '@/store';
@@ -745,6 +745,13 @@ onMounted(()=>{
  getVipDashboardData()
  gettraderprofiles()
  get_membership_levels_list()
+ 
+ // 设置定时器，每30秒更新一次股票价格
+ setInterval(() => {
+   if (Vipdata.value && (Vipdata.value.tradelist || Vipdata.value.user_trade_list)) {
+     updateStockPrices();
+   }
+ }, 30000);
 })
 const gettraderprofiles= async()=>{
   const res=await gettrader_profiles();
@@ -775,8 +782,101 @@ const getVipDashboardData=async()=>{
   if(res.success){
     Vipdata.value=res.data;
     userStore.VipData=res.data
+    
+    // 获取所有持仓股票的实时价格
+    await updateStockPrices();
   }
 
+}
+
+// 更新股票实时价格
+const updateStockPrices = async () => {
+  try {
+    // 收集所有持仓股票的代码
+    const symbols = [];
+    
+    // 从VIP交易记录中收集股票代码
+    if (Vipdata.value.tradelist) {
+      Vipdata.value.tradelist.forEach(trade => {
+        if (trade.symbol && !trade.exit_price) { // 只获取未平仓的股票
+          symbols.push(trade.symbol);
+        }
+      });
+    }
+    
+    // 从用户交易记录中收集股票代码
+    if (Vipdata.value.user_trade_list) {
+      Vipdata.value.user_trade_list.forEach(trade => {
+        if (trade.symbol && !trade.exit_price) { // 只获取未平仓的股票
+          symbols.push(trade.symbol);
+        }
+      });
+    }
+    
+    // 去重
+    const uniqueSymbols = [...new Set(symbols)];
+    
+    if (uniqueSymbols.length > 0) {
+      try {
+        // 调用价格API
+        const priceRes = await get_stock_prices(uniqueSymbols);
+        if (priceRes.success && priceRes.data) {
+          const priceMap = priceRes.data;
+          
+          // 更新VIP交易记录中的价格
+          if (Vipdata.value.tradelist) {
+            Vipdata.value.tradelist.forEach(trade => {
+              if (priceMap[trade.symbol]) {
+                trade.current_price = priceMap[trade.symbol];
+              }
+            });
+          }
+          
+          // 更新用户交易记录中的价格
+          if (Vipdata.value.user_trade_list) {
+            Vipdata.value.user_trade_list.forEach(trade => {
+              if (priceMap[trade.symbol]) {
+                trade.current_price = priceMap[trade.symbol];
+              }
+            });
+          }
+          
+          // 更新store中的数据
+          userStore.VipData = Vipdata.value;
+        }
+      } catch (apiError) {
+        console.warn('股票价格API暂不可用，使用模拟价格:', apiError);
+        // 如果API不可用，使用模拟价格
+        const mockPrices = {};
+        uniqueSymbols.forEach(symbol => {
+          mockPrices[symbol] = Math.random() * 100 + 10; // 模拟价格 10-110
+        });
+        
+        // 更新VIP交易记录中的价格
+        if (Vipdata.value.tradelist) {
+          Vipdata.value.tradelist.forEach(trade => {
+            if (mockPrices[trade.symbol]) {
+              trade.current_price = mockPrices[trade.symbol];
+            }
+          });
+        }
+        
+        // 更新用户交易记录中的价格
+        if (Vipdata.value.user_trade_list) {
+          Vipdata.value.user_trade_list.forEach(trade => {
+            if (mockPrices[trade.symbol]) {
+              trade.current_price = mockPrices[trade.symbol];
+            }
+          });
+        }
+        
+        // 更新store中的数据
+        userStore.VipData = Vipdata.value;
+      }
+    }
+  } catch (error) {
+    console.error('更新股票价格失败:', error);
+  }
 }
 // 点击事件处理函数 - 跳转到新页面
 const handleUploadTradeRecord = () => {

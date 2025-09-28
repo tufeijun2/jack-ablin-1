@@ -70,7 +70,11 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
       next('/userlogin');
     }
   } else if (to.path === '/userlogin') {
-    
+    // 如果已经登录，直接跳转到VIP页面
+    if (token) {
+      next('/vip');
+      return;
+    }
     next();
   } else if (to.matched.length === 0) {
     // 路由不存在，重定向到404页面

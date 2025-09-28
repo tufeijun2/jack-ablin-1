@@ -55,12 +55,12 @@ export default [
   {
     path: '/userlogin',
     component: () => import('../../views/web/LoginView.vue'),
-    meta: { title: '登录页面', requireAuth: false },
+    meta: { title: 'Login Page', requireAuth: false },
   },
   {
     path: '/login',
     component: Login,
-    meta: { title: '登录页面', requireAuth: false },
+    meta: { title: 'Admin Login', requireAuth: false },
   },
   {
     path: '/webhome',

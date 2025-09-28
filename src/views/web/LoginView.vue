@@ -58,9 +58,10 @@ const isLoggingIn = ref(false); // 添加登录状态变量
 
 onMounted(() => {
   console.log(userStore.token)
-  if(userStore.token){
-    router.push('/vip');
-  }
+  // 移除自动跳转逻辑，由路由守卫处理
+  // if(userStore.token){
+  //   router.push('/vip');
+  // }
 });
 // 处理登录
 const handleLogin = async () => {

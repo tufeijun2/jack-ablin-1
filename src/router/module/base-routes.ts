@@ -11,12 +11,12 @@ export default [
   {
     path: '/vip',
     component: () => import('../../views/web/VipView.vue'),
-    meta: { title: '会员中心', requireAuth: false },
+    meta: { title: 'Member Center', requireAuth: false },
   },
   {
     path: '/vipdashboard',
     component: () => import('../../views/web/VipDashboardView.vue'),
-    meta: { title: '会员中心', requireAuth: false },
+    meta: { title: 'Member Center', requireAuth: false },
   },
   {
     path: '/Register',

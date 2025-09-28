@@ -10,7 +10,7 @@
             Let professional investment strategies help you grow your wealth
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:24px;">
-            <!-- 顶部欢迎区头像 -->
+            <!-- Top welcome area avatar -->
             <div style="position:relative;cursor:pointer;" id="avatar-preview-trigger" @click="handleAvatarClick">
                 <img 
                   :src="user_info?.avatar_url || 'https://lnndxivliqxifhpdpidr.supabase.co/storage/v1/object/public/avatars/avatars/avatars/123456_0868673e94664ac2959bbe029a76675d.webp'" 
@@ -25,7 +25,7 @@
                   style="display: none;"
                   @change="handleAvatarFileChange"
                 >
-                <!-- 删除svg图标，不再显示 -->
+                <!-- Remove svg icon, no longer displayed -->
             </div>
             <div style="display:flex;gap:20px;justify-content:center;margin-top:18px;">
                 <button class="ant-btn ant-btn-primary styled-button" style="font-weight:700;border-radius:12px;" @click="handleUploadTradeRecord"><span class="anticon"><svg viewBox="64 64 896 896" focusable="false" data-icon="upload" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M872 474H728V184c0-4.4-3.6-8-8-8H304c-4.4 0-8 3.6-8 8v290H152c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h720c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg></span> Upload Trade Record</button>
@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <!-- 五大数据卡片 -->
+    <!-- Five major data cards -->
     <div class="glass-stat-card-grid" style="max-width: 1400px;">
       <div class="glass-stat-card">
         <div class="glass-stat-label">Initial Capital</div>
@@ -62,7 +62,7 @@
       </div>
     </div>
 
-    <!-- 投资公告与策略（美化版） -->
+    <!-- Investment Announcements & Strategies (Enhanced Version) -->
     <div class="section" style="max-width: 1400px;">
       <h2 class="card-title">Investment Announcements & Strategies</h2>
       <div class="announcement-card" v-for="value in Vipdata.announcements_List">
@@ -76,9 +76,9 @@
           <span><span class="us-time" data-time="{{ value.publish_time }}">{{ formatUSDate(value.publish_time) }}</span></span>
         </div>
       </div>
-      <!-- VIP交易记录表格区域 -->
+      <!-- VIP Trading Records Table Area -->
     <div class="vip-trades-section" style="max-width: 1400px;">
-      <!-- PC表格 -->
+      <!-- PC Table -->
       <!-- <div class="table-wrapper trade-table-pc">
         <table class="vip-table">
           <thead>
@@ -122,7 +122,7 @@
         </table>
       </div> -->
      
-      <!-- 移动端表格 -->
+      <!-- Mobile Table -->
       <div class="trade-card-list trade-mobile-list">
         <div v-for="t in Vipdata.tradelist" :key="t.id" class="trade-card">
           <div class="trade-card-header">
@@ -169,10 +169,10 @@
       </div>
     </div>
     </div>
-    <!-- 交易记录（持仓分析/历史交易） -->
+    <!-- Trading Records (Position Analysis/Historical Trading) -->
      <div class="section">
         <h2 class="card-title">My Trade Records</h2>
-        <!-- 统计卡片区域（总资产、总市值、可用资金） -->
+        <!-- Statistics Cards Area (Total Assets, Total Market Value, Available Funds) -->
         <div class="flex-row mb-24">
             <div class="card" style="flex:1;min-width:220px;">
                 <div class="glass-stat-label">Total Assets</div>
@@ -193,7 +193,7 @@
         </div>
         <div id="trade-record-detail">
          
-          <!-- 移动端卡片（5条） -->
+          <!-- Mobile Cards (5 items) -->
           <div class="trade-card-list trade-mobile-list">
             
             <div class="trade-card" v-for="t in Vipdata.user_trade_list" :key="t.id">
@@ -289,7 +289,7 @@
     </div>
     
 
-    <!-- 会员收益排名 -->
+    <!-- Member Profit Ranking -->
     <div class="section" style="max-width: 1400px;">
       <h2 class="card-title" style="font-size:2.2rem;font-weight:900;color:#FFD700;text-shadow:0 2px 8px rgba(24,31,42,0.53);margin-bottom:24px;">Member Profit Ranking</h2>
       <div class="card member-rank-table-pc" style="border:3px solid #FFD700;padding:36px 28px 28px 28px;box-shadow:0 0 24px rgba(255,215,0,0.2);">
@@ -337,14 +337,14 @@
         </table>
       </div>
 
-      <!-- 移动端会员排名 -->
+      <!-- Mobile Member Ranking -->
       <div class="member-rank-mobile-list">
         <div v-for="user in topUsers" :key="user.id" class="member-rank-mobile-card" style="background:linear-gradient(135deg,#232B3E 60%,#232e4a 100%);border-radius:14px;box-shadow:0 4px 16px rgba(24,31,42,0.2),0 0 0 2px rgba(255,215,0,0.13);border:1.5px solid rgba(255,215,0,0.10);padding:14px 12px 10px 12px;margin-bottom:14px;display:flex;flex-direction:column;gap:8px;">
           <div class="rank-row-main" style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
             <span class="rank-num" style="font-size:1.18rem;font-weight:900;min-width:24px;text-align:center;" :style="{color: user.rank === 1 ? '#FFD700' : user.rank === 2 ? '#b0c4e6' : user.rank === 3 ? '#faad14' : '#fff'}">{{ user.rank }}</span>
             <div class="rank-avatar" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid #FFD700;box-shadow:0 0 4px rgba(255,215,0,0.2);display:flex;align-items:center;justify-content:center;">{{ user.name.charAt(0) }}</div>
             <span class="rank-name" style="font-weight:700;font-size:1.05rem;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;">{{ user.name }}</span>
-            <span class="rank-level" :class="user.level" style="font-size:0.95rem;padding:2px 10px;border-radius:8px;background:#1a2236;margin-left:4px;min-width:80px;text-align:center;display:inline-block;">{{ user.level === 'gold-member' ? '黄金会员' : user.level === 'diamond-member' ? '钻石会员' : '黑卡会员' }}</span>
+            <span class="rank-level" :class="user.level" style="font-size:0.95rem;padding:2px 10px;border-radius:8px;background:#1a2236;margin-left:4px;min-width:80px;text-align:center;display:inline-block;">{{ user.level === 'gold-member' ? 'Gold Member' : user.level === 'diamond-member' ? 'Diamond Member' : 'Black Card Member' }}</span>
           </div>
           <div class="rank-row-bottom" style="display:flex;justify-content:space-between;font-size:1.05em;margin-top:2px;">
             <span class="rank-amount" style="font-weight:900;font-size:1.08rem;" :style="{color: parseFloat(user.totalProfit) > 0 ? '#00ffae' : parseFloat(user.totalProfit) < 0 ? '#ff4d4f' : '#b0c4e6'}">{{ user.totalProfit }}</span>
@@ -461,7 +461,7 @@
         </div>
     </div>
 
-    <!-- 会员权益卡片区域 -->
+    <!-- Member Benefits Cards Area -->
     <div class="section" style="max-width: 1400px;">
        <h2 class="card-title">Membership Agreement & Benefits</h2>
         <div class="vip-benefit-subtitle" style="text-align:center;color:#b0c4e6;font-size:1.2rem;margin-bottom:48px;">Exclusive member benefits to help your wealth grow</div>
@@ -559,13 +559,13 @@
       </div>
     </div>
 
-    <!-- 会员协议部分 -->
+    <!-- Membership Agreement Section -->
     <div class="vip-agreement-section" style="max-width: 1400px;">
       <div class="agreement-header">
         <h3 class="agreement-title">Membership Agreement</h3>
         <p class="agreement-desc">This platform is a paid service focused on providing members with professional investment strategies and market analysis. Members pay commissions based on actual profits. In the event of significant losses, the platform will compensate and share commissions according to the ratios shown in the membership level table.</p>
       </div>
-      <!-- PC端表格对比 -->
+      <!-- PC Table Comparison -->
       <div class="agreement-table-section agreement-table-pc">
         <h4 class="table-title">Membership Commission Mechanism</h4>
         <div class="table-wrapper">
@@ -591,7 +591,7 @@
           </table>
         </div>
       </div>
-      <!-- 移动端卡片式展示 -->
+      <!-- Mobile Card Display -->
       <div class="agreement-mobile-cards">
         <div class="mobile-section">
           <div class="mobile-section-title">Membership Commission Mechanism</div>
@@ -664,33 +664,33 @@ import { uploadImage } from '../../api/module/commone'
 import { useUserStore } from '@/store';
 const router = useRouter();
 const userStore = useUserStore()
-// 视频弹窗状态
+// Video modal state
 const isVideosModalOpen = ref(false);
 
-// 打开视频弹窗
+// Open video modal
 const openVideosModal = () => {
   isVideosModalOpen.value = true;
 };
 
-// 关闭视频弹窗
+// Close video modal
 const closeVideosModal = () => {
   isVideosModalOpen.value = false;
 };
 
-// 文档弹窗状态
+// Document modal state
 const isDocumentsModalOpen = ref(false);
 
-// 打开文档弹窗
+// Open document modal
 const openDocumentsModal = () => {
   isDocumentsModalOpen.value = true;
 };
 
-// 关闭文档弹窗
+// Close document modal
 const closeDocumentsModal = () => {
   isDocumentsModalOpen.value = false;
 };
 
-// 格式化日期为美国时间格式
+// Format date to US time format
 const formatUSDate = (dateString: string) => {
   if (!dateString) return '';
   
@@ -705,11 +705,11 @@ const formatUSDate = (dateString: string) => {
       hour12: true
     });
   } catch (error) {
-    return dateString; // 如果解析失败，返回原始字符串
+    return dateString; // If parsing fails, return original string
   }
 };
 
-// 格式化金额，添加千分位分隔符
+// Format currency, add thousand separators
 const formatCurrency = (amount: number | string) => {
   if (amount === null || amount === undefined || amount === '') return '0';
   
@@ -722,7 +722,7 @@ const formatCurrency = (amount: number | string) => {
   });
 };
 
-// 模拟数据
+// Mock data
 const recentTrades = ref([
   
 ]);
@@ -746,7 +746,7 @@ onMounted(()=>{
  gettraderprofiles()
  get_membership_levels_list()
  
- // 设置定时器，每30秒更新一次股票价格
+ // Set timer to update stock prices every 30 seconds
  setInterval(() => {
    if (Vipdata.value && (Vipdata.value.tradelist || Vipdata.value.user_trade_list)) {
      updateStockPrices();
@@ -783,47 +783,47 @@ const getVipDashboardData=async()=>{
     Vipdata.value=res.data;
     userStore.VipData=res.data
     
-    // 获取所有持仓股票的实时价格
+    // Get real-time prices for all held stocks
     await updateStockPrices();
   }
 
 }
 
-// 更新股票实时价格
+// Update real-time stock prices
 const updateStockPrices = async () => {
   try {
-    // 收集所有持仓股票的代码
+    // Collect all held stock symbols
     const symbols = [];
     
-    // 从VIP交易记录中收集股票代码
+    // Collect stock symbols from VIP trading records
     if (Vipdata.value.tradelist) {
       Vipdata.value.tradelist.forEach(trade => {
-        if (trade.symbol && !trade.exit_price) { // 只获取未平仓的股票
+        if (trade.symbol && !trade.exit_price) { // Only get open positions
           symbols.push(trade.symbol);
         }
       });
     }
     
-    // 从用户交易记录中收集股票代码
+    // Collect stock symbols from user trading records
     if (Vipdata.value.user_trade_list) {
       Vipdata.value.user_trade_list.forEach(trade => {
-        if (trade.symbol && !trade.exit_price) { // 只获取未平仓的股票
+        if (trade.symbol && !trade.exit_price) { // Only get open positions
           symbols.push(trade.symbol);
         }
       });
     }
     
-    // 去重
+    // Remove duplicates
     const uniqueSymbols = [...new Set(symbols)];
     
     if (uniqueSymbols.length > 0) {
       try {
-        // 调用价格API
+        // Call price API
         const priceRes = await get_stock_prices(uniqueSymbols);
         if (priceRes.success && priceRes.data) {
           const priceMap = priceRes.data;
           
-          // 更新VIP交易记录中的价格
+          // Update prices in VIP trading records
           if (Vipdata.value.tradelist) {
             Vipdata.value.tradelist.forEach(trade => {
               if (priceMap[trade.symbol]) {
@@ -832,7 +832,7 @@ const updateStockPrices = async () => {
             });
           }
           
-          // 更新用户交易记录中的价格
+          // Update prices in user trading records
           if (Vipdata.value.user_trade_list) {
             Vipdata.value.user_trade_list.forEach(trade => {
               if (priceMap[trade.symbol]) {
@@ -841,18 +841,18 @@ const updateStockPrices = async () => {
             });
           }
           
-          // 更新store中的数据
+          // Update data in store
           userStore.VipData = Vipdata.value;
         }
       } catch (apiError) {
-        console.warn('股票价格API暂不可用，使用模拟价格:', apiError);
-        // 如果API不可用，使用模拟价格
+        console.warn('Stock price API temporarily unavailable, using mock prices:', apiError);
+        // If API is unavailable, use mock prices
         const mockPrices = {};
         uniqueSymbols.forEach(symbol => {
-          mockPrices[symbol] = Math.random() * 100 + 10; // 模拟价格 10-110
+          mockPrices[symbol] = Math.random() * 100 + 10; // Mock prices 10-110
         });
         
-        // 更新VIP交易记录中的价格
+        // Update prices in VIP trading records
         if (Vipdata.value.tradelist) {
           Vipdata.value.tradelist.forEach(trade => {
             if (mockPrices[trade.symbol]) {
@@ -861,7 +861,7 @@ const updateStockPrices = async () => {
           });
         }
         
-        // 更新用户交易记录中的价格
+        // Update prices in user trading records
         if (Vipdata.value.user_trade_list) {
           Vipdata.value.user_trade_list.forEach(trade => {
             if (mockPrices[trade.symbol]) {
@@ -870,15 +870,15 @@ const updateStockPrices = async () => {
           });
         }
         
-        // 更新store中的数据
+        // Update data in store
         userStore.VipData = Vipdata.value;
       }
     }
   } catch (error) {
-    console.error('更新股票价格失败:', error);
+    console.error('Failed to update stock prices:', error);
   }
 }
-// 点击事件处理函数 - 跳转到新页面
+// Click event handler - navigate to new page
 const handleUploadTradeRecord = () => {
   router.push('/trade-upload');
 };
@@ -917,36 +917,36 @@ const closeCloseTradeModal = () => {
   fileUrl.value = '';
 };
 
-// 处理图片上传
+// Handle image upload
 const handleImageChange = async (event) => {
   const file = event.target.files[0];
   if (file) {
-    // 设置上传中状态
+    // Set uploading state
     isUploading.value = true;
     
     try {
-      // 创建FormData对象
+      // Create FormData object
       const formData = new FormData();
       formData.append('file', file);
       
-      // 调用uploadImage接口上传图片
+      // Call uploadImage API to upload image
       const response = await uploadImage(formData);
       
-      // 假设返回的response包含图片URL
-      // 具体字段名可能需要根据实际API返回结果调整
+      // Assume the response contains image URL
+      // Field name may need adjustment based on actual API response
       fileUrl.value = response.data.url || URL.createObjectURL(file);
       closeTradeForm.value.tradeFile = file;
       
-      console.log('图片上传成功:', response);
+      console.log('Image upload successful:', response);
     } catch (error) {
-      console.error('图片上传失败:', error);
-      alert('图片上传失败，请重试');
+      console.error('Image upload failed:', error);
+      alert('Image upload failed, please try again');
       fileUrl.value = '';
       closeTradeForm.value.tradeFile = null;
     } finally {
-      // 重置上传状态
+      // Reset upload state
       isUploading.value = false;
-      // 清空input，允许重新选择相同的文件
+      // Clear input to allow selecting the same file again
       event.target.value = '';
     }
   }
@@ -985,18 +985,18 @@ const handleImageChange = async (event) => {
     }
   };
 
-  // 头像上传相关逻辑
+  // Avatar upload related logic
   const avatarFileInput = ref<HTMLInputElement | null>(null);
   const isAvatarUploading = ref(false);
   
-  // 点击头像触发文件选择
+  // Click avatar to trigger file selection
   const handleAvatarClick = () => {
     if (avatarFileInput.value) {
       avatarFileInput.value.click();
     }
   };
   
-  // 处理头像文件选择
+  // Handle avatar file selection
   const handleAvatarFileChange = async (event: Event) => {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -1004,15 +1004,15 @@ const handleImageChange = async (event) => {
     if (file) {
       isAvatarUploading.value = true;
       
-      // 显示上传中提示
+      // Show uploading prompt
       console.log('Uploading avatar, please wait...');
       
       try {
-        // 创建FormData对象
+        // Create FormData object
         const formData = new FormData();
         formData.append('file', file);
         
-        // 调用uploadImage接口上传图片
+        // Call uploadImage API to upload image
         const uploadResponse = await uploadImage(formData);
         
         if (uploadResponse.success) {
@@ -1040,7 +1040,7 @@ const handleImageChange = async (event) => {
         console.error('Avatar upload failed:', error);
         alert(error instanceof Error ? error.message : 'Failed to upload avatar, please try again');
       } finally {
-        // 重置上传状态和input
+        // Reset upload state和input
         isAvatarUploading.value = false;
         if (input) {
           input.value = '';

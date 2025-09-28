@@ -92,7 +92,7 @@
             <lay-input v-model="model11.name"></lay-input>
           </lay-form-item>
           <lay-form-item label="会员权益" prop="benefits">
-            <lay-textarea v-model="model11.benefits" :rows="3"></lay-textarea>
+            <lay-textarea v-model="model11.benefits" :rows="5" placeholder="每行输入一个权益，例如：&#10;Basic Trading Tools&#10;Standard Market Analysis&#10;Community Access&#10;Standard Support"></lay-textarea>
           </lay-form-item>
           <lay-form-item label="最低交易量" prop="min_trading_volume">
             <lay-input v-model="model11.min_trading_volume" type="number"></lay-input>
@@ -321,6 +321,10 @@ const changeVisible11 = (text: string, row?: MembershipLevel) => {
   if (row) {
     // 编辑模式，复制行数据
     model11.value = { ...row }
+    // 将逗号分隔的权益转换为换行符分隔，便于编辑
+    if (model11.value.benefits) {
+      model11.value.benefits = model11.value.benefits.split(',').join('\n');
+    }
   } else {
     // 新增模式，清空表单
     model11.value = {
@@ -348,11 +352,16 @@ async function toSubmit() {
       return;
     }
     
+    // 处理会员权益：将换行符转换为逗号分隔
+    const processedBenefits = model11.value.benefits
+      ? model11.value.benefits.split('\n').filter(line => line.trim()).join(',')
+      : '';
+    
     // 创建提交数据对象，确保与后端接口匹配
     const submitData = {
       level: model11.value.level,
       name: model11.value.name,
-      benefits: model11.value.benefits,
+      benefits: processedBenefits,
       min_trading_volume: model11.value.min_trading_volume,
       monthly_profit_ratio: model11.value.monthly_profit_ratio,
       commission_ratio: model11.value.commission_ratio,

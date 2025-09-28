@@ -34,6 +34,7 @@
                 :allow-clear="true"
                 placeholder="请选择"
               >
+               <lay-select-option value="superadmin" label="超级管理员" v-if="!model11.trader_uuid"></lay-select-option>
                 <lay-select-option value="admin" label="管理员"></lay-select-option>
                 <lay-select-option value="user" label="普通用户"></lay-select-option>
               </lay-select>
@@ -150,6 +151,7 @@
           </lay-form-item>
           <lay-form-item label="角色" prop="role">
             <lay-select v-model="model11.role" style="width: 100%">
+               <lay-select-option value="superadmin" label="超级管理员" v-if="!model11.trader_uuid"></lay-select-option>
               <lay-select-option value="user" label="普通用户"></lay-select-option>
               <lay-select-option value="admin" label="管理员"></lay-select-option>
             </lay-select>

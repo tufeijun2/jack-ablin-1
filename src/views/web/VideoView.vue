@@ -112,7 +112,7 @@
                   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2ZM13 17H11V11H13V17ZM13 9H11V7H13V9Z" fill="#b0c4e6"/>
                   </svg>
-                  <span>{{ value.last_update }}</span>
+                  <span>{{ formatUSDate(value.last_update) }}</span>
                 </div>
                 <div class="meta-item">
                   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -152,6 +152,25 @@ let activeFilter = ref('all');
 onMounted(() => {
   getVipDashboardData();
 });
+
+// 格式化日期为美国时间格式
+const formatUSDate = (dateString: string) => {
+  if (!dateString) return '';
+  
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  } catch (error) {
+    return dateString; // 如果解析失败，返回原始字符串
+  }
+};
 
 const getVipDashboardData = async () => {
   const res = await getvideos(null);

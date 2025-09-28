@@ -159,7 +159,7 @@
             <div class="secondary-info">
               <div class="secondary-info-item" >
                 <span class="secondary-info-label">Entry Date</span>
-                <span class="secondary-info-value">{{formatEntryDate(value.entry_date)}}</span>
+                <span class="secondary-info-value">{{formatUSDate(value.entry_date)}}</span>
               </div>
               
               <div class="secondary-info-item">
@@ -807,8 +807,8 @@ const getStatusText = (status: string, ratio: number) => {
   }
 };
 
-// 格式化买入日期，使用美国时间格式
-const formatEntryDate = (dateString: string) => {
+// 格式化日期为美国时间格式
+const formatUSDate = (dateString: string) => {
   if (!dateString) return '';
   
   try {
@@ -816,11 +816,13 @@ const formatEntryDate = (dateString: string) => {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
     });
   } catch (error) {
-    // 如果解析失败，返回原始字符串
-    return dateString;
+    return dateString; // 如果解析失败，返回原始字符串
   }
 };
 

@@ -55,49 +55,42 @@ class Http {
                     return response.data;
                 case 500:
                     return response.data;
-                case 99998:
-                    layer.confirm(
-                    '会话超时, 请重新登录', 
-                    { icon : 2, yes: function(){
-                        router.push('/userlogin');
-                        layer.closeAll()
-                    }});
+                case 401:
                     return response.data;
                 default:
                     return response.data;
             }
         }, error => {
             // 错误处理
+            let message = ''
             if (error.response) {
                 // 服务器返回错误状态码
                 const status = error.response.status;
-                const message = error.response.data?.message || error.response.data?.msg || '请求失败';
-                
+                message = error.response.data?.message || error.response.data?.msg || '请求失败';
+                 const userInfoStore = useUserStore();
                 if (status === 401) {
-                    // layer.confirm(
-                    //     "You haven‘t logged in yet, please log in first", 
-                    //     { icon : 2, yes: function(){
-                    //         router.push('/userlogin');
-                    //         layer.closeAll()
-                    //     }}
-                    // );
+                layer.msg('Login and failure, please log in again!', { icon: 2 });
+                userInfoStore.token=null
+                userInfoStore.userInfo=null
+                router.push('/userlogin');
                 } else if (status === 403) {
-                    layer.msg('您没有权限执行此操作', { icon: 2 });
+                    
+                    layer.msg('You do not have permission to perform this action', { icon: 2 });
                 } else if (status === 404) {
-                    layer.msg('请求的资源不存在', { icon: 2 });
+                    layer.msg('The requested resource does not exist', { icon: 2 });
                 } else if (status >= 500) {
-                    layer.msg('服务器内部错误', { icon: 2 });
+                    //layer.msg('服务器内部错误', { icon: 2 });
                 } else {
                    // layer.msg(message, { icon: 2 });
                 }
             } else if (error.request) {
                 // 请求发出但没有收到响应
-                layer.msg('网络连接失败，请检查网络设置', { icon: 2 });
+                layer.msg('The network connection failed. Please check the network settings', { icon: 2 });
             } else {
                 // 请求配置出错
                 layer.msg('请求配置错误', { icon: 2 });
             }
-            return Promise.reject(error)
+            return {success:true,message:'The request was successful, but an error occurred and the request was not executed:'+message}
         })
     }
 

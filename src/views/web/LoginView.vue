@@ -13,13 +13,13 @@
       <form @submit.prevent="handleLogin">
         <div class="form-group">
           <label for="username">Username</label>
-          <input type="text" id="username" v-model="loginUsername" placeholder="Enter your username" required>
+          <input type="text" id="username" v-model="loginUsername" placeholder="Enter your username">
           <div v-if="usernameError" class="error-message">{{ usernameError }}</div>
         </div>
         
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" v-model="loginPassword" placeholder="Enter your password" required>
+          <input type="password" id="password" v-model="loginPassword" placeholder="Enter your password">
           <div v-if="passwordError" class="error-message">{{ passwordError }}</div>
         </div>
         

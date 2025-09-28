@@ -38,27 +38,27 @@
     <div class="glass-stat-card-grid" style="max-width: 1400px;">
       <div class="glass-stat-card">
         <div class="glass-stat-label">Initial Capital</div>
-        <div class="glass-stat-value" style="color:#00ffae; font-size: 18px;">{{ user_info.initial_asset }}<span class="glass-stat-unit">$</span></div>
+        <div class="glass-stat-value" style="color:#00ffae; font-size: 18px;">{{ formatCurrency(user_info.initial_asset) }}<span class="glass-stat-unit">$</span></div>
       </div>
       <div class="glass-stat-card">
         <div class="glass-stat-label">Total Profit</div>
-        <div class="glass-stat-value" style="color:#ffd700; font-size: 18px;">{{ user_info.utotle_profit }}<span class="glass-stat-unit">$</span></div>
+        <div class="glass-stat-value" style="color:#ffd700; font-size: 18px;">{{ formatCurrency(user_info.utotle_profit) }}<span class="glass-stat-unit">$</span></div>
       </div>
       <div class="glass-stat-card">
         <div class="glass-stat-label">Monthly Profit</div>
-        <div class="glass-stat-value" style="color:#52c41a; font-size: 18px;">{{ user_info.umonth_profit }}<span class="glass-stat-unit">$</span></div>
+        <div class="glass-stat-value" style="color:#52c41a; font-size: 18px;">{{ formatCurrency(user_info.umonth_profit) }}<span class="glass-stat-unit">$</span></div>
       </div>
       <div class="glass-stat-card">
         <div class="glass-stat-label">Last Month Profit</div>
-        <div class="glass-stat-value" style="color:#52c41a; font-size: 18px;">{{ user_info.uprvmonth_profit }}<span class="glass-stat-unit">$</span></div>
+        <div class="glass-stat-value" style="color:#52c41a; font-size: 18px;">{{ formatCurrency(user_info.uprvmonth_profit) }}<span class="glass-stat-unit">$</span></div>
       </div>
       <div class="glass-stat-card">
         <div class="glass-stat-label">Holding Profit</div>
-        <div class="glass-stat-value" id="holding-profit-card" style="color:#faad14; font-size: 18px;">{{ user_info.hold_profit }}<span class="glass-stat-unit">$</span></div>
+        <div class="glass-stat-value" id="holding-profit-card" style="color:#faad14; font-size: 18px;">{{ formatCurrency(user_info.hold_profit) }}<span class="glass-stat-unit">$</span></div>
       </div>
        <div class="glass-stat-card">
         <div class="glass-stat-label">Available Points</div>
-        <div class="glass-stat-value" id="holding-profit-card" style="color:#faad14; font-size: 18px;">{{ user_info.membership_points }}</div>
+        <div class="glass-stat-value" id="holding-profit-card" style="color:#faad14; font-size: 18px;">{{ formatCurrency(user_info.membership_points) }}</div>
       </div>
     </div>
 
@@ -73,7 +73,7 @@
         <div class="announcement-content">{{ value.content }}</div>
         <div class="announcement-meta">
           <span>Publisher: {{ value.publisher }}</span>
-          <span><span class="us-time" data-time="{{ value.publish_time }}">{{ value.publish_time }}</span></span>
+          <span><span class="us-time" data-time="{{ value.publish_time }}">{{ formatUSDate(value.publish_time) }}</span></span>
         </div>
       </div>
       <!-- VIP交易记录表格区域 -->
@@ -100,14 +100,14 @@
               <td class="symbol-cell">{{ trade.trade_market }}</td>
               <td class="symbol-cell"><span class="trade-type-table">{{ trade.direction==1?'Long':'Short' }}</span></td>
               <td class="symbol-cell">{{ trade.symbol }}</td>
-              <td>${{ trade.entry_price }}</td>
+              <td>${{ formatCurrency(trade.entry_price) }}</td>
               <td class="current-price" :data-symbol="trade.symbol">
-                ${{ trade.current_price || '-' }}
+                ${{ trade.current_price ? formatCurrency(trade.current_price) : '-' }}
               </td>
-              <td>${{ trade.exit_price || '-' }}</td>
+              <td>${{ trade.exit_price ? formatCurrency(trade.exit_price) : '-' }}</td>
               <td>{{ trade.size }}</td>
               <td class="pnl-cell">
-                <span class="trade-profit-table" >{{ trade.profitAmount }}</span>
+                <span class="trade-profit-table" >{{ formatCurrency(trade.profitAmount) }}</span>
               </td>
               <td class="roi-cell">
                 <span class="trade-profit-table" >
@@ -115,7 +115,7 @@
                 </span>
               </td>
               <td class="date-cell">
-                {{ trade.entry_date }}
+                {{ formatUSDate(trade.entry_date) }}
               </td>
             </tr>
           </tbody>
@@ -129,14 +129,14 @@
             <span class="trade-symbol">{{ t.trade_market || '-' }}</span>
             <span class="trade-symbol">{{ t.symbol || '-' }}</span>
             <span :class="['trade-type', t.direction==1 ? 'sell' : 'buy']">{{ t.direction==1 ? 'Long' : 'Short' }}</span>
-            <span class="trade-date">{{ t.entry_date }}</span>
+            <span class="trade-date">{{ formatUSDate(t.entry_date) }}</span>
           </div>
           <div class="trade-card-body">
             <div class="trade-info-group">
-              <div><span class="label">Entry:</span> $<b>{{ t.entry_price }}</b></div>
+              <div><span class="label">Entry:</span> $<b>{{ formatCurrency(t.entry_price) }}</b></div>
            
-              <div v-if="t.exit_price"><span class="label">Exit:</span> $<b>{{ t.exit_price || '-' }}</b></div>
-              <div v-else><span class="label" >Current:</span> $<b>{{ t.current_price || '-' }}</b></div>
+              <div v-if="t.exit_price"><span class="label">Exit:</span> $<b>{{ formatCurrency(t.exit_price) }}</b></div>
+              <div v-else><span class="label" >Current:</span> $<b>{{ formatCurrency(t.current_price) }}</b></div>
                <div><span class="label">Qty:</span> <b>{{ t.quantity }}</b></div>
             </div>
           
@@ -144,10 +144,10 @@
               <div>
                 <span class="label">P&L:</span>
                 <span class="trade-profit-table" v-if="t.exit_price">
-                  {{ t.currency }}{{ ((t.exit_price-t.entry_price)*t.quantity*t.direction).toFixed(2) }}
+                  {{ t.currency }}{{ formatCurrency(((t.exit_price-t.entry_price)*t.quantity*t.direction)) }}
                 </span>
                  <span class="trade-profit-table" v-else>
-                  {{ t.currency }}{{  ((t.current_price-t.entry_price)*t.quantity*t.direction).toFixed(2) }}
+                  {{ t.currency }}{{ formatCurrency(((t.current_price-t.entry_price)*t.quantity*t.direction)) }}
                 </span>
               </div>
               <div>
@@ -161,8 +161,8 @@
                
 
               </div>
-               <div v-if="exit_date"><span class="label">Exit Date:</span> <b>{{ t.exit_time || '-' }}</b></div>
-               <div v-else><span class="label">Entry Date:</span> <b>{{ t.entry_time || '-' }}</b></div>
+               <div v-if="exit_date"><span class="label">Exit Date:</span> <b>{{ t.exit_time ? formatUSDate(t.exit_time) : '-' }}</b></div>
+               <div v-else><span class="label">Entry Date:</span> <b>{{ t.entry_time ? formatUSDate(t.entry_time) : '-' }}</b></div>
             </div>
           </div>
         </div>
@@ -176,18 +176,18 @@
         <div class="flex-row mb-24">
             <div class="card" style="flex:1;min-width:220px;">
                 <div class="glass-stat-label">Total Assets</div>
-                <div class="glass-stat-value gold-number">$ {{ user_info.initial_asset+user_info.utotle_profit+user_info.now_amount-user_info.hold_amount }}</div>
+                <div class="glass-stat-value gold-number">$ {{ formatCurrency(user_info.initial_asset+user_info.utotle_profit+user_info.now_amount-user_info.hold_amount) }}</div>
                 <div class="progress-bar" style="width:85%"></div>
                
             </div>
             <div class="card" style="flex:1;min-width:220px;">
                 <div class="glass-stat-label">Total Market Value</div>
-                <div class="glass-stat-value" style="color:#00ffae;">${{ user_info.now_amount }}</div>
+                <div class="glass-stat-value" style="color:#00ffae;">${{ formatCurrency(user_info.now_amount) }}</div>
                 <div class="progress-bar" style="width:65%;background:#00ffae;"></div>
             </div>
             <div class="card" style="flex:1;min-width:220px;">
                 <div class="glass-stat-label">Available Funds</div>
-                <div class="glass-stat-value" style="color:#faad14;">${{ user_info.initial_asset+user_info.utotle_profit-user_info.hold_amount }}</div>
+                <div class="glass-stat-value" style="color:#faad14;">${{ formatCurrency(user_info.initial_asset+user_info.utotle_profit-user_info.hold_amount) }}</div>
                 <div class="progress-bar" style="width:50%;background:#faad14;"></div>
             </div>
         </div>
@@ -202,24 +202,24 @@
                  <span class="trade-symbol">{{ t.symbol || '-' }}</span>
                   <span class="trade-type sell">{{t.direction==1?"Long":"Short"}}</span>
                 
-                <span class="trade-date">{{ t.entry_date }}</span>
+                <span class="trade-date">{{ formatUSDate(t.entry_date) }}</span>
               </div>
               <div class="trade-card-body">
                 <div class="trade-info-group">
-                  <div><span class="label">Entry:</span> <b>{{ t.currency }}{{ t.entry_price }}</b></div>
+                  <div><span class="label">Entry:</span> <b>{{ t.currency }}{{ formatCurrency(t.entry_price) }}</b></div>
                   
-                  <div v-if="t.exit_price"><span class="label">Exit:</span> <b>{{ t.currency }}{{ t.exit_price }}</b></div>
-                  <div v-else><span class="label">Current:</span> <b>{{ t.currency }}{{ t.current_price }}</b></div>
+                  <div v-if="t.exit_price"><span class="label">Exit:</span> <b>{{ t.currency }}{{ formatCurrency(t.exit_price) }}</b></div>
+                  <div v-else><span class="label">Current:</span> <b>{{ t.currency }}{{ formatCurrency(t.current_price) }}</b></div>
                    <div><span class="label">Qty:</span> <b>{{ t.size }}</b></div>
                 </div>
                 <div class="trade-info-group">
                    <div>
                     <span class="label">P&L:</span>
                     <span class="trade-profit-table" v-if="t.exit_price">
-                      {{ t.currency }}{{ ((t.exit_price-t.entry_price)*t.size*t.direction).toFixed(2) }}
+                      {{ t.currency }}{{ formatCurrency(((t.exit_price-t.entry_price)*t.size*t.direction)) }}
                     </span>
                     <span class="trade-profit-table" v-else>
-                      {{ t.currency }}{{  ((t.current_price-t.entry_price)*t.size*t.direction).toFixed(2) }}
+                      {{ t.currency }}{{ formatCurrency(((t.current_price-t.entry_price)*t.size*t.direction)) }}
                     </span>
                   </div>
                   <div>
@@ -231,8 +231,8 @@
                       {{((t.current_price-t.entry_price)/t.entry_price*t.direction*100).toFixed(2) }}%
                     </span>
                   </div>
-                   <div v-if="t.exit_date"><span class="label">Exit Date:</span> <b>{{ t.exit_date }}</b></div>
-                   <div v-else><span class="label">Entry Date:</span> <b>{{ t.entry_date }}</b></div>
+                   <div v-if="t.exit_date"><span class="label">Exit Date:</span> <b>{{ formatUSDate(t.exit_date) }}</b></div>
+                   <div v-else><span class="label">Entry Date:</span> <b>{{ formatUSDate(t.entry_date) }}</b></div>
                 </div>
               <!-- 关闭交易按钮 - 仅当退出价格为空时显示 -->
               <div v-if="!t.exit_price" class="trade-close-btn-container" style="margin-top:12px;">
@@ -324,12 +324,12 @@
               </td>
               <td style="text-align:right;font-weight:900;">
                 <span style="font-size:1.12rem;" :style="{color: parseFloat(user.monthly_profit) > 0 ? '#00ffae' : parseFloat(user.totalProfit) < 0 ? '#ff4d4f' : '#b0c4e6'}">
-                  {{ user.utotle_profit }}
+                  {{ formatCurrency(user.utotle_profit) }}
                 </span>
               </td>
               <td style="text-align:right;font-weight:900;">
                 <span style="font-size:1.12rem;" :style="{color: parseFloat(user.profitRate) > 0 ? '#52c41a' : parseFloat(user.profitRate) < 0 ? '#ff4d4f' : '#b0c4e6'}">
-                  {{ user.umonth_profit }}
+                  {{ formatCurrency(user.umonth_profit) }}
                 </span>
               </td>
             </tr>
@@ -363,7 +363,7 @@
                 </div>
                 <h4 style="color:#fff;margin-bottom:16px;">{{ value.title }}</h4>
                 <div style="color:#b0c4e6;margin-bottom:12px;height:140px;overflow-y: auto;">{{ value.description }}</div>
-                <div style="color:#b0c4e6;margin-bottom:12px;">Last Updated: {{ value.last_update }}</div>
+                <div style="color:#b0c4e6;margin-bottom:12px;">Last Updated: {{ formatUSDate(value.last_update) }}</div>
             </div>
         </div>
         <div style="text-align:center;margin-top:18px;">
@@ -383,7 +383,7 @@
                     </div>
                     <h4 style="color:#fff;margin-bottom:16px;">{{ video.title }}</h4>
                     <div style="color:#b0c4e6;margin-bottom:12px;height:140px;overflow-y: scroll;">{{ video.description }}</div>
-                    <div style="color:#b0c4e6;margin-bottom:12px;">Last Updated: {{ video.last_update }}</div>
+                    <div style="color:#b0c4e6;margin-bottom:12px;">Last Updated: {{ formatUSDate(video.last_update) }}</div>
                 </div>
             </div>
         </div>
@@ -406,7 +406,7 @@
                             <h4 style="color:#fff;margin-bottom:12px;">{{ document.title }}</h4>
                             <div style="color:#b0c4e6;margin-bottom:16px;">{{ document.description }}</div>
                             <div style="display:flex;align-items:center;gap:16px;color:#b0c4e6;font-size:0.9rem;">
-                                <span>Last Updated: {{ document.last_update }}</span>
+                                <span>Last Updated: {{ formatUSDate(document.last_update) }}</span>
                             </div>
                             <div style="margin-top:16px;display:flex;gap:16px;">
                                 <a :href="document.file_url" download="" target="_blank" style="color:#FFD700;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
@@ -439,7 +439,7 @@
                     <h4 style="color:#fff;margin-bottom:12px;">{{ value.title }}</h4>
                     <div style="color:#b0c4e6;margin-bottom:16px;">{{ value.description }}</div>
                     <div style="display:flex;align-items:center;gap:16px;color:#b0c4e6;font-size:0.9rem;">
-                        <span>Last Updated: {{ value.last_update }}</span>
+                        <span>Last Updated: {{ formatUSDate(value.last_update) }}</span>
                     </div>
                     <div style="margin-top:16px;display:flex;gap:16px;">
                         <a :href="value.file_url" download="" target="_blank" style="color:#FFD700;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
@@ -688,6 +688,38 @@ const openDocumentsModal = () => {
 // 关闭文档弹窗
 const closeDocumentsModal = () => {
   isDocumentsModalOpen.value = false;
+};
+
+// 格式化日期为美国时间格式
+const formatUSDate = (dateString: string) => {
+  if (!dateString) return '';
+  
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  } catch (error) {
+    return dateString; // 如果解析失败，返回原始字符串
+  }
+};
+
+// 格式化金额，添加千分位分隔符
+const formatCurrency = (amount: number | string) => {
+  if (amount === null || amount === undefined || amount === '') return '0';
+  
+  const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+  if (isNaN(num)) return '0';
+  
+  return num.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
 };
 
 // 模拟数据

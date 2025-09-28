@@ -79,7 +79,7 @@
                         </span>
                       </div>
                       <div class="stock-price-info">
-                        <span class="current-price">{{ item.put_time }}</span>
+                        <span class="current-price">{{ formatDate(item.put_time) }}</span>
                         <span class="price-change negative">
                           Recommended date
                         </span>

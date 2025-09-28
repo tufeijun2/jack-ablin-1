@@ -40,8 +40,12 @@
         </div>
         
         <div class="form-group">
-          <label for="entry_date">Entry Date</label>
-          <input type="datetime-local" id="entry_date" v-model="entryDate" required>
+          <label for="entry_date">Entry Date (US Eastern Time)</label>
+          <div class="datetime-input-container">
+            <input type="date" id="entry_date" v-model="selectedDate" required @change="updateDateTime">
+            <input type="time" id="entry_time" v-model="selectedTime" required @change="updateDateTime">
+          </div>
+          <div class="time-display">Current: {{ entryDate }}</div>
           <div v-if="entryDateError" class="error-message">{{ entryDateError }}</div>
         </div>
         
@@ -92,7 +96,52 @@ const direction = ref('');
 const symbol = ref('');
 const entryPrice = ref<number>(0);
 const quantity = ref<number>(0);
-const entryDate = ref(new Date().toISOString().slice(0, 16)); // 格式化为datetime-local格式
+// 获取美国东部时间并格式化为可读格式
+const getUSTime = () => {
+  const now = new Date();
+  // 转换为美国东部时间 (UTC-5 或 UTC-4，取决于夏令时)
+  const usTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+  
+  // 格式化为可读的美国时间格式
+  const year = usTime.getFullYear();
+  const month = String(usTime.getMonth() + 1).padStart(2, '0');
+  const day = String(usTime.getDate()).padStart(2, '0');
+  const hours = String(usTime.getHours()).padStart(2, '0');
+  const minutes = String(usTime.getMinutes()).padStart(2, '0');
+  
+  return `${year}/${month}/${day} ${hours}:${minutes} EST`;
+};
+
+// 分离日期和时间
+const getUSDateAndTime = () => {
+  const now = new Date();
+  const usTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+  
+  const year = usTime.getFullYear();
+  const month = String(usTime.getMonth() + 1).padStart(2, '0');
+  const day = String(usTime.getDate()).padStart(2, '0');
+  const hours = String(usTime.getHours()).padStart(2, '0');
+  const minutes = String(usTime.getMinutes()).padStart(2, '0');
+  
+  return {
+    date: `${year}-${month}-${day}`,
+    time: `${hours}:${minutes}`
+  };
+};
+
+const usDateTime = getUSDateAndTime();
+const selectedDate = ref(usDateTime.date);
+const selectedTime = ref(usDateTime.time);
+const entryDate = ref(getUSTime());
+
+// 更新日期时间显示
+const updateDateTime = () => {
+  if (selectedDate.value && selectedTime.value) {
+    const [year, month, day] = selectedDate.value.split('-');
+    const [hours, minutes] = selectedTime.value.split(':');
+    entryDate.value = `${year}/${month}/${day} ${hours}:${minutes} EST`;
+  }
+};
 const assetType = ref('');
 const tradeType = ref('');
 const tradeFile = ref<File | null>(null);
@@ -265,12 +314,16 @@ const handleSubmit = async () => {
     }
     
     // 构建提交数据
+    // 将选择的日期时间转换为ISO格式用于提交
+    const selectedDateTime = new Date(`${selectedDate.value}T${selectedTime.value}`);
+    const isoTime = selectedDateTime.toISOString();
+    
     const submitData = {
       market: market.value,
       symbol: symbol.value,
       entry_price: entryPrice.value,
       size: quantity.value,
-      entry_date: entryDate.value,
+      entry_date: isoTime,
       asset_type: assetType.value,
       direction: direction.value,
       trade_type: '',
@@ -492,6 +545,26 @@ const handleSubmit = async () => {
 }
 .form-group input::placeholder {
   color: var(--text-secondary);
+}
+
+.datetime-input-container {
+  display: flex;
+  gap: 10px;
+}
+
+.datetime-input-container input {
+  flex: 1;
+}
+
+.time-display {
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-align: center;
 }
 
 .error-message {

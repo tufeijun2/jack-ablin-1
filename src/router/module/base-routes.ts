@@ -21,7 +21,7 @@ export default [
   {
     path: '/Register',
     component: () => import('../../views/web/RegisterView.vue'),
-    meta: { title: '注册页面', requireAuth: false },
+    meta: { title: 'Registration page', requireAuth: false },
   },
   {
     path: '/trade-upload',

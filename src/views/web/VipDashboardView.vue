@@ -234,9 +234,9 @@
                    <div v-if="t.exit_date"><span class="label">Exit Date:</span> <b>{{ formatUSDate(t.exit_date) }}</b></div>
                    <div v-else><span class="label">Entry Date:</span> <b>{{ formatUSDate(t.entry_date) }}</b></div>
                 </div>
-              <!-- 关闭交易按钮 - 仅当退出价格为空时显示 -->
+              <!-- Close Trade Button - Only show when exit price is empty -->
               <div v-if="!t.exit_price" class="trade-close-btn-container" style="margin-top:12px;">
-                <a class="styled-button close-trade-btn" @click="openCloseTradeModal(t)" style="background:linear-gradient(90deg, #FFD700 0%, #FFB300 100%);color:#181F2A;padding:8px 10px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size: 12px;">关闭交易</a>
+                <a class="styled-button close-trade-btn" @click="openCloseTradeModal(t)" style="background:linear-gradient(90deg, #FFD700 0%, #FFB300 100%);color:#181F2A;padding:8px 10px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size: 12px;">Close Trade</a>
               </div>
               
             </div>
@@ -245,7 +245,7 @@
             
           </div>
         
-        <!-- 关闭交易弹窗 -->
+        <!-- Close Trade Modal -->
         <div id="close-trade-modal" v-show="isCloseTradeModalOpen" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:2000;align-items:center;justify-content:center;display:flex;">
           <div style="background:#232B3E;border-radius:18px;max-width:600px;width:90vw;max-height:92vh;overflow:auto;padding:32px 24px 24px 24px;position:relative;">
             <button @click="closeCloseTradeModal" style="position:absolute;right:18px;top:18px;background:none;border:none;color:#fff;font-size:28px;cursor:pointer;">×</button>
@@ -887,7 +887,7 @@ const handleSettingsClick = () => {
   router.push('/settings');
 };
 
-// 关闭交易弹窗相关状态和函数
+// Close Trade Modal related state and functions
 const isCloseTradeModalOpen = ref(false);
 const selectedTrade = ref(null);
 const closeTradeForm = ref({
@@ -896,21 +896,21 @@ const closeTradeForm = ref({
   tradeFile: null
 });
 const fileUrl = ref('');
-const isUploading = ref(false); // 上传状态标志
+const isUploading = ref(false); // Upload status flag
 
-// 打开关闭交易弹窗
+// Open close trade modal
 const openCloseTradeModal = (trade) => {
   selectedTrade.value = trade;
   closeTradeForm.value = {
     exitPrice: '',
-    exitDate: new Date().toISOString().split('T')[0], // 默认今天
+    exitDate: new Date().toISOString().split('T')[0], // Default today
     tradeFile: null
   };
   fileUrl.value = '';
   isCloseTradeModalOpen.value = true;
 };
 
-// 关闭关闭交易弹窗
+// Close close trade modal
 const closeCloseTradeModal = () => {
   isCloseTradeModalOpen.value = false;
   selectedTrade.value = null;
@@ -952,7 +952,7 @@ const handleImageChange = async (event) => {
   }
 };
 
-// 确认关闭交易
+// Confirm close trade
   const confirmCloseTrade = async () => {
     if (!selectedTrade.value || !closeTradeForm.value.exitPrice || !closeTradeForm.value.exitDate) {
       alert('Please fill in the exit price and exit date');
@@ -960,19 +960,19 @@ const handleImageChange = async (event) => {
     }
     
     try {
-      // 构造请求数据
+      // Construct request data
       const tradeData = {
         id: selectedTrade.value.id,
         exit_price: closeTradeForm.value.exitPrice,
         exit_date: closeTradeForm.value.exitDate,
-        image_url: fileUrl.value // 传递图片URL
+        image_url: fileUrl.value // Pass image URL
       };
       
-      // 调用API关闭交易
+      // Call API to close trade
       const response = await closetrades(tradeData);
       
       if (response.success) {
-        // 成功后刷新数据
+        // Refresh data after success
         await getVipDashboardData();
         closeCloseTradeModal();
         alert('Transaction closed successfully');

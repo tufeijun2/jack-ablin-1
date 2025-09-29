@@ -572,9 +572,13 @@ body {
 }
 
 .stock-symbol {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: #ffd700;
+  background: linear-gradient(135deg, #ffd700 0%, #ffb347 50%, #ffd700 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
 }
 
 .stock-name {

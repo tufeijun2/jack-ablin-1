@@ -946,11 +946,27 @@ body {
 }
 
 .stock-symbol {
-  font-size: 1.8rem;
-  font-weight: 900;
-  color: #ffd700;
-  text-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-  letter-spacing: 1px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffd700 0%, #ffb347 50%, #ffd700 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 1px 3px rgba(255, 215, 0, 0.2);
+  letter-spacing: 0.5px;
+  animation: subtleGlow 4s ease-in-out infinite;
+}
+
+@keyframes subtleGlow {
+  0%, 100% { 
+    background-position: 0% 50%;
+    filter: brightness(1);
+  }
+  50% { 
+    background-position: 100% 50%;
+    filter: brightness(1.1);
+  }
 }
 
 .stock-name {

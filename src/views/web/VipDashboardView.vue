@@ -208,8 +208,8 @@
                 <div class="trade-info-group">
                   <div><span class="label">Entry:</span> <b>{{ t.currency }}{{ formatCurrency(t.entry_price) }}</b></div>
                   
-                  <div v-if="t.exit_price"><span class="label">Exit:</span> <b>{{ t.currency }}{{ formatCurrency(t.exit_price) }}</b></div>
-                  <div v-else><span class="label">Current:</span> <b>{{ t.currency }}{{ t.current_price ? formatCurrency(t.current_price) : 'Loading...' }}</b></div>
+                  <div v-if="t.exit_date"><span class="label">Exit Date:</span> <b>{{ formatUSDate(t.exit_date) }}</b></div>
+                  <div v-else><span class="label">Entry Date:</span> <b>{{ formatUSDate(t.entry_date) }}</b></div>
                    <div><span class="label">Qty:</span> <b>{{ t.size }}</b></div>
                 </div>
                 <div class="trade-info-group">
@@ -231,8 +231,8 @@
                       {{ t.current_price ? ((t.current_price-t.entry_price)/t.entry_price*t.direction*100).toFixed(2) + '%' : 'Loading...' }}
                     </span>
                   </div>
-                   <div v-if="t.exit_date"><span class="label">Exit Date:</span> <b>{{ formatUSDate(t.exit_date) }}</b></div>
-                   <div v-else><span class="label">Entry Date:</span> <b>{{ formatUSDate(t.entry_date) }}</b></div>
+                   <div v-if="t.exit_price"><span class="label">Exit:</span> <b>{{ t.currency }}{{ formatCurrency(t.exit_price) }}</b></div>
+                   <div v-else><span class="label">Current:</span> <b>{{ t.currency }}{{ t.current_price ? formatCurrency(t.current_price) : 'Loading...' }}</b></div>
                 </div>
               <!-- Close Trade Button - Only show when exit price is empty -->
               <div v-if="!t.exit_price" class="trade-close-btn-container" style="margin-top:12px;">

@@ -137,6 +137,8 @@
 <script>
 import { getAIHistory } from '@/api/module/web/ai'
 import navcomponent from '../component/nav/nav.vue'
+import { useUserStore } from '@/store';
+import router from '@/router';
 export default {
   name: 'AIHistoryView',
   components: {
@@ -243,6 +245,11 @@ export default {
     }
   },
   mounted() {
+    const userStore = useUserStore();
+    if (!userStore.token) {
+      router.push('/userlogin');
+      return;
+    }
     this.loadRecommendations();
   },
   methods: {
@@ -583,9 +590,13 @@ export default {
 }
 
 .stock-symbol {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #ffd700;
+  font-size: 1.2rem;
+  font-weight: 650;
+  background: linear-gradient(135deg, #ffd700 0%, #ffb347 50%, #ffd700 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
 }
 
 .stock-name {

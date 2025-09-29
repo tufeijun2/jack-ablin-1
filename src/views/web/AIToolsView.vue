@@ -151,12 +151,13 @@
             <div id="stockPickerResults" v-if="!isStockPickerLoading">
               <div v-if="stockRecommendations.length === 0 && !stockPickerError" class="text-center text-muted" style="padding: 3rem 0;">
                 <i class="bi bi-robot" style="font-size: 3rem; opacity: 0.3;"></i>
-                <p style="margin-top: 1rem;">Configure your criteria and click "Generate AI Recommendations" to get started</p>
+                <p style="margin-top: 1rem; color: aqua;">Configure your criteria and click "Generate AI Recommendations" to get started</p>
               </div>
               <div v-if="stockPickerError" class="alert alert-danger">
                 <i class="bi bi-exclamation-triangle"></i>
                 Error generating recommendations: {{ stockPickerError }}
               </div>
+             
               <div v-for="(stock, index) in stockRecommendations" :key="stock.symbol" 
                    class="stock-recommendation result-item" :style="{ animationDelay: `${index * 0.1}s` }">
                 
@@ -372,7 +373,7 @@
             <div id="stockDiagnosisResults" v-if="!isDiagnosisLoading">
               <div v-if="!stockDiagnosis && !diagnosisError" class="text-center text-muted" style="padding: 3rem 0;">
                 <i class="bi bi-search" style="font-size: 3rem; opacity: 0.3;"></i>
-                <p style="margin-top: 1rem;">Enter a stock symbol and click "Run AI Diagnosis" to analyze</p>
+                <p style="margin-top: 1rem;color: aqua;">Enter a stock symbol and click "Run AI Diagnosis" to analyze</p>
               </div>
               <div v-if="diagnosisError" class="alert alert-danger">
                 <i class="bi bi-exclamation-triangle"></i>
@@ -769,9 +770,11 @@ async function runStockPicker() {
     }
     
     const data = await getStockRecommendations(stockPickerCriteria.value);
-    
+    console.log('AI选股返回数据:', data);
     if (!data.success) {
-      throw new Error(data.error || 'Server returned error status');
+      stockPickerError.value=data.error || 'Server returned error status';
+      return;
+      // throw new Error(data.error || 'Server returned error status');
     }
     
     stockRecommendations.value = data.recommendations || [];
@@ -779,7 +782,7 @@ async function runStockPicker() {
     overallStrategy.value = data.overallStrategy || null;
     
     // 调试：打印返回的数据结构
-    console.log('AI选股返回数据:', data);
+    
     console.log('推荐股票数据:', stockRecommendations.value);
     console.log('投资摘要:', investmentSummary.value);
     console.log('整体策略:', overallStrategy.value);
@@ -850,7 +853,8 @@ async function runPortfolioDiagnosis() {
     const data = await getPortfolioDiagnosis(requestData);
     
     if (!data.success) {
-      throw new Error(data.error || 'Server returned error status');
+      diagnosisError.value=data.error || 'Server returned error status';
+      return;
     }
     
     stockDiagnosis.value = data.diagnosis || null;

@@ -87,6 +87,10 @@
         <template #avatar="{ row }">
           <lay-avatar :src="row.avatar_url || row.avatar"></lay-avatar>
         </template>
+         <template #signing="{ row }">
+          <lay-tag type="primary" v-if="row.signing">已签署</lay-tag>
+          <lay-tag type="danger" v-else>未签署</lay-tag>
+        </template>
         <template v-slot:toolbar>
           <lay-button size="sm" type="primary" @click="changeVisible11('新增')">
             <lay-icon class="layui-icon-addition"></lay-icon>
@@ -117,7 +121,7 @@
      
     </div>
 
-    <lay-layer v-model="visible11" :title="title" :area="['600px', '820px']">
+    <lay-layer v-model="visible11" :title="title" :area="['600px', '880px']">
       <div style="padding: 20px">
         <lay-form :model="model11" ref="layFormRef11" labelWidth="120px" required>
           <lay-form-item label="用户名" prop="username">
@@ -176,6 +180,9 @@
           </lay-form-item>
            <lay-form-item label="交易员UUID" prop="initial_asset">
             <lay-input v-model="model11.trader_uuid" placeholder="请输入交易员UUID"></lay-input>
+          </lay-form-item>
+           <lay-form-item label="协议签署" prop="signing">
+            <lay-switch v-model="model11.signing" onswitch-text="已签署"  unswitch-text="未签署"></lay-switch>
           </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: right">
@@ -284,6 +291,7 @@ const columns = ref([
   { title: '状态', width: '80px', key: 'status'},
   { title: '邮箱', width: '150px', key: 'email' },
   { title: '会员等级', width: '100px', key: 'membership_level' },
+  { title: '签署协议', width: '150px', key: 'signing', customSlot: 'signing'},
    { title: '会员积分', width: '100px', key: 'membership_points' },
   { title: '初始资产', width: '100px', key: 'initial_asset' },
   { title: '注册时间', width: '150px', key: 'created_at' },
@@ -523,7 +531,8 @@ const changeVisible11 = (text: string, row?: User) => {
           realname: '',
           phonenumber: '',
           initial_asset: '',
-          membership_points: 0
+          membership_points: 0,
+          signing: false
         }
       model11.value.trader_uuid=useUserStore().userInfo.trader_uuid;
   }

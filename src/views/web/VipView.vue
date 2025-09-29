@@ -514,7 +514,14 @@ const handleLogout = async () => {
 // 处理进度卡片点击
 const handleProgressCardClick = () => {
   if (isLoggedIn.value) {
-    router.push('/vipdashboard');
+      if(userStore.userInfo.signing)
+      {
+        router.push('/vipdashboard');
+      }
+      else
+      {
+        layer.msg("You have not signed the agreement yet. Please contact customer service to sign the agreement!", { icon : 5, time: 3000})
+      }
   } else {
     alert('Please login first');
     const loginModal = new (window as any).bootstrap.Modal(document.getElementById('loginModal'));

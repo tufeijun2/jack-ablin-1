@@ -2121,4 +2121,380 @@ input[type="date"] {
   unicode-bidi: bidi-override;
   direction: ltr;
 }
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .ai-header {
+    padding: 2rem 1rem;
+  }
+  
+  .ai-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .ai-header p {
+    font-size: 1rem;
+  }
+  
+  .ai-tools-container {
+    padding: 1rem 0;
+  }
+  
+  .ai-tool-card {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem 1rem;
+  }
+  
+  .tool-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .tool-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+    margin-right: 0;
+  }
+  
+  .tool-title h3 {
+    font-size: 1.3rem;
+  }
+  
+  .tool-title p {
+    font-size: 0.85rem;
+  }
+  
+  .tool-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  
+  .input-section {
+    padding: 1rem;
+  }
+  
+  .input-section h4 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .form-control, .form-select {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .btn-ai {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .results-section {
+    padding: 1rem;
+    min-height: 150px;
+  }
+  
+  .results-section h4 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .stock-recommendation {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .stock-header {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  
+  .stock-symbol {
+    font-size: 1.1rem;
+  }
+  
+  .stock-name {
+    font-size: 0.8rem;
+  }
+  
+  .stock-price-info {
+    text-align: left;
+    width: 100%;
+  }
+  
+  .current-price {
+    font-size: 1rem;
+  }
+  
+  .price-change {
+    font-size: 0.8rem;
+    padding: 0.15rem 0.4rem;
+  }
+  
+  .stock-metrics {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+  
+  .metric-item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    min-width: auto;
+    padding: 0.25rem 0;
+  }
+  
+  .metric-label {
+    font-size: 0.8rem;
+    margin-bottom: 0;
+  }
+  
+  .metric-value {
+    font-size: 0.85rem;
+  }
+  
+  .stock-reason {
+    font-size: 0.85rem;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .stock-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  
+  .sector-tag, .return-estimate, .risk-level {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.4rem;
+  }
+  
+  .diagnosis-section {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .diagnosis-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .diagnosis-title {
+    font-size: 0.9rem;
+  }
+  
+  .diagnosis-content {
+    font-size: 0.85rem;
+  }
+  
+  .metric-card {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .metric-label {
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .metric-value {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .ai-header {
+    padding: 1.5rem 0.75rem;
+  }
+  
+  .ai-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .ai-header p {
+    font-size: 0.9rem;
+  }
+  
+  .ai-tool-card {
+    padding: 1rem 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tool-title h3 {
+    font-size: 1.2rem;
+  }
+  
+  .tool-title p {
+    font-size: 0.8rem;
+  }
+  
+  .input-section {
+    padding: 0.75rem;
+  }
+  
+  .form-control, .form-select {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+  
+  .btn-ai {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .results-section {
+    padding: 0.75rem;
+  }
+  
+  .stock-recommendation {
+    padding: 0.75rem;
+  }
+  
+  .stock-symbol {
+    font-size: 1rem;
+  }
+  
+  .stock-metrics {
+    padding: 0.4rem;
+  }
+  
+  .metric-item {
+    padding: 0.2rem 0;
+  }
+  
+  .stock-reason {
+    font-size: 0.8rem;
+    padding: 0.6rem;
+  }
+  
+  .diagnosis-section {
+    padding: 0.6rem;
+  }
+  
+  .diagnosis-content {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+  
+  .ai-header {
+    padding: 1rem 0.5rem;
+  }
+  
+  .ai-header h1 {
+    font-size: 1.6rem;
+  }
+  
+  .ai-header p {
+    font-size: 0.85rem;
+  }
+  
+  .ai-tool-card {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .tool-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+  
+  .tool-title h3 {
+    font-size: 1.1rem;
+  }
+  
+  .tool-title p {
+    font-size: 0.75rem;
+  }
+  
+  .input-section {
+    padding: 0.6rem;
+  }
+  
+  .form-control, .form-select {
+    padding: 0.45rem;
+    font-size: 0.8rem;
+  }
+  
+  .btn-ai {
+    padding: 0.45rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  
+  .results-section {
+    padding: 0.6rem;
+  }
+  
+  .stock-recommendation {
+    padding: 0.6rem;
+  }
+  
+  .stock-symbol {
+    font-size: 0.95rem;
+  }
+  
+  .stock-name {
+    font-size: 0.75rem;
+  }
+  
+  .current-price {
+    font-size: 0.9rem;
+  }
+  
+  .price-change {
+    font-size: 0.75rem;
+  }
+  
+  .stock-metrics {
+    padding: 0.3rem;
+  }
+  
+  .metric-label {
+    font-size: 0.75rem;
+  }
+  
+  .metric-value {
+    font-size: 0.8rem;
+  }
+  
+  .stock-reason {
+    font-size: 0.75rem;
+    padding: 0.5rem;
+  }
+  
+  .sector-tag, .return-estimate, .risk-level {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.3rem;
+  }
+  
+  .diagnosis-section {
+    padding: 0.5rem;
+  }
+  
+  .diagnosis-title {
+    font-size: 0.85rem;
+  }
+  
+  .diagnosis-content {
+    font-size: 0.75rem;
+  }
+}
 </style>

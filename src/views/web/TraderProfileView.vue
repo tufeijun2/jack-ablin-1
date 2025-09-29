@@ -258,12 +258,12 @@
                 <span class="secondary-info-value">$210.30</span>
               </div>
               <div class="secondary-info-item">
-                <span class="secondary-info-label">Exit Date</span>
-                <span class="secondary-info-value">2023-11-14</span>
-              </div>
-              <div class="secondary-info-item">
                 <span class="secondary-info-label">Exit Price</span>
                 <span class="secondary-info-value">$234.75</span>
+              </div>
+              <div class="secondary-info-item">
+                <span class="secondary-info-label">Exit Date</span>
+                <span class="secondary-info-value">2023-11-14</span>
               </div>
             </div>
 

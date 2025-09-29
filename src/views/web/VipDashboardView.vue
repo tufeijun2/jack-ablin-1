@@ -253,13 +253,13 @@
             
             <div v-if="selectedTrade" class="close-trade-form">
               <div class="form-item">
-                <label for="exit_price" style="color:#fff;">Exite Price</label>
-                <input type="number" id="exit_price" v-model="closeTradeForm.exitPrice" placeholder="please enter Exite Price" step="0.01" required style="width:100%;padding:12px 16px;border:1px solid #FFD70033;border-radius:8px;background:#181F2A;color:#fff;font-size:1rem;">
+                <label for="exit_date" style="color:#fff;">Exit Data</label>
+                <input type="date" id="exit_date" v-model="closeTradeForm.exitDate" required style="width:100%;padding:12px 16px;border:1px solid #FFD70033;border-radius:8px;background:#181F2A;color:#fff;font-size:1rem;">
               </div>
               
               <div class="form-item">
-                <label for="exit_date" style="color:#fff;">Exit Data</label>
-                <input type="date" id="exit_date" v-model="closeTradeForm.exitDate" required style="width:100%;padding:12px 16px;border:1px solid #FFD70033;border-radius:8px;background:#181F2A;color:#fff;font-size:1rem;">
+                <label for="exit_price" style="color:#fff;">Exite Price</label>
+                <input type="number" id="exit_price" v-model="closeTradeForm.exitPrice" placeholder="please enter Exite Price" step="0.01" required style="width:100%;padding:12px 16px;border:1px solid #FFD70033;border-radius:8px;background:#181F2A;color:#fff;font-size:1rem;">
               </div>
               
               <div class="form-item">
@@ -736,6 +736,10 @@ let user_info=ref({});
 let Vipdata=ref({});
 let vedioslist=ref([])
 onMounted(()=>{
+  if(!userStore.userInfo.signing)
+  {
+    router.push('/vip')
+  }
   try{
   Vipdata.value=userStore.VipData
   vipList.value=userStore.vipList

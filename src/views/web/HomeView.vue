@@ -171,12 +171,16 @@
                 <span class="secondary-info-value">{{value.currency}}{{formatCurrency(value.current_price)}}</span>
               </div>
               <div class="secondary-info-item" v-else>
-                <span class="secondary-info-label">Exit Price</span>
-                <span class="secondary-info-value">{{value.currency}}{{formatCurrency(value.exit_price)}}</span>
+                <span class="secondary-info-label">Exit Date</span>
+                <span class="secondary-info-value">{{formatUSDate(value.exit_date)}}</span>
               </div>
-              <div class="secondary-info-item">
+              <div class="secondary-info-item" v-if="value.status == 'Active'">
                 <span class="secondary-info-label">Quantity</span>
                 <span class="secondary-info-value">{{formatQuantity(value.size)}}</span>
+              </div>
+              <div class="secondary-info-item" v-else>
+                <span class="secondary-info-label">Exit Price</span>
+                <span class="secondary-info-value">{{value.currency}}{{formatCurrency(value.exit_price)}}</span>
               </div>
             </div>
 
@@ -816,10 +820,7 @@ const formatUSDate = (dateString: string) => {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
+      day: 'numeric'
     });
   } catch (error) {
     return dateString; // 如果解析失败，返回原始字符串

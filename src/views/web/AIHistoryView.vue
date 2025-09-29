@@ -629,8 +629,8 @@ export default {
 }
 
 .price-change.positive {
-  background: rgba(255, 215, 0, 0.2);
-  color: #ffd700;
+  background: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
 }
 
 .price-change.negative {
@@ -726,14 +726,14 @@ export default {
 
 .return-estimate {
   display: inline-block;
-  background: rgba(255, 215, 0, 0.1);
-  color: #ffd700;
+  background: rgba(46, 204, 113, 0.1);
+  color: #2ecc71;
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-size: 0.8rem;
   margin-right: 0.5rem;
   margin-bottom: 0.5rem;
-  border: 1px solid rgba(255, 215, 0, 0.2);
+  border: 1px solid rgba(46, 204, 113, 0.2);
 }
 
 .risk-level {

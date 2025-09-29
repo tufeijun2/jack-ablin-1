@@ -1180,8 +1180,8 @@ onMounted(() => {
 }
 
 .price-change.positive {
-  background: rgba(255, 215, 0, 0.2);
-  color: #ffd700;
+  background: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
 }
 
 .price-change.negative {
@@ -1273,7 +1273,7 @@ onMounted(() => {
 }
 
 .return-estimate.positive {
-  color: #ffd700;
+  color: #2ecc71;
 }
 
 .return-estimate.negative {
@@ -1336,7 +1336,7 @@ onMounted(() => {
 }
 
 .text-success {
-  color: #ffd700 !important;
+  color: #2ecc71 !important;
 }
 
 .text-danger {

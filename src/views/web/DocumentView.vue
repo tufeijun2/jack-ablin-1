@@ -156,7 +156,7 @@
           <h3 class="categories-title">Browse by Category</h3>
           <div class="categories-grid">
             <div class="category-card">
-              <div class="category-icon">📈</div>
+              <div class="category-icon"><i class="bi bi-graph-up"></i></div>
               <h4>Trading Strategies</h4>
               <p>Advanced trading methodologies</p>
             </div>
@@ -971,6 +971,10 @@ const previewDocument = (document: any) => {
 .category-icon {
   font-size: 3rem;
   margin-bottom: 20px;
+}
+
+.category-icon i {
+  color: #2ecc71;
 }
 
 .category-card h4 {

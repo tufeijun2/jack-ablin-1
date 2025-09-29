@@ -331,17 +331,21 @@ const handleSubmit = async () => {
     };
     
     // 调用webvipRoutes中的/upload-trade接口
+    console.log('提交数据:', submitData);
     const response = await createVipTrade(submitData);
+    console.log('API响应:', response);
     
     if (response && response.success) {
       alert('Trade record uploaded successfully!');
       router.push('/vipdashboard');
     } else {
-      alert(`Failed to upload trade record: ${response?.message || 'Unknown error'}`);
+      console.error('上传失败响应:', response);
+      alert(`Failed to upload trade record: ${response?.message || response?.data?.message || 'Unknown error'}`);
     }
   } catch (error) {
     console.error('Upload error:', error);
-    alert('An error occurred during upload. Please try again later.');
+    console.error('Error details:', error.response?.data);
+    alert(`An error occurred during upload: ${error.response?.data?.message || error.message || 'Please try again later.'}`);
   }
 };
 </script>

@@ -160,6 +160,9 @@
           <lay-form-item label="首页顶部标题" prop="home_top_title" :label-width="200">
             <lay-input v-model="model11.home_top_title" placeholder="请输入首页顶部标题"></lay-input>
           </lay-form-item>
+          <lay-form-item label="首页顶部标题链接" prop="home_top_title_link" :label-width="200">
+            <lay-input v-model="model11.home_top_title_link" placeholder="请输入跳转链接，如：https://www.baidu.com"></lay-input>
+          </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: right">
           <lay-button size="sm" type="primary" @click="toSubmit"
@@ -419,6 +422,7 @@ const changeVisible11 = (text: string, row?: TraderProfile) => {
       win_rate: null,
       website_title: '',
       home_top_title: '',
+      home_top_title_link: '',
       use_dialog: 1,
       allow_close_dialog: 0,
       agreement: '',

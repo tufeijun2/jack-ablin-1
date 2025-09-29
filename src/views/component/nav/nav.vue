@@ -2,7 +2,7 @@
      <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark mb-3">
       <div class="container">
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" :href="trader_profiles.home_top_title_link || '/'" :target="trader_profiles.home_top_title_link ? '_blank' : '_self'">
           <i class="bi bi-graph-up me-2"></i>
           {{ trader_profiles.home_top_title }}
         </a>

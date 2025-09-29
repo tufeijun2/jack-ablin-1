@@ -356,6 +356,11 @@ const changeVisible11 = (text: string, row?: Video) => {
 // 提交表单
 async function toSubmit() {
   try {
+    // 检查是否还在上传中
+    if (uploading.value) {
+      layer.msg('文件正在上传中，请稍候再试', { icon: 3 });
+      return;
+    }
    
     // 表单验证
     if (!model11.value.title) {
@@ -391,8 +396,8 @@ async function toSubmit() {
       if (response.success) {
         layer.msg(response.message || '更新成功', { icon: 1 });
         visible11.value = false;
+        toReset();
         // 刷新数据
-        loading.value = true
         change(page);
       } else {
         layer.msg(response.message || '更新失败', { icon: 2 });
@@ -404,6 +409,7 @@ async function toSubmit() {
       if (response.success) {
         layer.msg(response.message || '新增成功', { icon: 1 });
         visible11.value = false;
+        toReset();
         // 刷新数据
         change(page);
       } else {
@@ -419,7 +425,12 @@ async function toSubmit() {
 
 // 关闭对话框
 function toCancel() {
-  visible11.value = false
+  // 重置上传状态
+  uploading.value = false;
+  videoFile.value = null;
+  // 重置表单数据
+  toReset();
+  visible11.value = false;
 }
 
 // 确认删除单个视频
@@ -477,18 +488,34 @@ function handleVideoUploadSuccess(response: any) {
   layer.closeAll()
   uploading.value = false;
   layer.closeAll('loading'); // 关闭上传提示
+  
+  // 确保上传状态正确重置
+  setTimeout(() => {
+    uploading.value = false;
+  }, 100);
+  
   try {
     let updataData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
     if (updataData && updataData.success) {
       // 将上传成功后的视频URL赋值给video_url字段
       model11.value.video_url = updataData.data.url;
       layer.msg('视频上传成功', { icon: 1 });
+      
+      // 重置文件上传组件状态
+      videoFile.value = null;
+      
     } else {
       layer.msg('视频上传失败', { icon: 2 });
+      // 重置状态
+      videoFile.value = null;
+      uploading.value = false;
     }
   } catch (error) {
     console.error('解析上传响应异常:', error);
     layer.msg('视频上传失败，请重试', { icon: 2 });
+    // 重置状态
+    videoFile.value = null;
+    uploading.value = false;
   }
 }
 </script>

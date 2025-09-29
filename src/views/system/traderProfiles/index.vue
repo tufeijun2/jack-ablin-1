@@ -96,7 +96,7 @@
 
     <lay-layer v-model="visible11" :title="title" :area="['900px', '710px']">
       <div style="padding: 20px">
-        <lay-form :model="model11" :pane="true" ref="layFormRef11" required>
+        <lay-form :model="model11" :pane="true" ref="layFormRef11" required @submit.prevent>
           <lay-form-item label="交易员名称" prop="trader_name" :label-width="200">
             <lay-input v-model="model11.trader_name" placeholder="请输入用户名"></lay-input>
           </lay-form-item>
@@ -165,7 +165,7 @@
           </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: right">
-          <lay-button size="sm" type="primary" @click="toSubmit"
+          <lay-button size="sm" type="primary" @click="toSubmit" :loading="loading"
             >保存</lay-button
           >
           <lay-button size="sm" @click="toCancel">取消</lay-button>
@@ -437,7 +437,7 @@ const changeVisible11 = (text: string, row?: TraderProfile) => {
 
 // 提交表单
 async function toSubmit() {
- 
+  loading.value = true;
   try {
       // 表单验证
       if (!model11.value.trader_name) {
@@ -480,9 +480,10 @@ async function toSubmit() {
         layer.msg(response.message || '新增失败', { icon: 2 });
       }
     }
-  } catch (error) {
+    } catch (error) {
     console.error('提交表单异常:', error);
     layer.msg('操作异常', { icon: 2 });
+  } finally {
     loading.value = false;
   }
 }

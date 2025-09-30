@@ -827,13 +827,16 @@ const formatUSDate = (dateString: string) => {
   }
 };
 
-// 格式化时间，使用美国时间格式
+// 格式化时间，使用美国日期时间格式
 const formatUSTime = (dateString: string) => {
   if (!dateString) return '';
   
   try {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', {
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
       hour12: true

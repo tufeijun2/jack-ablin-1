@@ -827,13 +827,15 @@ const formatUSDate = (dateString: string) => {
   }
 };
 
-// 格式化时间，使用美国日期时间格式
+// 格式化时间，转换为美国当地时间
 const formatUSTime = (dateString: string) => {
   if (!dateString) return '';
   
   try {
     const date = new Date(dateString);
+    // 转换为美国东部时间 (EST/EDT)
     return date.toLocaleString('en-US', {
+      timeZone: 'America/New_York',
       month: 'short',
       day: 'numeric',
       year: 'numeric',

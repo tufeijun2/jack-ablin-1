@@ -816,13 +816,31 @@ const formatUSDate = (dateString: string) => {
   if (!dateString) return '';
   
   try {
-    const date = new Date(dateString);
+    // 确保正确解析UTC时间字符串
+    let date: Date;
+    
+    // 如果时间字符串没有时区信息，假设它是UTC时间
+    if (dateString.includes('T') && !dateString.includes('Z') && !dateString.includes('+') && !dateString.includes('-', 10)) {
+      // 添加Z表示UTC时间
+      date = new Date(dateString + 'Z');
+    } else {
+      date = new Date(dateString);
+    }
+    
+    // 验证日期是否有效
+    if (isNaN(date.getTime())) {
+      console.error('无效的时间字符串:', dateString);
+      return dateString;
+    }
+    
     return date.toLocaleDateString('en-US', {
+      timeZone: 'America/New_York',
       year: 'numeric',
       month: 'short',
       day: 'numeric'
     });
   } catch (error) {
+    console.error('日期转换错误:', error, '原始时间:', dateString);
     return dateString; // 如果解析失败，返回原始字符串
   }
 };
@@ -832,12 +850,22 @@ const formatUSTime = (dateString: string) => {
   if (!dateString) return '';
   
   try {
-    const date = new Date(dateString);
+    // 确保正确解析UTC时间字符串
+    let date: Date;
     
-    // 调试信息
-    console.log('原始时间字符串:', dateString);
-    console.log('解析后的Date对象:', date);
-    console.log('UTC时间:', date.toISOString());
+    // 如果时间字符串没有时区信息，假设它是UTC时间
+    if (dateString.includes('T') && !dateString.includes('Z') && !dateString.includes('+') && !dateString.includes('-', 10)) {
+      // 添加Z表示UTC时间
+      date = new Date(dateString + 'Z');
+    } else {
+      date = new Date(dateString);
+    }
+    
+    // 验证日期是否有效
+    if (isNaN(date.getTime())) {
+      console.error('无效的时间字符串:', dateString);
+      return dateString;
+    }
     
     // 转换为美国东部时间 (EST/EDT)
     const usTime = date.toLocaleString('en-US', {
@@ -850,10 +878,15 @@ const formatUSTime = (dateString: string) => {
       hour12: true
     });
     
-    console.log('转换后的美国东部时间:', usTime);
-    return usTime;
+    // 添加时区标识
+    const timeZone = date.toLocaleString('en-US', {
+      timeZone: 'America/New_York',
+      timeZoneName: 'short'
+    }).split(' ').pop();
+    
+    return `${usTime} ${timeZone}`;
   } catch (error) {
-    console.error('时间转换错误:', error);
+    console.error('时间转换错误:', error, '原始时间:', dateString);
     // 如果解析失败，返回原始字符串
     return dateString;
   }

@@ -95,7 +95,7 @@
         <div class="strategy-update">
           <div class="strategy-header">
             <h3><i class="bi bi-lightbulb glow-bulb"></i> Today's Trading Strategy</h3>
-            <span class="update-time">Updated at: 2023-11-15 09:30 AM</span>
+            <span class="update-time">Updated at: {{ formatUSTime(new Date().toISOString()) }}</span>
           </div>
           <div class="strategy-content">
             <div class="market-analysis">
@@ -483,6 +483,53 @@ const handleAvatarUpload = (event: Event) => {
   
   // In a real application, you would upload the file here
   alert('Avatar upload functionality would be implemented here');
+};
+
+// 格式化时间，转换为美国当地时间
+const formatUSTime = (dateString: string) => {
+  if (!dateString) return '';
+  
+  try {
+    // 确保正确解析UTC时间字符串
+    let date: Date;
+    
+    // 如果时间字符串没有时区信息，假设它是UTC时间
+    if (dateString.includes('T') && !dateString.includes('Z') && !dateString.includes('+') && !dateString.includes('-', 10)) {
+      // 添加Z表示UTC时间
+      date = new Date(dateString + 'Z');
+    } else {
+      date = new Date(dateString);
+    }
+    
+    // 验证日期是否有效
+    if (isNaN(date.getTime())) {
+      console.error('无效的时间字符串:', dateString);
+      return dateString;
+    }
+    
+    // 转换为美国东部时间 (EST/EDT)
+    const usTime = date.toLocaleString('en-US', {
+      timeZone: 'America/New_York',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+    
+    // 添加时区标识
+    const timeZone = date.toLocaleString('en-US', {
+      timeZone: 'America/New_York',
+      timeZoneName: 'short'
+    }).split(' ').pop();
+    
+    return `${usTime} ${timeZone}`;
+  } catch (error) {
+    console.error('时间转换错误:', error, '原始时间:', dateString);
+    // 如果解析失败，返回原始字符串
+    return dateString;
+  }
 };
 
 // Set up event listeners when component mounts

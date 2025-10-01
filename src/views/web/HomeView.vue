@@ -833,8 +833,14 @@ const formatUSTime = (dateString: string) => {
   
   try {
     const date = new Date(dateString);
+    
+    // 调试信息
+    console.log('原始时间字符串:', dateString);
+    console.log('解析后的Date对象:', date);
+    console.log('UTC时间:', date.toISOString());
+    
     // 转换为美国东部时间 (EST/EDT)
-    return date.toLocaleString('en-US', {
+    const usTime = date.toLocaleString('en-US', {
       timeZone: 'America/New_York',
       month: 'short',
       day: 'numeric',
@@ -843,7 +849,11 @@ const formatUSTime = (dateString: string) => {
       minute: '2-digit',
       hour12: true
     });
+    
+    console.log('转换后的美国东部时间:', usTime);
+    return usTime;
   } catch (error) {
+    console.error('时间转换错误:', error);
     // 如果解析失败，返回原始字符串
     return dateString;
   }

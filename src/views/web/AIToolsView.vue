@@ -571,12 +571,12 @@ function getAnalysisIcon(key: string) {
 
 function getAnalysisTitle(key: string) {
   const titles: Record<string, string> = {
-    'businessAnalysis': '公司业务分析',
-    'financialAnalysis': '财务表现评估',
-    'technicalAnalysis': '技术面分析',
-    'investmentAdvice': '投资建议',
-    'riskAssessment': '风险评估',
-    'positionAdvice': '仓位建议'
+    'businessAnalysis': 'Business Analysis',
+    'financialAnalysis': 'Financial Performance',
+    'technicalAnalysis': 'Technical Analysis',
+    'investmentAdvice': 'Investment Advice',
+    'riskAssessment': 'Risk Assessment',
+    'positionAdvice': 'Position Analysis'
   };
   return titles[key] || key;
 }

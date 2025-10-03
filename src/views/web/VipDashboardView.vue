@@ -143,19 +143,19 @@
             <div class="trade-info-group">
               <div>
                 <span class="label">P&L:</span>
-                <span class="trade-profit-table" v-if="t.exit_price">
+                <span class="trade-profit-table" v-if="t.exit_price" :class="getProfitColor(((t.exit_price-t.entry_price)*t.quantity*t.direction))">
                   {{ t.currency }}{{ formatCurrency(((t.exit_price-t.entry_price)*t.quantity*t.direction)) }}
                 </span>
-                 <span class="trade-profit-table" v-else>
+                 <span class="trade-profit-table" v-else :class="getProfitColor(t.current_price ? ((t.current_price-t.entry_price)*t.quantity*t.direction) : 0)">
                   {{ t.currency }}{{ t.current_price ? formatCurrency(((t.current_price-t.entry_price)*t.quantity*t.direction)) : 'Loading...' }}
                 </span>
               </div>
               <div>
                 <span class="label">Ratio:</span>
-                <span class="trade-profit-table" v-if="t.exit_price">
+                <span class="trade-profit-table" v-if="t.exit_price" :class="getProfitColor(((t.exit_price-t.entry_price)/t.entry_price*t.direction*100))">
                   {{((t.exit_price-t.entry_price)/t.entry_price*t.direction*100).toFixed(2) }}%
                 </span>
-                 <span class="trade-profit-table" v-else>
+                 <span class="trade-profit-table" v-else :class="getProfitColor(t.current_price ? ((t.current_price-t.entry_price)/t.entry_price*t.direction*100) : 0)">
                   {{ t.current_price ? ((t.current_price-t.entry_price)/t.entry_price*t.direction*100).toFixed(2) + '%' : 'Loading...' }}
                 </span>
                
@@ -215,19 +215,19 @@
                 <div class="trade-info-group">
                    <div>
                     <span class="label">P&L:</span>
-                    <span class="trade-profit-table" v-if="t.exit_price">
+                    <span class="trade-profit-table" v-if="t.exit_price" :class="getProfitColor(((t.exit_price-t.entry_price)*t.size*t.direction))">
                       {{ t.currency }}{{ formatCurrency(((t.exit_price-t.entry_price)*t.size*t.direction)) }}
                     </span>
-                    <span class="trade-profit-table" v-else>
+                    <span class="trade-profit-table" v-else :class="getProfitColor(t.current_price ? ((t.current_price-t.entry_price)*t.size*t.direction) : 0)">
                       {{ t.currency }}{{ t.current_price ? formatCurrency(((t.current_price-t.entry_price)*t.size*t.direction)) : 'Loading...' }}
                     </span>
                   </div>
                   <div>
                     <span class="label">Ratio:</span>
-                    <span class="trade-profit-table" v-if="t.exit_price">
+                    <span class="trade-profit-table" v-if="t.exit_price" :class="getProfitColor(((t.exit_price-t.entry_price)/t.entry_price*t.direction*100))">
                       {{((t.exit_price-t.entry_price)/t.entry_price*t.direction*100).toFixed(2) }}%
                     </span>
-                    <span class="trade-profit-table" v-else>
+                    <span class="trade-profit-table" v-else :class="getProfitColor(t.current_price ? ((t.current_price-t.entry_price)/t.entry_price*t.direction*100) : 0)">
                       {{ t.current_price ? ((t.current_price-t.entry_price)/t.entry_price*t.direction*100).toFixed(2) + '%' : 'Loading...' }}
                     </span>
                   </div>
@@ -690,6 +690,13 @@ const closeDocumentsModal = () => {
   isDocumentsModalOpen.value = false;
 };
 
+// 获取盈亏颜色类
+const getProfitColor = (value: number) => {
+  if (value > 0) return 'profit-positive'; // 盈利用绿色
+  if (value < 0) return 'profit-negative'; // 亏损用红色
+  return 'profit-neutral'; // 中性用默认色
+};
+
 // Format date to US time format
 const formatUSDate = (dateString: string) => {
   if (!dateString) return '';
@@ -716,19 +723,10 @@ const formatUSDate = (dateString: string) => {
       timeZone: 'America/New_York',
       year: 'numeric',
       month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
+      day: 'numeric'
     });
     
-    // 添加时区标识
-    const timeZone = date.toLocaleString('en-US', {
-      timeZone: 'America/New_York',
-      timeZoneName: 'short'
-    }).split(' ').pop();
-    
-    return `${usTime} ${timeZone}`;
+    return usTime;
   } catch (error) {
     console.error('时间转换错误:', error, '原始时间:', dateString);
     return dateString; // If parsing fails, return original string
@@ -769,6 +767,11 @@ onMounted(()=>{
   try{
   Vipdata.value=userStore.VipData
   vipList.value=userStore.vipList
+  
+  // 如果已有数据，也要进行排序
+  if (Vipdata.value && Object.keys(Vipdata.value).length > 0) {
+    sortTradeLists();
+  }
   }
   catch{}
  get_user_info()
@@ -813,10 +816,68 @@ const getVipDashboardData=async()=>{
     Vipdata.value=res.data;
     userStore.VipData=res.data
     
+    // 对交易列表进行排序
+    sortTradeLists();
+    
     // Get real-time prices for all held stocks
     await updateStockPrices();
   }
 
+}
+
+// 排序交易列表函数
+const sortTradeLists = () => {
+  // 对 VIP 交易列表排序
+  if (Vipdata.value.tradelist && Array.isArray(Vipdata.value.tradelist)) {
+    Vipdata.value.tradelist.sort((a: any, b: any) => {
+      // 首先按持仓状态排序：持仓在前，平仓在后
+      const isHoldingA = !a.exit_price;
+      const isHoldingB = !b.exit_price;
+      
+      if (isHoldingA !== isHoldingB) {
+        return isHoldingA ? -1 : 1; // 持仓在前
+      }
+      
+      // 同状态内按时间排序
+      if (isHoldingA) {
+        // 持仓的按买入时间排序（最新的在前）
+        const dateA = new Date(a.entry_date);
+        const dateB = new Date(b.entry_date);
+        return dateB.getTime() - dateA.getTime();
+      } else {
+        // 平仓的按平仓时间排序（最新的在前）
+        const dateA = new Date(a.exit_time || a.entry_date);
+        const dateB = new Date(b.exit_time || b.entry_date);
+        return dateB.getTime() - dateA.getTime();
+      }
+    });
+  }
+  
+  // 对用户交易列表排序
+  if (Vipdata.value.user_trade_list && Array.isArray(Vipdata.value.user_trade_list)) {
+    Vipdata.value.user_trade_list.sort((a: any, b: any) => {
+      // 首先按持仓状态排序：持仓在前，平仓在后
+      const isHoldingA = !a.exit_price;
+      const isHoldingB = !b.exit_price;
+      
+      if (isHoldingA !== isHoldingB) {
+        return isHoldingA ? -1 : 1; // 持仓在前
+      }
+      
+      // 同状态内按时间排序
+      if (isHoldingA) {
+        // 持仓的按买入时间排序（最新的在前）
+        const dateA = new Date(a.entry_date);
+        const dateB = new Date(b.entry_date);
+        return dateB.getTime() - dateA.getTime();
+      } else {
+        // 平仓的按平仓时间排序（最新的在前）
+        const dateA = new Date(a.exit_date || a.entry_date);
+        const dateB = new Date(b.exit_date || b.entry_date);
+        return dateB.getTime() - dateA.getTime();
+      }
+    });
+  }
 }
 
 // Update real-time stock prices
@@ -1477,14 +1538,19 @@ const handleImageChange = async (event) => {
             font-weight: 700;
         }
         
-        .trade-profit-table.up {
+        .trade-profit-table.profit-positive {
             color: #00ffae;
             font-weight: 900;
         }
         
-        .trade-profit-table.down {
+        .trade-profit-table.profit-negative {
             color: #cf1322;
             font-weight: 900;
+        }
+        
+        .trade-profit-table.profit-neutral {
+            color: #ffffff;
+            font-weight: 600;
         }
         @media (min-width: 1200px) {
             .benefit-row { gap: 56px !important; }
@@ -1806,13 +1872,17 @@ const handleImageChange = async (event) => {
             padding: 2px 14px;
             font-weight: 700;
         }
-        .trade-profit-table.up {
+        .trade-profit-table.profit-positive {
             color: #00ffae;
             font-weight: 900;
         }
-        .trade-profit-table.down {
+        .trade-profit-table.profit-negative {
             color: #cf1322;
             font-weight: 900;
+        }
+        .trade-profit-table.profit-neutral {
+            color: #ffffff;
+            font-weight: 600;
         }
         /* 移动端会员权益对比卡片样式 */
         .agreement-mobile-cards { display: none; }
@@ -4072,13 +4142,17 @@ const handleImageChange = async (event) => {
           color: #fff;
           font-weight: 700;
         }
-        .trade-profit-table.up {
+        .trade-profit-table.profit-positive {
           color: #00ffae;
           font-weight: 900;
         }
-        .trade-profit-table.down {
+        .trade-profit-table.profit-negative {
           color: #cf1322;
           font-weight: 900;
+        }
+        .trade-profit-table.profit-neutral {
+          color: #ffffff;
+          font-weight: 600;
         }
 
         .vip-trade-card-new {

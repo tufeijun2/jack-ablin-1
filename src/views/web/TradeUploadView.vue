@@ -40,12 +40,8 @@
         </div>
         
         <div class="form-group">
-          <label for="entry_date">Entry Date (US Eastern Time)</label>
-          <div class="datetime-input-container">
-            <input type="date" id="entry_date" v-model="selectedDate" required @change="updateDateTime">
-            <input type="time" id="entry_time" v-model="selectedTime" required @change="updateDateTime">
-          </div>
-          <div class="time-display">Current: {{ entryDate }}</div>
+          <label for="entry_date">Entry Date</label>
+          <input type="date" id="entry_date" v-model="selectedDate" required>
           <div v-if="entryDateError" class="error-message">{{ entryDateError }}</div>
         </div>
         
@@ -96,52 +92,19 @@ const direction = ref('');
 const symbol = ref('');
 const entryPrice = ref<number>(0);
 const quantity = ref<number>(0);
-// 获取美国东部时间并格式化为可读格式
-const getUSTime = () => {
-  const now = new Date();
-  // 转换为美国东部时间 (UTC-5 或 UTC-4，取决于夏令时)
-  const usTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
-  
-  // 格式化为可读的美国时间格式
-  const year = usTime.getFullYear();
-  const month = String(usTime.getMonth() + 1).padStart(2, '0');
-  const day = String(usTime.getDate()).padStart(2, '0');
-  const hours = String(usTime.getHours()).padStart(2, '0');
-  const minutes = String(usTime.getMinutes()).padStart(2, '0');
-  
-  return `${year}/${month}/${day} ${hours}:${minutes} EST`;
-};
-
-// 分离日期和时间
-const getUSDateAndTime = () => {
+// 获取美国东部日期
+const getUSDate = () => {
   const now = new Date();
   const usTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
   
   const year = usTime.getFullYear();
   const month = String(usTime.getMonth() + 1).padStart(2, '0');
   const day = String(usTime.getDate()).padStart(2, '0');
-  const hours = String(usTime.getHours()).padStart(2, '0');
-  const minutes = String(usTime.getMinutes()).padStart(2, '0');
   
-  return {
-    date: `${year}-${month}-${day}`,
-    time: `${hours}:${minutes}`
-  };
+  return `${year}-${month}-${day}`;
 };
 
-const usDateTime = getUSDateAndTime();
-const selectedDate = ref(usDateTime.date);
-const selectedTime = ref(usDateTime.time);
-const entryDate = ref(getUSTime());
-
-// 更新日期时间显示
-const updateDateTime = () => {
-  if (selectedDate.value && selectedTime.value) {
-    const [year, month, day] = selectedDate.value.split('-');
-    const [hours, minutes] = selectedTime.value.split(':');
-    entryDate.value = `${year}/${month}/${day} ${hours}:${minutes} EST`;
-  }
-};
+const selectedDate = ref(getUSDate());
 const assetType = ref('');
 const tradeType = ref('');
 const tradeFile = ref<File | null>(null);
@@ -150,7 +113,7 @@ const fileUrl = ref('');
 const isUploading = ref(false);
 
 // 市场列表数据
-const marketList = ref([]);
+const marketList = ref<any[]>([]);
 const isLoadingMarkets = ref(false);
 
 // 错误消息
@@ -168,10 +131,6 @@ const removeImage = () => {
   tradeFile.value = null;
   selectedFileName.value = '';
   tradeImageError.value = '';
-  // 重置文件输入框
-  if ($refs.tradeImageInput) {
-    ($refs.tradeImageInput as HTMLInputElement).value = '';
-  }
 };
 
 // 获取市场列表
@@ -281,7 +240,7 @@ const validateForm = (): boolean => {
   }
   
   // 验证日期
-  if (!entryDate.value) {
+  if (!selectedDate.value) {
     entryDateError.value = 'Entry date is required';
     isValid = false;
   }
@@ -314,8 +273,8 @@ const handleSubmit = async () => {
     }
     
     // 构建提交数据
-    // 将选择的日期时间转换为ISO格式用于提交
-    const selectedDateTime = new Date(`${selectedDate.value}T${selectedTime.value}`);
+    // 将选择的日期转换为ISO格式用于提交（使用00:00:00作为默认时间）
+    const selectedDateTime = new Date(`${selectedDate.value}T00:00:00`);
     const isoTime = selectedDateTime.toISOString();
     
     const submitData = {
@@ -342,7 +301,7 @@ const handleSubmit = async () => {
       console.error('上传失败响应:', response);
       alert(`Failed to upload trade record: ${response?.message || response?.data?.message || 'Unknown error'}`);
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Upload error:', error);
     console.error('Error details:', error.response?.data);
     alert(`An error occurred during upload: ${error.response?.data?.message || error.message || 'Please try again later.'}`);
@@ -551,25 +510,6 @@ const handleSubmit = async () => {
   color: var(--text-secondary);
 }
 
-.datetime-input-container {
-  display: flex;
-  gap: 10px;
-}
-
-.datetime-input-container input {
-  flex: 1;
-}
-
-.time-display {
-  margin-top: 8px;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 14px;
-  color: var(--text-secondary);
-  text-align: center;
-}
 
 .error-message {
   color: #ff4d4f;

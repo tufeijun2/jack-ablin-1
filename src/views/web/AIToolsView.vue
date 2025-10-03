@@ -644,14 +644,28 @@ function formatStockSymbol(event: Event) {
 function formatGPTAnalysis(content: string): string {
   if (!content) return '';
   
-  // 将内容按段落分割
-  const paragraphs = content.split('\n').filter(p => p.trim());
+  // 将内容按段落分割，支持多种分隔符
+  const paragraphs = content.split(/\n+|\r\n+/).filter(p => p.trim());
   
   return paragraphs.map(paragraph => {
     const trimmed = paragraph.trim();
     
+    // 检查是否是数字列表（以数字和点开头）
+    if (/^\d+\./.test(trimmed)) {
+      // 提取数字和内容
+      const match = trimmed.match(/^(\d+)\.\s*(.*)$/);
+      if (match) {
+        const number = match[1];
+        const content = match[2];
+        return `<div class="gpt-numbered-item">
+          <span class="number">${number}.</span>
+          <span class="content">${content}</span>
+        </div>`;
+      }
+      return `<div class="gpt-numbered-item">${trimmed}</div>`;
+    }
     // 检查是否是标题（包含冒号且较短）
-    if (trimmed.includes(':') && trimmed.length < 100) {
+    else if (trimmed.includes(':') && trimmed.length < 100) {
       const parts = trimmed.split(':');
       if (parts.length === 2) {
         return `<div class="gpt-title"><strong>${parts[0]}:</strong> ${parts[1].trim()}</div>`;
@@ -660,10 +674,6 @@ function formatGPTAnalysis(content: string): string {
     // 检查是否是列表项（以-开头）
     else if (trimmed.startsWith('-')) {
       return `<div class="gpt-list-item">${trimmed.replace(/^-\s*/, '')}</div>`;
-    }
-    // 检查是否是数字列表（以数字开头）
-    else if (/^\d+\./.test(trimmed)) {
-      return `<div class="gpt-numbered-item">${trimmed}</div>`;
     }
     // 检查是否是粗体标题（**包围）
     else if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
@@ -1626,6 +1636,59 @@ onMounted(() => {
   padding: 0.5rem 0;
   color: #2c3e50;
   font-weight: 500;
+}
+
+/* GPT 数字列表样式 */
+.gpt-numbered-item {
+  margin: 0.75rem 0;
+  padding: 0.75rem 0;
+  border-left: 3px solid #3498db;
+  padding-left: 1rem;
+  background: rgba(52, 152, 219, 0.05);
+  border-radius: 0 8px 8px 0;
+}
+
+.gpt-numbered-item .number {
+  font-weight: 700;
+  color: #2980b9;
+  font-size: 1.05em;
+  margin-right: 0.5rem;
+}
+
+.gpt-numbered-item .content {
+  color: #2c3e50;
+  line-height: 1.6;
+}
+
+/* GPT 段落样式 */
+.gpt-paragraph {
+  margin: 0.5rem 0;
+  padding: 0.5rem 0;
+  color: #2c3e50;
+  line-height: 1.6;
+}
+
+/* GPT 标题样式 */
+.gpt-title {
+  margin: 1rem 0 0.5rem 0;
+  padding: 0.5rem 0;
+  font-weight: 600;
+  color: #e74c3c;
+}
+
+/* GPT 列表项样式 */
+.gpt-list-item {
+  margin: 0.5rem 0;
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  position: relative;
+}
+
+.gpt-list-item::before {
+  content: "•";
+  position: absolute;
+  left: 0.5rem;
+  color: #3498db;
+  font-weight: bold;
 }
 
 

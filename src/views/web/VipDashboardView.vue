@@ -235,10 +235,10 @@
                    <div v-if="t.exit_price"><span class="label">Exit:</span> <b>{{ t.currency }}{{ formatCurrency(t.exit_price) }}</b></div>
                    <div v-else><span class="label">Current:</span> <b>{{ t.currency }}{{ t.current_price ? formatCurrency(t.current_price) : 'Loading...' }}</b></div>
                 </div>
-              <!-- Close Trade Button - Only show when exit price is empty -->
-              <div v-if="!t.exit_price" class="trade-close-btn-container" style="margin-top:12px;">
-                <a class="styled-button close-trade-btn" @click="openCloseTradeModal(t)" style="background:linear-gradient(90deg, #FFD700 0%, #FFB300 100%);color:#181F2A;padding:8px 10px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size: 12px;">Close Trade</a>
-              </div>
+                <!-- Close Trade Button - Only show when exit price is empty, positioned on the right -->
+                <div v-if="!t.exit_price" class="trade-close-btn-container" style="display:flex;justify-content:flex-end;margin-top:12px;">
+                  <a class="styled-button close-trade-btn" @click="openCloseTradeModal(t)" style="background:linear-gradient(90deg, #FFD700 0%, #FFB300 100%);color:#181F2A;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size: 12px;">Close Trade</a>
+                </div>
               
             </div>
             

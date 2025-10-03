@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <div class="number-flow"></div>
     <navcomponent />
     <div class="main-content">
      <div class="section center" style="max-width: 1400px;">
@@ -305,7 +306,7 @@
                     </tr>
           </thead>
           <tbody>
-            <tr v-for="(user,index) in Vipdata.usersSort" :key="index" class="rank-row" style="border-bottom:1.5px solid rgba(255,215,0,0.13);background:linear-gradient(90deg,#232B3E 80%,#232e4a 100%);">
+            <tr v-for="(user,index) in displayedUsers" :key="index" class="rank-row" style="border-bottom:1.5px solid rgba(255,215,0,0.13);background:linear-gradient(90deg,#232B3E 80%,#232e4a 100%);">
               <td style="text-align:center;font-weight:900;">
                 <span style="font-size:1.6rem;" :style="{color: user.rank === 1 ? '#FFD700' : user.rank === 2 ? '#b0c4e6' : user.rank === 3 ? '#faad14' : '#fff', textShadow: user.rank <= 3 ? '0 0 8px rgba(255,215,0,0.6)' : 'none'}">
                   {{ index+1 }}
@@ -336,6 +337,20 @@
           </tbody>
         </table>
       </div>
+      
+      <!-- 查看所有按钮 -->
+      <div style="text-align:center;margin-top:24px;">
+        <button v-if="!showAllRankings && Vipdata.usersSort && Vipdata.usersSort.length > 5" 
+                class="styled-button" 
+                @click="toggleRankingsView">
+          View All Rankings ({{ Vipdata.usersSort.length }} members)
+        </button>
+        <button v-else-if="showAllRankings" 
+                class="styled-button" 
+                @click="toggleRankingsView">
+          Show Top 5 Only
+        </button>
+      </div>
 
       <!-- Mobile Member Ranking -->
       <div class="member-rank-mobile-list">
@@ -357,7 +372,7 @@
     <div class="section">
         <h2 class="card-title">Video Tutorials</h2>
         <div id="videos-container" class="flex-row" style="display:flex;flex-wrap:wrap;gap:24px;">
-            <div class="card" style="flex:0 0 calc(33.333% - 16px);min-width:320px;" v-for="value in Vipdata.vedioslist" :key="value.id">
+            <div class="card" style="flex:0 0 calc(33.333% - 16px);min-width:320px;" v-for="value in displayedVideos" :key="value.id">
                 <div style="height:280px;background:#232e4a;border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;">
                     <video :src="value.video_url" controls="" style="width:100%;height:280px;border-radius:12px;background:#232e4a;"></video>
                 </div>
@@ -367,7 +382,17 @@
             </div>
         </div>
         <div style="text-align:center;margin-top:18px;">
-                                <button id="show-all-videos-btn" class="styled-button" @click="openVideosModal">Show all videos</button>
+            <button v-if="!showAllVideos && Vipdata.vedioslist && Vipdata.vedioslist.length > 3" 
+                    id="show-all-videos-btn" 
+                    class="styled-button" 
+                    @click="toggleVideosView">
+              View All Videos ({{ Vipdata.vedioslist.length }} videos)
+            </button>
+            <button v-else-if="showAllVideos" 
+                    class="styled-button" 
+                    @click="toggleVideosView">
+              Show Top 3 Only
+            </button>
         </div>
     </div>
 
@@ -428,7 +453,7 @@
     <div class="section">
                         <h2 class="card-title">Documents</h2>
         <div id="documents-container">
-        <div class="card mb-24" v-for="value in Vipdata.documentslist">
+        <div class="card mb-24" v-for="value in displayedDocuments">
             <div style="display:flex;align-items:center;gap:24px;" >
                 <span class="avatar-glow" style="width:64px;height:64px;display:inline-flex;align-items:center;justify-content:center;font-size:2.5rem;background:#232b3e;margin-right:8px;">
                     <svg viewBox="64 64 896 896" focusable="false" data-icon="file-text" width="1em" height="1em" fill="currentColor" aria-hidden="true">
@@ -457,7 +482,17 @@
      
     </div>
         <div style="text-align:center;margin-top:24px;">
-                                <button id="show-all-documents-btn" class="styled-button" style="display:block;" @click="openDocumentsModal">Show all Documents</button>
+            <button v-if="!showAllDocuments && Vipdata.documentslist && Vipdata.documentslist.length > 5" 
+                    id="show-all-documents-btn" 
+                    class="styled-button" 
+                    @click="toggleDocumentsView">
+              View All Documents ({{ Vipdata.documentslist.length }} documents)
+            </button>
+            <button v-else-if="showAllDocuments" 
+                    class="styled-button" 
+                    @click="toggleDocumentsView">
+              Show Top 5 Only
+            </button>
         </div>
     </div>
 
@@ -655,7 +690,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref,onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import navcomponent from '../component/nav/nav.vue';
 import{ get_userinfo,get_membership_levels,get_VipDashboardData,closetrades, updateUserAvatar, get_stock_prices } from '../../api/module/web/vip'
@@ -759,6 +794,75 @@ const vipList=ref([])
 let user_info=ref({});
 let Vipdata=ref({});
 let vedioslist=ref([])
+
+// 排行榜显示控制
+const showAllRankings = ref(false);
+
+// 计算显示的会员列表
+const displayedUsers = computed(() => {
+  if (!Vipdata.value.usersSort || !Array.isArray(Vipdata.value.usersSort)) {
+    return [];
+  }
+  
+  if (showAllRankings.value) {
+    // 显示所有会员（最多50名）
+    return Vipdata.value.usersSort.slice(0, 50);
+  } else {
+    // 只显示前5名
+    return Vipdata.value.usersSort.slice(0, 5);
+  }
+});
+
+// 切换排行榜显示模式
+const toggleRankingsView = () => {
+  showAllRankings.value = !showAllRankings.value;
+};
+
+// 视频显示控制
+const showAllVideos = ref(false);
+
+// 计算显示的视频列表
+const displayedVideos = computed(() => {
+  if (!Vipdata.value.vedioslist || !Array.isArray(Vipdata.value.vedioslist)) {
+    return [];
+  }
+  
+  if (showAllVideos.value) {
+    // 显示所有视频
+    return Vipdata.value.vedioslist;
+  } else {
+    // 只显示前3个视频
+    return Vipdata.value.vedioslist.slice(0, 3);
+  }
+});
+
+// 切换视频显示模式
+const toggleVideosView = () => {
+  showAllVideos.value = !showAllVideos.value;
+};
+
+// 文档显示控制
+const showAllDocuments = ref(false);
+
+// 计算显示的文档列表
+const displayedDocuments = computed(() => {
+  if (!Vipdata.value.documentslist || !Array.isArray(Vipdata.value.documentslist)) {
+    return [];
+  }
+  
+  if (showAllDocuments.value) {
+    // 显示所有文档
+    return Vipdata.value.documentslist;
+  } else {
+    // 只显示前5个文档
+    return Vipdata.value.documentslist.slice(0, 5);
+  }
+});
+
+// 切换文档显示模式
+const toggleDocumentsView = () => {
+  showAllDocuments.value = !showAllDocuments.value;
+};
 onMounted(()=>{
   if(!userStore.userInfo.signing)
   {
@@ -1211,6 +1315,73 @@ const handleImageChange = async (event) => {
   pointer-events: none;
   align-items: center;
 }
+
+/* 增强背景科技感 */
+.app-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(0, 255, 174, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 数字流动背景效果 */
+.number-flow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.number-flow::before,
+.number-flow::after {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 50px,
+    rgba(255, 215, 0, 0.03) 50px,
+    rgba(255, 215, 0, 0.03) 100px
+  );
+  animation: numberFlow 15s infinite linear;
+}
+
+.number-flow::after {
+  animation-delay: 7s;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 80px,
+    rgba(0, 255, 174, 0.02) 80px,
+    rgba(0, 255, 174, 0.02) 120px
+  );
+}
+
+@keyframes numberFlow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes lightBeam {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(200%) rotate(45deg); }
+}
         /* Add forced-colors media query */
         @media (forced-colors: active) {
             .gold-text { forced-color-adjust: none; }
@@ -1292,10 +1463,54 @@ const handleImageChange = async (event) => {
             border-radius: 0 !important;
           }
         }
-        .gold-text { color: #FFD700; font-weight: 900; letter-spacing: 1px; }
-        .green-text { color: #00FFAE; font-weight: 700; }
-        .big-number { font-family: 'Roboto Mono', 'Inter', monospace; font-size: 2.6rem; color: #00ffae; font-weight: 900; text-shadow: 0 0 16px #00ffae55; }
-        .gold-number { color: #ffd700; text-shadow: 0 0 16px #ffd70077; }
+        .gold-text { 
+            color: #FFD700; 
+            font-weight: 900; 
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFE55C 50%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        .green-text { 
+            color: #00FFAE; 
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(0, 255, 174, 0.4);
+        }
+        .big-number { 
+            font-family: 'Roboto Mono', 'Inter', monospace; 
+            font-size: 2.6rem; 
+            color: #00ffae; 
+            font-weight: 900; 
+            text-shadow: 
+                0 0 16px #00ffae55,
+                0 0 32px rgba(0, 255, 174, 0.3);
+            animation: pulseGreen 2s ease-in-out infinite alternate;
+        }
+        .gold-number { 
+            color: #ffd700; 
+            text-shadow: 
+                0 0 16px #ffd70077,
+                0 0 32px rgba(255, 215, 0, 0.4);
+            animation: pulseGold 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 30px rgba(255, 215, 0, 0.3); }
+            100% { text-shadow: 0 0 50px rgba(255, 215, 0, 0.7); }
+        }
+
+        @keyframes pulseGreen {
+            0% { text-shadow: 0 0 16px #00ffae55, 0 0 32px rgba(0, 255, 174, 0.2); }
+            100% { text-shadow: 0 0 24px #00ffae88, 0 0 48px rgba(0, 255, 174, 0.4); }
+        }
+
+        @keyframes pulseGold {
+            0% { text-shadow: 0 0 16px #ffd70077, 0 0 32px rgba(255, 215, 0, 0.3); }
+            100% { text-shadow: 0 0 24px #ffd700aa, 0 0 48px rgba(255, 215, 0, 0.5); }
+        }
         .card-title,
         .section h2,
         .agreement-title,
@@ -1312,27 +1527,78 @@ const handleImageChange = async (event) => {
             display: inline-block;
         }
         .styled-button, .ant-btn-primary {
-            background: linear-gradient(90deg, #FFD700 0%, #FFB300 100%) !important;
+            background: linear-gradient(135deg, #FFD700 0%, #FFB300 50%, #FFD700 100%) !important;
             color: #181F2A !important;
             border: none !important;
             font-weight: 900;
             border-radius: 16px !important;
-            box-shadow: 0 6px 24px #FFD70044;
-            transition: all 0.3s cubic-bezier(.4,2,.6,1);
+            box-shadow: 
+                0 8px 32px rgba(255, 215, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                0 0 0 1px rgba(255, 215, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             height: 48px;
             padding: 0 32px;
             font-size: 1.15rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .styled-button::before, .ant-btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+
+        .styled-button:hover::before, .ant-btn-primary:hover::before {
+            left: 100%;
         }
         .styled-button:hover, .ant-btn-primary:hover {
-            background: linear-gradient(90deg, #FFE066 0%, #FFD700 100%) !important;
+            background: linear-gradient(135deg, #FFE066 0%, #FFD700 50%, #FFE066 100%) !important;
             color: #181F2A !important;
-            box-shadow: 0 12px 36px #FFD70077;
-            transform: translateY(-3px) scale(1.04);
+            box-shadow: 
+                0 16px 48px rgba(255, 215, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 0 0 2px rgba(255, 215, 0, 0.7),
+                0 0 60px rgba(255, 215, 0, 0.2);
+            transform: translateY(-4px) scale(1.05);
         }
         .avatar-glow, .ant-avatar {
-            border: 2.5px solid #FFD700 !important;
-            box-shadow: 0 0 24px #FFD70099, 0 0 0 6px #FFD70022;
-            background: #232b3e !important;
+            border: 3px solid #FFD700 !important;
+            box-shadow: 
+                0 0 30px rgba(255, 215, 0, 0.8),
+                0 0 0 8px rgba(255, 215, 0, 0.15),
+                0 0 60px rgba(255, 215, 0, 0.3);
+            background: linear-gradient(135deg, #232b3e 0%, #2a3444 100%) !important;
+            animation: avatarGlow 4s ease-in-out infinite alternate;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        @keyframes avatarGlow {
+            0% {
+                box-shadow: 
+                    0 0 30px rgba(255, 215, 0, 0.6),
+                    0 0 0 8px rgba(255, 215, 0, 0.1),
+                    0 0 60px rgba(255, 215, 0, 0.2);
+            }
+            100% {
+                box-shadow: 
+                    0 0 45px rgba(255, 215, 0, 0.9),
+                    0 0 0 12px rgba(255, 215, 0, 0.25),
+                    0 0 80px rgba(255, 215, 0, 0.4);
+            }
         }
         .glass-stat-card-grid {
             display: flex;
@@ -1347,23 +1613,57 @@ const handleImageChange = async (event) => {
             max-width: none;
             background: linear-gradient(135deg, #232B3E 60%, #222a3a 100%);
             border-radius: 24px;
-            box-shadow: 0 8px 32px #181F2A44, 0 0 0 2px #FFD70033;
+            box-shadow: 
+                0 8px 32px #181F2A44, 
+                0 0 0 2px #FFD70033,
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
             border: 1.5px solid rgba(255, 255, 255, 0.12);
             color: #fff;
             padding: 40px 28px;
             margin-bottom: 18px;
             text-align: center;
-            transition: all 0.3s cubic-bezier(.4,2,.6,1);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .glass-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                #FFD700 20%, 
+                #FFE55C 50%, 
+                #FFD700 80%, 
+                transparent 100%
+            );
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .glass-stat-card:hover::before {
+            opacity: 0.8;
         }
         @media (max-width: 900px) {
             .glass-stat-card-grid { gap: 16px; }
             .glass-stat-card { padding: 18px 8px; min-width: 120px; border-radius: 10px; }
         }
         .glass-stat-card:hover {
-            box-shadow: 0 16px 64px 0 #FFD70044, 0 0 0 3px #FFD700;
+            box-shadow: 
+                0 20px 80px 0 #FFD70055, 
+                0 0 0 3px #FFD700,
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 60px rgba(255, 215, 0, 0.15);
             border-color: #FFD700;
-            transform: translateY(-6px) scale(1.03);
+            transform: translateY(-8px) scale(1.05);
+            background: linear-gradient(135deg, #2a3444 60%, #252d3a 100%);
         }
         .glass-stat-label { color: #b0c4e6; font-size: 1.15rem; margin-bottom: 10px; font-weight: 600;height: 60px; }
         .glass-stat-value {

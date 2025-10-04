@@ -45,24 +45,7 @@
           <div class="input-section">
             <h4><i class="bi bi-sliders"></i> Selection Criteria</h4>
             
-            <label class="form-label">Market Sector</label>
-            <select class="form-select" v-model="stockPickerCriteria.sector">
-              <option value="">All Sectors</option>
-              <option value="AI Technology">AI Technology</option>
-              <option value="Semiconductors">Semiconductors</option>
-              <option value="Technology">Technology</option>
-              <option value="Healthcare">Healthcare</option>
-              <option value="Biotechnology">Biotechnology</option>
-              <option value="Finance">Finance</option>
-              <option value="Energy">Energy</option>
-              <option value="Renewable Energy">Renewable Energy</option>
-              <option value="Consumer Goods">Consumer Goods</option>
-              <option value="Industrial">Industrial</option>
-              <option value="Utilities">Utilities</option>
-              <option value="Materials">Materials</option>
-              <option value="Real Estate">Real Estate</option>
-              <option value="Communication">Communication</option>
-            </select>
+            <!-- Market Sector is now fixed as "All Sectors" - no selector needed -->
             
             <label class="form-label">Investment Style</label>
             <select class="form-select" v-model="stockPickerCriteria.style">
@@ -493,7 +476,7 @@ const traderInfo = ref({
 
 // Stock Picker related data
 const stockPickerCriteria = ref({
-  sector: '',
+  sector: '', // 保持为空字符串，表示所有行业，但不在UI上显示选择框
   style: 'Long-term investment',
   risk: 'Medium',
   timeHorizon: 'Medium-term (3-12 months)',

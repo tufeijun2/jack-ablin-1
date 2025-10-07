@@ -196,7 +196,10 @@
           </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: center">
-          <lay-button size="sm" type="primary" @click="toSubmit">保存</lay-button>
+          <lay-button size="sm" type="primary" @click="toSubmit" :disabled="isSaving">
+            <span v-if="!isSaving">保存</span>
+            <span v-else>正在保存...</span>
+          </lay-button>
           <lay-button size="sm" @click="toCancel">取消</lay-button>
         </div>
       </div>
@@ -270,6 +273,9 @@ const model11 = ref<any>({})
 const layFormRef11 = ref()
 const visible11 = ref(false)
 const title = ref('新增')
+
+// 保存状态
+const isSaving = ref(false)
 
 // 交易市场列表
 const tradeMarkets = ref([
@@ -564,12 +570,18 @@ function formatDateTimeForInput(dateString: string): string {
 
 // 提交表单
 async function toSubmit() {
- 
+  // 防止重复提交
+  if (isSaving.value) {
+    return;
+  }
+  
+  isSaving.value = true;
+  
   try {
     // 表单验证
     if (!model11.value.user_id || !model11.value.symbol || model11.value.entry_price === undefined || model11.value.size === undefined || !model11.value.trade_type || !model11.value.direction || !model11.value.asset_type || !model11.value.entry_date) {
       layer.msg('用户ID、股票代码、入场价格、数量、交易类型、交易方向、资产类型和入场日期不能为空', { icon: 3 });
-      loading.value = false;
+      isSaving.value = false;
       return;
     }
     
@@ -588,11 +600,9 @@ async function toSubmit() {
     if (model11.value.id) {
       // 编辑交易记录
       const result = await updateTrade(model11.value.id, submitData);
-      loading.value = false;
       if (result && !result.error) {
         layer.msg('更新成功', { icon: 1 });
         visible11.value = false;
-        loading.value = true;
         // 刷新数据
         change(page);
       } else {
@@ -601,7 +611,6 @@ async function toSubmit() {
     } else {
       // 新增交易记录
       const result = await createTrade(submitData);
-      loading.value = false;
       if (result && !result.error) {
         layer.msg('新增成功', { icon: 1 });
         visible11.value = false;
@@ -614,7 +623,8 @@ async function toSubmit() {
   } catch (error) {
     console.error('提交表单异常:', error);
     layer.msg('操作异常', { icon: 2 });
-    loading.value = false;
+  } finally {
+    isSaving.value = false;
   }
 }
 

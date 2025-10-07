@@ -10,7 +10,7 @@ type TAxiosOption = {
  
 const config: TAxiosOption = {
     timeout: 15000, // 增加到15秒
-    baseURL: import.meta.env.VITE_API_URL+"/api"
+    baseURL: (import.meta.env.VITE_API_URL || "http://localhost:8888")+"/api"
 }
  
 class Http {
@@ -21,7 +21,7 @@ class Http {
         /* 请求拦截 */
         this.service.interceptors.request.use((config: InternalAxiosRequestConfig) => {
             const userInfoStore = useUserStore();
-            config.headers['Web-Trader-UUID'] = import.meta.env.VITE_Web_Trader_UUID as string
+            config.headers['Web-Trader-UUID'] = import.meta.env.VITE_Web_Trader_UUID || "default-trader-uuid"
             if (userInfoStore.token) {
                 
               

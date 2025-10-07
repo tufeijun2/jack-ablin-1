@@ -94,7 +94,10 @@
         
         </lay-form>
         <div style="width: 100%; text-align: right">
-          <lay-button size="sm" type="primary" @click="toSubmit">保存</lay-button>
+          <lay-button size="sm" type="primary" @click="toSubmit" :disabled="isSaving">
+            <template v-if="!isSaving">保存</template>
+            <template v-else>正在保存...</template>
+          </lay-button>
           <lay-button size="sm" @click="toCancel">取消</lay-button>
         </div>
       </div>
@@ -150,6 +153,9 @@ const model = ref<any>({
 const layFormRef = ref()
 const visible = ref(false)
 const title = ref('新增邀请码')
+
+// 保存状态
+const isSaving = ref(false)
 
 // 初始化加载数据
 onMounted(() => {
@@ -275,23 +281,32 @@ async function copyText(text:any) {
     }
 // 提交表单
 async function toSubmit() {
+  // 防止重复提交
+  if (isSaving.value) {
+    return;
+  }
+  
   try {
-   
-      layer.load(0, {time: 3000})
-      const response = await createInvitationCode()
-      if (response.success) {
-        layer.closeAll()
-        layer.confirm(response.message)
-        visible.value = false
-        // 刷新数据
-        change(page)
-      } else {
-        layer.msg(response.message || '新增失败', { icon: 2 })
-      }
+    // 设置保存状态
+    isSaving.value = true;
     
+    layer.load(0, {time: 3000})
+    const response = await createInvitationCode()
+    if (response.success) {
+      layer.closeAll()
+      layer.confirm(response.message)
+      visible.value = false
+      // 刷新数据
+      change(page)
+    } else {
+      layer.msg(response.message || '新增失败', { icon: 2 })
+    }
   } catch (error) {
-    console.error('提交表单异常:', error)
+    console.error('提交表单异常', error)
     layer.msg('操作异常', { icon: 2 })
+  } finally {
+    // 重置保存状态
+    isSaving.value = false;
   }
 }
 

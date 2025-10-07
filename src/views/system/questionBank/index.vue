@@ -125,7 +125,10 @@
           </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: right">
-          <lay-button size="sm" type="primary" @click="saveQuestion">保存</lay-button>
+          <lay-button size="sm" type="primary" @click="saveQuestion" :disabled="isSaving">
+            <template v-if="!isSaving">保存</template>
+            <template v-else>正在保存...</template>
+          </lay-button>
           <lay-button size="sm" @click="toCancel">取消</lay-button>
         </div>
       </div>
@@ -184,6 +187,9 @@ const model = ref<any>({
 const layFormRef = ref();
 const visible = ref(false);
 const title = ref('新增题目');
+
+// 保存状态
+const isSaving = ref(false);
 
 // 图片上传相关
 const avatarFile = ref<File | null>(null);
@@ -377,10 +383,19 @@ function removeOption(index: number) {
 
 // 保存题目
 async function saveQuestion() {
+  // 防止重复提交
+  if (isSaving.value) {
+    return;
+  }
+  
   try {
+    // 设置保存状态
+    isSaving.value = true;
+    
     // 表单验证
     if (!model.value.question.trim()) {
       layer.msg('题目内容不能为空', { icon: 3 });
+      isSaving.value = false;
       return;
     }
     
@@ -388,12 +403,14 @@ async function saveQuestion() {
     const validOptions = model.value.options.filter((option: string) => option.trim() !== '');
     if (validOptions.length < 2) {
       layer.msg('至少需要2个有效的选项', { icon: 3 });
+      isSaving.value = false;
       return;
     }
     
     // 验证正确答案
     if (model.value.correctAnswer === undefined || model.value.correctAnswer < 0 || model.value.correctAnswer >= model.value.options.length) {
       layer.msg('请选择正确的答案', { icon: 3 });
+      isSaving.value = false;
       return;
     }
     
@@ -433,6 +450,9 @@ async function saveQuestion() {
   } catch (error) {
     console.error('保存题目异常:', error);
     layer.msg('操作异常', { icon: 2 });
+  } finally {
+    // 重置保存状态
+    isSaving.value = false;
   }
 }
 

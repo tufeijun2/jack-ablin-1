@@ -117,7 +117,10 @@
           </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: right">
-          <lay-button size="sm" type="primary" @click="toSubmit">保存</lay-button>
+          <lay-button size="sm" type="primary" @click="toSubmit" :disabled="isSaving">
+            <span v-if="!isSaving">保存</span>
+            <span v-else>正在保存...</span>
+          </lay-button>
           <lay-button size="sm" @click="toCancel">取消</lay-button>
         </div>
       </div>
@@ -177,6 +180,9 @@ const model11 = ref<any>({})
 const layFormRef11 = ref()
 const visible11 = ref(false)
 const title = ref('新增')
+
+// 保存状态
+const isSaving = ref(false)
 
 // 会员权益列表
 const benefitsList = ref<string[]>([''])
@@ -365,12 +371,15 @@ const changeVisible11 = (text: string, row?: MembershipLevel) => {
 
 // 提交表单
 async function toSubmit() {
+  // 防止重复提交
+  if (isSaving.value) return
+  isSaving.value = true
   
   try {
     // 表单验证
     if (!model11.value.level || !model11.value.name) {
       layer.msg('等级和等级名称不能为空', { icon: 3 });
-      loading.value = false;
+      isSaving.value = false;
       return;
     }
     
@@ -395,7 +404,6 @@ async function toSubmit() {
       // 编辑会员等级
       try {
         const result = await updateMembershipLevel(model11.value.id, submitData);
-        loading.value = false;
         if (result) {
           layer.msg('更新成功', { icon: 1 });
           visible11.value = false;
@@ -406,14 +414,12 @@ async function toSubmit() {
           layer.msg('更新失败', { icon: 2 });
         }
       } catch (error) {
-        loading.value = false;
         layer.msg(error.response?.data?.error || '更新失败', { icon: 2 });
       }
     } else {
       // 新增会员等级
       try {
         const result = await createMembershipLevel(submitData);
-        loading.value = false;
         if (result) {
           layer.msg('新增成功', { icon: 1 });
           visible11.value = false;
@@ -423,14 +429,14 @@ async function toSubmit() {
           layer.msg('新增失败', { icon: 2 });
         }
       } catch (error) {
-        loading.value = false;
         layer.msg(error.response?.data?.error || '新增失败', { icon: 2 });
       }
     }
   } catch (error) {
     console.error('提交表单异常:', error);
     layer.msg('操作异常', { icon: 2 });
-    loading.value = false;
+  } finally {
+    isSaving.value = false;
   }
 }
 

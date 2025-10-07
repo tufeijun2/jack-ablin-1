@@ -1,11 +1,14 @@
 import BasicLayout from '../../layouts/BasicLayout.vue';
 import Login from '../../views/login/index.vue';
 import Home from '../../views/web/HomeView.vue';
-import BasicLayout from '../../layouts/BasicLayout.vue';
 
 export default [
   {
     path: '/',
+    component: Home,
+  },
+   {
+    path: '/index',
     component: Home,
   },
   {

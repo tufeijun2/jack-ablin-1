@@ -93,7 +93,7 @@
         </div>
 
         <!-- Strategy Update Section -->
-        <div class="strategy-update">
+        <div class="strategy-update" >
           <div class="strategy-header">
             <h3><i class="bi bi-lightbulb glow-bulb"></i> Today's Trading Strategy</h3>
             <span class="update-time">Updated at: {{formatUSTime(strategy_info.updated_at)}}</span>
@@ -423,7 +423,19 @@ import{getIndexData,get_whatsapp_link,getannouncement,likeTrader} from '../../ap
 import { useUserStore } from '@/store';
 import { layer } from '@layui/layui-vue';
 const trader_profiles=ref({});
-const strategy_info=ref({});
+const strategy_info=ref({
+    "updated_at": "",
+    "market_analysis": "",
+    "trading_focus": [
+    ],
+    "risk_warning": "",
+    "id": 0,
+    "trader_uuid": "",
+    "stype": 0,
+    "analysis_path": "",
+    "warntype": 0,
+    "warn_path": ""
+});
 const trades=ref({});
 const Activecount=ref(0)
 const Monthly=ref(0)
@@ -447,7 +459,9 @@ onMounted(() => {
   try{
   let indexdata=JSON.parse(userStore.indexData || '{}');
   trader_profiles.value=indexdata.trader_profiles;
-    strategy_info.value=indexdata.strategy_info;
+    if(indexdata.strategy_info){
+      strategy_info.value=indexdata.strategy_info;
+    }
     
     // 对本地存储的数据也进行排序
     if(indexdata.trades && Array.isArray(indexdata.trades)) {
@@ -662,7 +676,9 @@ const getindexdata= async()=>{
   if(res.success){
     userStore.indexData=JSON.stringify(res.data);
     trader_profiles.value=res.data.trader_profiles;
+     if(res.data.strategy_info){
     strategy_info.value=res.data.strategy_info;
+     }
     
     // 复杂排序：首先按状态，然后按时间
     const sortedTrades = res.data.trades.sort((a: any, b: any) => {

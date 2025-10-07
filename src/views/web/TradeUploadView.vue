@@ -66,7 +66,8 @@
           </select>
           <div v-if="directionError" class="error-message">{{ directionError }}</div>
         </div>
-        <button type="submit" class="login-btn" >Submit</button>
+        <button type="submit" class="login-btn" :disabled="isSaving" v-if="!isSaving">Submit</button>
+         <button type="submit" class="login-btn" :disabled="isSaving" v-else>Submitting...</button>
       </form>
       
       <div class="back-link">
@@ -111,7 +112,7 @@ const tradeFile = ref<File | null>(null);
 const selectedFileName = ref('');
 const fileUrl = ref('');
 const isUploading = ref(false);
-
+const isSaving = ref(false);
 // 市场列表数据
 const marketList = ref<any[]>([]);
 const isLoadingMarkets = ref(false);
@@ -261,6 +262,7 @@ const handleSubmit = async () => {
   if (!validateForm()) {
     return;
   }
+  isSaving.value = true;
    console.log(marketList.value)
   let result=marketList.value.filter(element => element.marketname==market.value);
     console.log(result)
@@ -269,6 +271,7 @@ const handleSubmit = async () => {
     // 如果文件正在上传，等待上传完成
     if (isUploading.value) {
       alert('Please wait for the file upload to complete before submitting the form.');
+      isSaving.value = false;
       return;
     }
     
@@ -301,6 +304,7 @@ const handleSubmit = async () => {
       console.error('上传失败响应:', response);
       alert(`Failed to upload trade record: ${response?.message || response?.data?.message || 'Unknown error'}`);
     }
+    isSaving.value = false;
   } catch (error: any) {
     console.error('Upload error:', error);
     console.error('Error details:', error.response?.data);

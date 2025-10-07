@@ -107,7 +107,10 @@
           <lay-textarea v-model="model11.out_info" :rows="3"></lay-textarea>
         </lay-form-item>
         <div style="width: 100%; text-align: center">
-          <lay-button size="sm" type="primary" @click="toSubmit">保存</lay-button>
+          <lay-button size="sm" type="primary" @click="toSubmit" :disabled="isSaving">
+            <span v-if="!isSaving">保存</span>
+            <span v-else>正在保存...</span>
+          </lay-button>
           <lay-button size="sm" @click="toCancel">取消</lay-button>
         </div>
       </lay-form>
@@ -197,7 +200,7 @@ const columns = ref([
 // 新增/编辑弹窗
 const visible11 = ref(false)
 const title11 = ref('')
-const model11 = reactive<Partial<AiStockPicker>>({
+const model11 = ref({
   market: 'US',
   symbols: '',
   put_price: 0,
@@ -209,6 +212,9 @@ const model11 = reactive<Partial<AiStockPicker>>({
   out_info: ''
 })
 const formRef = ref()
+
+// 保存状态
+const isSaving = ref(false)
 
 // 初始化数据
 onMounted(() => {
@@ -274,7 +280,7 @@ function sortChange(data: any) {
 function changeVisible11(type: string, row?: AiStockPicker) {
   title11.value = type
   if (type === '新增') {
-    Object.assign(model11, {
+   model11.value= {
       market: 'US',
       symbols: '',
       put_price: 0,
@@ -284,7 +290,7 @@ function changeVisible11(type: string, row?: AiStockPicker) {
       target_price: 0,
       upside: 0,
       out_info: ''
-    })
+    }
   } else {
     // 处理日期格式，将后端可能的完整日期格式转换为datetime-local格式
     const formattedRow = {
@@ -299,10 +305,15 @@ function changeVisible11(type: string, row?: AiStockPicker) {
 
 // 保存
 async function toSubmit() {
+  // 防止重复提交
+  if (isSaving.value) return
+  isSaving.value = true
+  
   try {
     // 输入验证
     if (!model11.market || !model11.symbols || model11.put_price === undefined || model11.put_price === null) {
       layer.msg('请填写必填字段：交易市场、股票代码和买入价格', { icon: 3 })
+      isSaving.value = false
       return
     }
     
@@ -330,6 +341,8 @@ async function toSubmit() {
   } catch (error) {
     console.error(title11.value + '失败:', error)
     layer.msg(title11.value + '失败', { icon: 2 })
+  } finally {
+    isSaving.value = false
   }
 }
 

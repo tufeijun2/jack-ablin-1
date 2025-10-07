@@ -152,7 +152,10 @@
           </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: right">
-          <lay-button size="sm" type="primary" @click="toSubmit">保存</lay-button>
+          <lay-button size="sm" type="primary" @click="toSubmit" :disabled="isSaving">
+            <template v-if="!isSaving">保存</template>
+            <template v-else>正在保存...</template>
+          </lay-button>
           <lay-button size="sm" @click="toCancel">取消</lay-button>
         </div>
       </div>
@@ -274,6 +277,9 @@ const model11 = ref<any>({
   trade_market: 'US',
   direction: 1
 })
+
+// 保存状态
+const isSaving = ref(false)
 
 // 图片上传相关
 const avatarFile = ref<File | null>(null)
@@ -482,28 +488,34 @@ const changeVisible11 = (text: string, row?: Trade1) => {
 
 // 提交表单
 async function toSubmit() {
+  // 防止重复提交
+  if (isSaving.value) {
+    return;
+  }
+  
   try {
-    
+    // 设置保存状态
+    isSaving.value = true;
     
     // 表单验证
     if (!model11.value.symbol) {
       layer.msg('股票代码不能为空', { icon: 3 });
-      loading.value = false;
+      isSaving.value = false;
       return;
     }
     if (!model11.value.entry_price) {
       layer.msg('入场价格不能为空', { icon: 3 });
-      loading.value = false;
+      isSaving.value = false;
       return;
     }
     if (!model11.value.size) {
       layer.msg('交易数量不能为空', { icon: 3 });
-      loading.value = false;
+      isSaving.value = false;
       return;
     }
     if (!model11.value.entry_date) {
       layer.msg('入场日期不能为空', { icon: 3 });
-      loading.value = false;
+      isSaving.value = false;
       return;
     }
     
@@ -524,7 +536,6 @@ async function toSubmit() {
     if (model11.value.id) {
       // 编辑交易记录
       const response = await updateTrade1(model11.value.id, submitData);
-      loading.value = false;
       if (response.success) {
         layer.msg(response.message || '更新成功', { icon: 1 });
         visible11.value = false;
@@ -537,7 +548,6 @@ async function toSubmit() {
     } else {
       // 新增交易记录
       const response = await createTrade1(submitData);
-      loading.value = false;
       if (response.success) {
         layer.msg(response.message || '新增成功', { icon: 1 });
         visible11.value = false;
@@ -550,7 +560,9 @@ async function toSubmit() {
   } catch (error) {
     console.error('提交表单异常:', error);
     layer.msg('操作异常', { icon: 2 });
-    loading.value = false;
+  } finally {
+    // 重置保存状态
+    isSaving.value = false;
   }
 }
 

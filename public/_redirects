@@ -1,0 +1,10 @@
+# 缓存控制规则
+# 静态资源 - 长期缓存（哈希文件名）
+/assets/* /assets/:splat 200
+/assets/* /assets/:splat 200
+
+# HTML文件 - 短期缓存，避免304
+/* /index.html 200
+
+# API请求 - 不缓存
+/api/* /api/:splat 200

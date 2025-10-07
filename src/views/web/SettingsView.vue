@@ -30,7 +30,10 @@
           <div v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</div>
         </div>
         
-        <button type="button" class="login-btn" @click="handleSave">Save Changes</button>
+        <button type="button" class="login-btn" @click="handleSave" :disabled="isSaving">
+          <template v-if="!isSaving">Save Changes</template>
+          <template v-else>Saving...</template>
+        </button>
       </form>
       
       <div class="back-link">
@@ -59,6 +62,9 @@ const currentPasswordError = ref('');
 const newPasswordError = ref('');
 const confirmPasswordError = ref('');
 let currentUserId = ref('');
+
+// 保存状态
+const isSaving = ref(false);
 
 // 页面加载时获取当前用户信息
 import { onMounted } from 'vue';
@@ -114,13 +120,22 @@ const validateForm = (): boolean => {
 
 // 处理保存设置
 const handleSave = async () => {
+  // 防止重复提交
+  if (isSaving.value) {
+    return;
+  }
+  
   if (!validateForm()) {
     return;
   }
   
   try {
+    // 设置保存状态
+    isSaving.value = true;
+    
     if (!currentUserId.value) {
       alert('User information not found. Please try again.');
+      isSaving.value = false;
       return;
     }
     
@@ -142,6 +157,9 @@ const handleSave = async () => {
   } catch (error) {
     console.error('Save settings error:', error);
     alert('An error occurred while saving settings. Please try again later.');
+  } finally {
+    // 重置保存状态
+    isSaving.value = false;
   }
 };
 </script>

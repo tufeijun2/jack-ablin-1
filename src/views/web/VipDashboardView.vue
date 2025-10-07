@@ -138,17 +138,17 @@
            
               <div v-if="t.exit_price"><span class="label">Exit:</span> $<b>{{ formatCurrency(t.exit_price) }}</b></div>
               <div v-else><span class="label" >Current:</span> $<b>{{ t.current_price ? formatCurrency(t.current_price) : 'Loading...' }}</b></div>
-               <div><span class="label">Qty:</span> <b>{{ t.quantity }}</b></div>
+               <div><span class="label">Qty:</span> <b>{{ t.quantity || t.size }}</b></div>
             </div>
           
             <div class="trade-info-group">
               <div>
                 <span class="label">P&L:</span>
-                <span class="trade-profit-table" v-if="t.exit_price" :class="getProfitColor(((t.exit_price-t.entry_price)*t.quantity*t.direction))">
-                  {{ t.currency }}{{ formatCurrency(((t.exit_price-t.entry_price)*t.quantity*t.direction)) }}
+                <span class="trade-profit-table" v-if="t.exit_price" :class="getProfitColor(((t.exit_price-t.entry_price)*(t.quantity||t.size)*t.direction))">
+                  {{ t.currency }}{{ formatCurrency(((t.exit_price-t.entry_price)*(t.quantity||t.size)*t.direction)) }}
                 </span>
-                 <span class="trade-profit-table" v-else :class="getProfitColor(t.current_price ? ((t.current_price-t.entry_price)*t.quantity*t.direction) : 0)">
-                  {{ t.currency }}{{ t.current_price ? formatCurrency(((t.current_price-t.entry_price)*t.quantity*t.direction)) : 'Loading...' }}
+                 <span class="trade-profit-table" v-else :class="getProfitColor(t.current_price ? ((t.current_price-t.entry_price)*(t.quantity||t.size)*t.direction) : 0)">
+                  {{ t.currency }}{{ t.current_price ? formatCurrency(((t.current_price-t.entry_price)*(t.quantity||t.size)*t.direction)) : 'Loading...' }}
                 </span>
               </div>
               <div>
@@ -211,16 +211,16 @@
                   
                   <div v-if="t.exit_date"><span class="label">Exit Date:</span> <b>{{ formatUSDate(t.exit_date) }}</b></div>
                   <div v-else><span class="label">Entry Date:</span> <b>{{ formatUSDate(t.entry_date) }}</b></div>
-                   <div><span class="label">Qty:</span> <b>{{ t.size }}</b></div>
+                   <div><span class="label">Qty:</span> <b>{{ t.size || t.quantity }}</b></div>
                 </div>
                 <div class="trade-info-group">
                    <div>
                     <span class="label">P&L:</span>
-                    <span class="trade-profit-table" v-if="t.exit_price" :class="getProfitColor(((t.exit_price-t.entry_price)*t.size*t.direction))">
-                      {{ t.currency }}{{ formatCurrency(((t.exit_price-t.entry_price)*t.size*t.direction)) }}
+                    <span class="trade-profit-table" v-if="t.exit_price" :class="getProfitColor(((t.exit_price-t.entry_price)*(t.size||t.quantity)*t.direction))">
+                      {{ t.currency }}{{ formatCurrency(((t.exit_price-t.entry_price)*(t.size||t.quantity)*t.direction)) }}
                     </span>
-                    <span class="trade-profit-table" v-else :class="getProfitColor(t.current_price ? ((t.current_price-t.entry_price)*t.size*t.direction) : 0)">
-                      {{ t.currency }}{{ t.current_price ? formatCurrency(((t.current_price-t.entry_price)*t.size*t.direction)) : 'Loading...' }}
+                    <span class="trade-profit-table" v-else :class="getProfitColor(t.current_price ? ((t.current_price-t.entry_price)*(t.size||t.quantity)*t.direction) : 0)">
+                      {{ t.currency }}{{ t.current_price ? formatCurrency(((t.current_price-t.entry_price)*(t.size||t.quantity)*t.direction)) : 'Loading...' }}
                     </span>
                   </div>
                   <div>
@@ -236,7 +236,7 @@
                    <div v-else><span class="label">Current:</span> <b>{{ t.currency }}{{ t.current_price ? formatCurrency(t.current_price) : 'Loading...' }}</b></div>
                 </div>
                 <!-- Close Trade Button - Only show when exit price is empty, positioned on the right -->
-                <div v-if="!t.exit_price" class="trade-close-btn-container" style="display:flex;justify-content:flex-end;margin-top:12px;">
+                <div v-if="!t.exit_price" class="trade-close-btn-container" style="display:flex;justify-content:flex-end;margin-top:2px;">
                   <a class="styled-button close-trade-btn" @click="openCloseTradeModal(t)" style="background:linear-gradient(90deg, #FFD700 0%, #FFB300 100%);color:#181F2A;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size: 12px;">Close Trade</a>
                 </div>
               
@@ -1012,11 +1012,16 @@ const updateStockPrices = async () => {
     const uniqueSymbols = [...new Set(symbols)];
     
     if (uniqueSymbols.length > 0) {
+      console.log('Updating stock prices for symbols:', uniqueSymbols);
       try {
         // Call price API
+        console.log('Calling stock price API with symbols:', uniqueSymbols);
         const priceRes = await get_stock_prices(uniqueSymbols);
-        if (priceRes.success && priceRes.data) {
+        console.log('Stock price API response:', priceRes);
+        
+        if (priceRes && priceRes.success && priceRes.data) {
           const priceMap = priceRes.data;
+          console.log('Price map received:', priceMap);
           
           // Update prices in VIP trading records
           if (Vipdata.value.tradelist) {
@@ -1038,8 +1043,37 @@ const updateStockPrices = async () => {
           
           // Update data in store
           userStore.VipData = Vipdata.value;
+        } else {
+          console.warn('Stock price API returned unsuccessful response:', priceRes);
+          // Use mock prices when API returns unsuccessful response
+          const mockPrices = {};
+          uniqueSymbols.forEach(symbol => {
+            mockPrices[symbol] = Math.random() * 100 + 10; // Mock prices 10-110
+          });
+          
+          // Update prices in VIP trading records
+          if (Vipdata.value.tradelist) {
+            Vipdata.value.tradelist.forEach(trade => {
+              if (mockPrices[trade.symbol]) {
+                trade.current_price = mockPrices[trade.symbol];
+              }
+            });
+          }
+          
+          // Update prices in user trading records
+          if (Vipdata.value.user_trade_list) {
+            Vipdata.value.user_trade_list.forEach(trade => {
+              if (mockPrices[trade.symbol]) {
+                trade.current_price = mockPrices[trade.symbol];
+              }
+            });
+          }
+          
+          // Update data in store
+          userStore.VipData = Vipdata.value;
         }
       } catch (apiError) {
+        console.error('Stock price API error:', apiError);
         console.warn('Stock price API temporarily unavailable, using mock prices:', apiError);
         // If API is unavailable, use mock prices
         const mockPrices = {};

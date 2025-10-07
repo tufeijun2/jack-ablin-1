@@ -153,7 +153,10 @@
           </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: right">
-          <lay-button size="sm" type="primary" @click="toSubmit">保存</lay-button>
+          <lay-button size="sm" type="primary" @click="toSubmit" :disabled="isSaving">
+            <span v-if="!isSaving">保存</span>
+            <span v-else>正在保存...</span>
+          </lay-button>
           <lay-button size="sm" @click="toCancel">取消</lay-button>
         </div>
       </div>
@@ -214,6 +217,9 @@ const model11 = ref<any>({})
 const layFormRef11 = ref()
 const visible11 = ref(false)
 const title = ref('新增')
+
+// 保存状态
+const isSaving = ref(false)
 
 // 初始化加载数据
 onMounted(() => {
@@ -420,12 +426,18 @@ const changeVisible11 = (text: string, row?: Announcement) => {
 
 // 提交表单
 async function toSubmit() {
- 
+  // 防止重复提交
+  if (isSaving.value) {
+    return;
+  }
+  
+  isSaving.value = true;
+  
   try {
     // 表单验证
     if (!model11.value.title || !model11.value.content) {
       layer.msg('标题和内容不能为空', { icon: 3 });
-      loading.value = false;
+      isSaving.value = false;
       return;
     }
     
@@ -454,7 +466,6 @@ async function toSubmit() {
     if (model11.value.id) {
       // 编辑公告
       const response = await updateAnnouncement(model11.value.id, submitData);
-      loading.value = false;
       if (response.success) {
         layer.msg(response.message || '更新成功', { icon: 1 });
         visible11.value = false;
@@ -466,7 +477,6 @@ async function toSubmit() {
     } else {
       // 新增公告
       const response = await createAnnouncement(submitData);
-      loading.value = false;
       if (response.success) {
         layer.msg(response.message || '新增成功', { icon: 1 });
         visible11.value = false;
@@ -480,7 +490,8 @@ async function toSubmit() {
   } catch (error) {
     console.error('提交表单异常:', error);
     layer.msg('操作异常', { icon: 2 });
-    loading.value = false;
+  } finally {
+    isSaving.value = false;
   }
 }
 

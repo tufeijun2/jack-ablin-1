@@ -165,9 +165,10 @@
           </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: right">
-          <lay-button size="sm" type="primary" @click="toSubmit" :loading="loading"
-            >保存</lay-button
-          >
+          <lay-button size="sm" type="primary" @click="toSubmit" :disabled="isSaving">
+            <span v-if="!isSaving">保存</span>
+            <span v-else>正在保存...</span>
+          </lay-button>
           <lay-button size="sm" @click="toCancel">取消</lay-button>
         </div>
       </div>
@@ -248,6 +249,9 @@ const file1 = ref<any[]>([])
 const avatarFile = ref<any[]>([])
 const agreementFile = ref<any[]>([])
 const uploading = ref(false)
+
+// 保存状态
+const isSaving = ref(false)
 
 // 初始化加载数据
 onMounted(() => {
@@ -437,12 +441,18 @@ const changeVisible11 = (text: string, row?: TraderProfile) => {
 
 // 提交表单
 async function toSubmit() {
-  loading.value = true;
+  // 防止重复提交
+  if (isSaving.value) {
+    return;
+  }
+  
+  isSaving.value = true;
+  
   try {
       // 表单验证
       if (!model11.value.trader_name) {
         layer.msg('Trader UUID和用户名不能为空', { icon: 3 });
-        loading.value = false;
+        isSaving.value = false;
         return;
       }
     
@@ -458,7 +468,6 @@ async function toSubmit() {
     if (model11.value.id) {
       // 编辑交易者档案
       const response= await updateTraderProfile(model11.value.id, submitData);
-      loading.value = false;
       if (response.success) {
         layer.msg(response.message || '更新成功', { icon: 1 });
         visible11.value = false;
@@ -470,7 +479,6 @@ async function toSubmit() {
     } else {
       // 新增交易者档案
       const response = await createTraderProfile(submitData);
-      loading.value = false;
       if (response.success) {
         layer.msg(response.message || '新增成功', { icon: 1 });
         visible11.value = false;
@@ -484,7 +492,7 @@ async function toSubmit() {
     console.error('提交表单异常:', error);
     layer.msg('操作异常', { icon: 2 });
   } finally {
-    loading.value = false;
+    isSaving.value = false;
   }
 }
 

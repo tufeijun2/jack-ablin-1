@@ -22,5 +22,5 @@ export const updateVipTrade = function(id: string, vipTradeData: any) {
 
 // 删除VIP交易记录
 export const deleteVipTrade = function(id: string) {
-    return Http.delete(`/vip-trades/${id}`)
+    return Http.delete(`/vip-trades/${id}/delete`)
 }

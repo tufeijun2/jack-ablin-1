@@ -163,6 +163,9 @@
           <lay-form-item label="首页顶部标题链接" prop="home_top_title_link" :label-width="200">
             <lay-input v-model="model11.home_top_title_link" placeholder="请输入跳转链接，如：https://www.baidu.com"></lay-input>
           </lay-form-item>
+            <lay-form-item label="会员协议" prop="terms" :label-width="200">
+            <lay-textarea v-model="model11.terms" placeholder="请输入会员协议"></lay-textarea>
+          </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: right">
           <lay-button size="sm" type="primary" @click="toSubmit" :disabled="isSaving">
@@ -433,7 +436,8 @@ const changeVisible11 = (text: string, row?: TraderProfile) => {
       members_count: 0,
       likes_count: 0,
       status: 'active',
-      remark: ''
+      remark: '',
+      terms: ''
     }
   }
   visible11.value = true

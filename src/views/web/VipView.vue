@@ -204,6 +204,108 @@
         </div>
       </div>
       
+      <!-- Membership Agreement Button -->
+      <div class="text-center mt-4 mb-4">
+        <button class="btn-community-primary" data-bs-toggle="modal" data-bs-target="#membershipAgreementModal">
+          <i class="bi bi-file-text me-2"></i>View Membership Agreement
+        </button>
+      </div>
+      
+    </div>
+    
+    <!-- Membership Agreement Modal -->
+    <div class="modal fade" id="membershipAgreementModal" tabindex="-1" aria-labelledby="membershipAgreementModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="membershipAgreementModalLabel">Membership Agreement</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="agreement-content">
+              <div class="agreement-header-section">
+                <h3 class="agreement-main-title">Membership Agreement</h3>
+                <p class="agreement-description">
+                  This platform is a paid service focused on providing members with professional investment strategies and market analysis. Members pay commissions based on actual profits. In the event of significant losses, the platform will compensate and share commissions according to the ratios shown in the membership level table.
+                </p>
+              </div>
+              
+              <div class="agreement-table-section">
+                <h4 class="table-title">Membership Commission Mechanism</h4>
+                <div class="table-responsive">
+                  <table class="table table-striped table-dark">
+                    <thead>
+                      <tr>
+                        <th>Membership Level</th>
+                        <th>Fund Range</th>
+                        <th>Monthly Profit Ratio</th>
+                        <th>Commission Ratio</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(level, index) in vipList" :key="index">
+                        <td><span class="badge bg-warning">{{level.name}}</span></td>
+                        <td>>=${{ formatNumber(level.min_trading_volume) }}</td>
+                        <td><span class="text-success">{{level.monthly_profit_ratio}}%</span></td>
+                        <td><span class="text-info">{{level.commission_ratio}}%</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              
+              <div class="agreement-table-section">
+                <h4 class="table-title">Membership Compensation Mechanism</h4>
+                <div class="table-responsive">
+                  <table class="table table-striped table-dark">
+                    <thead>
+                      <tr>
+                        <th>Membership Level</th>
+                        <th>Fund Range</th>
+                        <th>Risk Ratio</th>
+                        <th>Compensation Ratio</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(level, index) in vipList" :key="index">
+                        <td><span class="badge bg-warning">{{level.name}}</span></td>
+                        <td>>=${{ formatNumber(level.min_trading_volume) }}</td>
+                        <td><span class="text-danger">{{level.risk_ratio}}%</span></td>
+                        <td><span class="text-success">{{level.compensation_ratio}}%</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              
+              <div class="agreement-terms">
+                <h4>Terms and Conditions</h4>
+               
+                <ul class="terms-list">
+                  <li v-for="(term, index) in traderTerms" :key="index">
+                    <i class="bi bi-check-circle text-success me-2"></i>{{ term }}
+                  </li>
+                  <!-- 如果没有交易员条款数据，显示默认条款 -->
+                  <template v-if="traderTerms.length === 0">
+                    <li><i class="bi bi-check-circle text-success me-2"></i>Membership fees are non-refundable once paid</li>
+                    <li><i class="bi bi-check-circle text-success me-2"></i>Commission is calculated based on actual profits</li>
+                    <li><i class="bi bi-check-circle text-success me-2"></i>Compensation is provided for losses exceeding risk thresholds</li>
+                    <li><i class="bi bi-check-circle text-success me-2"></i>Platform reserves the right to modify terms with notice</li>
+                    <li><i class="bi bi-check-circle text-success me-2"></i>All trading involves risk, past performance doesn't guarantee future results</li>
+                  </template>
+                </ul>
+              </div>
+              
+            
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button type="button" class="btn-community-primary" @click="joinCommunity">
+              I already know
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     
     <!-- Interactive Trading Quiz -->
@@ -392,20 +494,59 @@
       </div>
     </div>
 
-  
+     <!-- Redirect Message -->
+    <div class="redirect-message" v-show="showContactPopup">
+        <span class="text">Redirecting to WhatsApp Community</span><span class="dots"></span>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted,computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { Modal } from 'bootstrap';
 import navcomponent from '../component/nav/nav.vue'
 import{ get_userinfo,get_membership_levels,updateUserLevel, get_random_questions,startquestions } from '../../api/module/web/vip'
+import { get_whatsapp_link,gettrader_profiles } from '../../api/module/web/index'
 import { useUserStore } from '@/store';
 const userStore = useUserStore()
 const router = useRouter();
+
+// Contact popup state (same as HomeView.vue)
+const showContactPopup = ref(false);
+
+// Toggle contact popup function (same as HomeView.vue)
+const toggleContactPopup = async () => {
+  showContactPopup.value = !showContactPopup.value;
+
+  const response=await get_whatsapp_link();
+    if(response.success)
+    {
+      window.location.href = response.data;
+      setTimeout(() => {
+                        showContactPopup.value = !showContactPopup.value;
+      }, 3000);
+    }
+    else
+    {
+      showContactPopup.value = !showContactPopup.value;
+    }
+};
+
+// Function to handle joining community (same as HomeView.vue)
+const joinCommunity = () => {
+  // Close membership agreement modal
+  const modalElement = document.getElementById('membershipAgreementModal');
+  if (modalElement) {
+    const modal = Modal.getInstance(modalElement) || new Modal(modalElement);
+    modal.hide();
+  }
+  
+  
+};
 const userinfo=ref({})
 const membership_levels=ref([])
+const traderTerms=ref<string[]>([])
 // Page data
 const homeTopTitle = ref('RenderZaice Trading Platform');
 const membershipLevel = ref('Regular Member');
@@ -455,15 +596,34 @@ const formatNumber = (num: number) => {
   return num.toLocaleString('en-US');
 };
 
+// 加载交易员条款数据
+const loadTraderTerms = async () => {
+  try {
+    const response = await gettrader_profiles();
+   
+    if (response.success && response.data) {
+      // 获取第一个交易员档案的terms数据
+      const traderProfile = response.data.trader_profiles;
+      
+      if (traderProfile.terms) {
+        // 将terms字符串按行分割成数组
+        traderTerms.value = traderProfile.terms.split('\n').filter(term => term.trim() !== '');
+      }
+    }
+  } catch (error) {
+    console.error('加载交易员条款失败:', error);
+  }
+};
+
 // 处理登录按钮点击
 const handleLoginButtonClick = () => {
   if (isLoggedIn.value) {
     handleLogout();
   } else {
      router.push('/userlogin');
-    // 显示登录模态框
-    const loginModal = new (window as any).bootstrap.Modal(document.getElementById('loginModal'));
-    loginModal.show();
+    // // 显示登录模态框
+    // const loginModal = new (window as any).bootstrap.Modal(document.getElementById('loginModal'));
+    // loginModal.show();
   }
 };
 
@@ -520,7 +680,9 @@ const handleProgressCardClick = () => {
       }
       else
       {
-        layer.msg("You have not signed the agreement yet. Please contact customer service to sign the agreement!", { icon : 5, time: 3000})
+         const modalElement = document.getElementById('membershipAgreementModal');
+       const modal = Modal.getInstance(modalElement) || new Modal(modalElement);
+      modal.show();
       }
   } else {
     alert('Please login first');
@@ -542,6 +704,7 @@ const get_info=async()=>{
   await get_membership_levels_list()
    get_current_level()
    fetchQuizQuestions()
+   loadTraderTerms()
 }
 const getUserInfo=async()=>{
   try{
@@ -1602,7 +1765,59 @@ const createFirework = () => {
 .badge-center {
   animation-delay: 1.7s;
 }
+.redirect-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            padding: 15px 30px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 500;
+            z-index: 10000;
+            white-space: nowrap;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            -webkit-transform: translateX(-50%);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            will-change: transform, opacity;
+        }
 
+        .redirect-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700 0%, #4361ee 100%);
+            animation: progressBar 3s linear forwards;
+            -webkit-animation: progressBar 3s linear forwards;
+            opacity: 0.15;
+        }
+
+        .redirect-message .text {
+            background: linear-gradient(90deg, #ffd700 0%, #4361ee 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: textGradient 3s linear forwards;
+            -webkit-animation: textGradient 3s linear forwards;
+        }
+
+        .redirect-message .dots {
+            display: inline-block;
+            width: 24px;
+        }
+
+        .redirect-message .dots::after {
+            content: '';
+            animation: dots 1s infinite;
+            -webkit-animation: dots 1s infinite;
+        }
 .badge-right {
   animation-delay: 2s;
 }
@@ -3522,15 +3737,268 @@ html {
   bottom: 0;
   left: 0;
   height: 3px;
-  background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
-  animation: progressShrink 2.5s linear;
+  background: linear-gradient(90deg, #00FF88, #00D4FF);
+  animation: progressFill 3s linear forwards;
 }
 
-@keyframes progressShrink {
-  from { width: 100%; }
-  to { width: 0%; }
+@keyframes progressFill {
+  from { width: 0%; }
+  to { width: 100%; }
 }
 
+/* Membership Agreement Modal Styles */
+.agreement-content {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 0 10px;
+}
+
+.agreement-header-section {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.agreement-main-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #FFD700;
+  margin-bottom: 15px;
+  text-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+}
+
+.agreement-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #b0c4e6;
+  margin: 0;
+  padding: 0 20px;
+}
+
+.agreement-table-section {
+  margin-bottom: 30px;
+}
+
+.table-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #00D4FF;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.agreement-table-section .table {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.agreement-table-section .table thead th {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(255, 215, 0, 0.2) 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  padding: 15px 10px;
+}
+
+.agreement-table-section .table tbody td {
+  border-color: rgba(255, 255, 255, 0.05);
+  padding: 12px 10px;
+  vertical-align: middle;
+  color: #e0e6f0;
+}
+
+.agreement-table-section .table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.agreement-terms {
+  margin-bottom: 30px;
+}
+
+.agreement-terms h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #00FF88;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.terms-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.terms-list li {
+  margin-bottom: 12px;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #b0c4e6;
+  display: flex;
+  align-items: flex-start;
+}
+
+.terms-list li i {
+  margin-top: 3px;
+  font-size: 1.1rem;
+}
+
+.agreement-footer-section {
+  padding-top: 20px;
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.agreement-footer-section p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #b0c4e6;
+  margin-bottom: 15px;
+}
+
+.agreement-date {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* Modal Customization */
+#membershipAgreementModal .modal-content {
+  background: linear-gradient(135deg, rgba(24, 31, 42, 0.98) 0%, rgba(35, 43, 62, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+#membershipAgreementModal .modal-header {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+  border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 30px;
+}
+
+#membershipAgreementModal .modal-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #FFD700;
+  text-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+#membershipAgreementModal .modal-body {
+  padding: 30px;
+}
+
+#membershipAgreementModal .modal-footer {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(0, 212, 255, 0.05) 100%);
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0 0 20px 20px;
+  padding: 20px 30px;
+}
+
+#membershipAgreementModal .btn-close {
+  background: transparent;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+#membershipAgreementModal .btn-close:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+#membershipAgreementModal .btn-close::before {
+  content: '✕';
+  color: #FFD700;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Community Primary Button Style (Matching Homepage) */
+.btn-community-primary {
+  background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+  color: #1a1a2e;
+  border: none;
+  border-radius: 30px;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 4px 20px rgba(255,215,0,0.3);
+}
+
+.btn-community-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(255,215,0,0.4);
+  background: linear-gradient(135deg, #ffed4e 0%, #ffc107 100%);
+}
+
+.btn-community-primary:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+ @media (max-width: 768px) {
+   .agreement-content {
+     padding: 0;
+   }
+   
+   .agreement-main-title {
+     font-size: 1.5rem;
+   }
+   
+   .agreement-description {
+     font-size: 1rem;
+     padding: 0 10px;
+   }
+   
+   .table-title {
+     font-size: 1.1rem;
+   }
+   
+   .agreement-table-section .table {
+     font-size: 0.8rem;
+   }
+   
+   .agreement-table-section .table thead th,
+   .agreement-table-section .table tbody td {
+     padding: 8px 5px;
+   }
+   
+   .terms-list li {
+     font-size: 0.9rem;
+   }
+   
+   #membershipAgreementModal .modal-dialog {
+     margin: 10px;
+   }
+   
+   #membershipAgreementModal .modal-content {
+     border-radius: 15px;
+   }
+   
+   #membershipAgreementModal .modal-header,
+   #membershipAgreementModal .modal-body,
+   #membershipAgreementModal .modal-footer {
+     padding: 20px;
+   }
+   
+   /* Responsive button adjustments */
+   .btn-community-primary {
+     font-size: 1rem;
+     padding: 0.875rem 1.75rem;
+   }
+ }
 /* Background Effects */
 .quiz-background-effects {
   position: absolute;
@@ -3620,6 +4088,91 @@ html {
   
   .notification-bubble {
     max-width: none;
+  }
+}
+
+/* Redirect Message Styles (Same as HomeView.vue) */
+.redirect-message {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a2e;
+  padding: 15px 30px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  z-index: 10000;
+  white-space: nowrap;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  -webkit-transform: translateX(-50%);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.redirect-message::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #ffd700 0%, #4361ee 100%);
+  animation: progressBar 3s linear forwards;
+  -webkit-animation: progressBar 3s linear forwards;
+  opacity: 0.15;
+}
+
+.redirect-message .text {
+  background: linear-gradient(90deg, #ffd700 0%, #4361ee 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: textGradient 3s linear forwards;
+  -webkit-animation: textGradient 3s linear forwards;
+}
+
+.redirect-message .dots {
+  display: inline-block;
+  width: 24px;
+}
+
+.redirect-message .dots::after {
+  content: '';
+  animation: dots 1s infinite;
+  -webkit-animation: dots 1s infinite;
+}
+
+@keyframes progressBar {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes textGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes dots {
+  0%, 20% {
+    content: '.';
+  }
+  40% {
+    content: '..';
+  }
+  60%, 100% {
+    content: '...';
   }
 }
 </style>

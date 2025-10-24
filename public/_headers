@@ -1,27 +1,13 @@
-/*
-  Cache-Control: public, max-age=0, must-revalidate
+# 图片资源（png/jpg/webp/svg）
+/**/*.png
+/**/*.jpg
+/**/*.webp
+/**/*.svg
+  Cache-Control: public, max-age=2592000, immutable
+  # max-age=2592000 表示 30 天（60*60*24*30）
+  # immutable：告诉浏览器资源不会变，无需验证新鲜度
 
-# 静态资源缓存配置 - 哈希文件名的资源可以长期缓存
-/*.js
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.css
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.png
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.jpg
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.jpeg
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.svg
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.gif
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.webp
-  Cache-Control: public, max-age=31536000, immutable
+# 第三方库（如 Vue、React 等，通常带版本号）
+/**/*.js
+/**/*.css
+  Cache-Control: public, max-age=2592000, immutable

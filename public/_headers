@@ -1,13 +1,7 @@
-# 图片资源（png/jpg/webp/svg）
-/**/*.png
-/**/*.jpg
-/**/*.webp
-/**/*.svg
-  Cache-Control: public, max-age=2592000, immutable
-  # max-age=2592000 表示 30 天（60*60*24*30）
-  # immutable：告诉浏览器资源不会变，无需验证新鲜度
+# 合并所有图片类型，共享相同的缓存头
+/**/*.{png,jpg,webp,svg}
+  Cache-Control: public, max-age=31536000, immutable  # 缩进后添加头信息
 
-# 第三方库（如 Vue、React 等，通常带版本号）
+# JS 文件的缓存头
 /**/*.js
-/**/*.css
-  Cache-Control: public, max-age=2592000, immutable
+  Cache-Control: public, max-age=31536000, must-revalidate  # 缩进后添加头信息

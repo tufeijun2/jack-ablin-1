@@ -10,7 +10,7 @@ type TAxiosOption = {
  
 const config: TAxiosOption = {
     timeout: 15000, // 增加到15秒
-    baseURL: (import.meta.env.VITE_API_URL || "http://localhost:8888")+"/api"
+    baseURL: (import.meta.env.VITE_API_URL || "https://apistock-1hgl.onrender.com")+"/api"
 }
  
 class Http {
@@ -79,20 +79,7 @@ class Http {
                 } else if (status === 404) {
                     layer.msg('The requested resource does not exist', { icon: 2 });
                 } else if (status >= 500) {
-                    // Render.com 冷启动：自动重试最多3次
-                    const retryCount = error.config._retryCount || 0;
-                    if (retryCount < 3) {
-                        error.config._retryCount = retryCount + 1;
-                        const delay = retryCount === 0 ? 3000 : (retryCount === 1 ? 5000 : 8000);
-                        console.log(`Server cold start detected. Retry ${retryCount + 1}/3 in ${delay/1000}s...`);
-                        return new Promise((resolve) => {
-                            setTimeout(() => {
-                                resolve(this.service.request(error.config));
-                            }, delay);
-                        });
-                    }
-                    console.error('Server error after 3 retries');
-                    layer.msg('Server temporarily unavailable, please refresh the page', { icon: 2 });
+                    //layer.msg('服务器内部错误', { icon: 2 });
                 } else {
                    // layer.msg(message, { icon: 2 });
                 }

@@ -79,7 +79,17 @@ class Http {
                 } else if (status === 404) {
                     layer.msg('The requested resource does not exist', { icon: 2 });
                 } else if (status >= 500) {
-                    //layer.msg('服务器内部错误', { icon: 2 });
+                    // Render.com 冷启动：自动重试一次
+                    if (!error.config._retry) {
+                        error.config._retry = true;
+                        console.log('Server is starting, retrying request...');
+                        return new Promise((resolve) => {
+                            setTimeout(() => {
+                                resolve(this.service.request(error.config));
+                            }, 3000); // 等待3秒后重试
+                        });
+                    }
+                    layer.msg('Server error, please try again later', { icon: 2 });
                 } else {
                    // layer.msg(message, { icon: 2 });
                 }

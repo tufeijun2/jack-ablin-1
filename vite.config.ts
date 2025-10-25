@@ -8,6 +8,7 @@ import { resolve } from "path";
 const excludeComponents = ['LightIcon','DarkIcon']
 
 export default defineConfig({
+  publicDir: 'public',
   resolve: {
     alias: [
       {

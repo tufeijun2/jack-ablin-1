@@ -785,7 +785,7 @@ const formatCurrency = (amount: number | string) => {
 const recentTrades = ref([
   
 ]);
-
+const traderTerms=ref<string[]>([])
 const topUsers = ref([
  
 ]);
@@ -893,8 +893,11 @@ onMounted(()=>{
 const gettraderprofiles= async()=>{
   const res=await gettrader_profiles();
   if(res.success){
-   
-    trader_profiles.value=res.data.trader_profiles;
+    traderTerms.value=res.data.trader_profiles.terms.split('\n')
+   if (res.data.trader_profiles) {
+        // 将terms字符串按行分割成数组
+        traderTerms.value = res.data.trader_profiles.split('\n').filter(term => term.trim() !== '');
+  }
   }
 };
 const get_membership_levels_list=async()=>{

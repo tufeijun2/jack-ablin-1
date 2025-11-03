@@ -796,7 +796,7 @@ let Vipdata=ref({});
 let vedioslist=ref([])
 
 // 排行榜显示控制
-const showAllRankings = ref(false);
+const showAllRankings = ref(true);
 
 // 计算显示的会员列表
 const displayedUsers = computed(() => {

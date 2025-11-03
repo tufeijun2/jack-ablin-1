@@ -66,15 +66,23 @@
     <!-- Investment Announcements & Strategies (Enhanced Version) -->
     <div class="section" style="max-width: 1400px;">
       <h2 class="card-title">Investment Announcements & Strategies</h2>
-      <div class="announcement-card" v-for="value in Vipdata.announcements_List">
-        <div class="announcement-header">
-          <span class="announcement-title">{{ value.title }}</span>
-          <span class="priority-badge priority-high">Priority: {{ value.priority }}</span>
+      <div v-if="!Vipdata.announcements_List || Vipdata.announcements_List.length === 0" class="no-announcements">
+        <div style="text-align: center; padding: 40px; color: #b0c4e6; font-size: 1.1rem;">
+          <i class="bi bi-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+          No Announcements
         </div>
-        <div class="announcement-content">{{ value.content }}</div>
-        <div class="announcement-meta">
-          <span>Publisher: {{ value.publisher }}</span>
-          <span><span class="us-time" data-time="{{ value.publish_time }}">{{ formatUSDate(value.publish_time) }}</span></span>
+      </div>
+      <div v-else>
+        <div class="announcement-card" v-for="value in Vipdata.announcements_List">
+          <div class="announcement-header">
+            <span class="announcement-title">{{ value.title }}</span>
+            <span class="priority-badge priority-high">Priority: {{ value.priority }}</span>
+          </div>
+          <div class="announcement-content">{{ value.content }}</div>
+          <div class="announcement-meta">
+            <span>Publisher: {{ value.publisher }}</span>
+            <span><span class="us-time" data-time="{{ value.publish_time }}">{{ formatUSDate(value.publish_time) }}</span></span>
+          </div>
         </div>
       </div>
       <!-- VIP Trading Records Table Area -->
@@ -376,7 +384,7 @@
                 <div style="color:#b0c4e6;margin-bottom:12px;">Last Updated: {{ formatUSDate(value.last_update) }}</div>
             </div>
         </div>
-        <div style="text-align:center;margin-top:18px;" v-if="displayedVideos.vedioslist && displayedVideos.vedioslist.length > 5">
+        <div style="text-align:center;margin-top:18px;" v-if="displayedVideos && displayedVideos.length > 2">
             <button id="show-all-videos-btn" 
                     class="styled-button" 
                     @click="goToVideosPage">
@@ -471,7 +479,7 @@
      
     </div>
         <div style="text-align:center;margin-top:24px;">
-            <button v-if="!showAllDocuments && Vipdata.documentslist && Vipdata.documentslist.length >5" 
+            <button v-if="!showAllDocuments && displayedDocuments && displayedDocuments.length >2" 
                     id="show-all-documents-btn" 
                     class="styled-button" 
                     @click="goToDocumentsPage">
@@ -2824,6 +2832,22 @@ const handleImageChange = async (event) => {
           gap: 24px;
           justify-content: flex-end;
           align-items: center;
+        }
+        .no-announcements {
+          background: linear-gradient(135deg, #232B3E 60%, #232e4a 100%);
+          border-radius: 20px;
+          box-shadow: 0 4px 24px #181F2A33, 0 0 0 2px #FFD70022;
+          border: 1.5px solid rgba(255,215,0,0.10);
+          padding: 40px 24px;
+          margin-bottom: 28px;
+          color: #b0c4e6;
+          text-align: center;
+        }
+        .no-announcements i {
+          font-size: 2.5rem;
+          margin-bottom: 15px;
+          color: #FFD700;
+          opacity: 0.7;
         }
         .vip-trade-cards-grid {
           display: flex;

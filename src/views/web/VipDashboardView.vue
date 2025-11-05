@@ -1,24 +1,87 @@
 <template>
   <div class="app-container">
     <div class="number-flow"></div>
+    <!-- 全页面金融背景层 -->
+    <div class="global-financial-background">
+      <!-- 流动数字 - 覆盖整个页面 -->
+      <div class="flowing-numbers-global">
+        <span class="number-item-global">$1,234,567</span>
+        <span class="number-item-global">+15.8%</span>
+        <span class="number-item-global">$98,765</span>
+        <span class="number-item-global">+8.2%</span>
+        <span class="number-item-global">$2,345,678</span>
+        <span class="number-item-global">+12.5%</span>
+        <span class="number-item-global">$567,890</span>
+        <span class="number-item-global">+22.3%</span>
+        <span class="number-item-global">$3,456,789</span>
+        <span class="number-item-global">+18.6%</span>
+      </div>
+      <!-- K线图背景 - 多个位置 -->
+      <svg class="kline-chart-global kline-1" viewBox="0 0 400 200" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="klineGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.2" />
+            <stop offset="100%" style="stop-color:#FFD700;stop-opacity:0" />
+          </linearGradient>
+        </defs>
+        <path d="M0,180 L40,160 L80,140 L120,120 L160,100 L200,90 L240,85 L280,80 L320,75 L360,70 L400,65" 
+              fill="none" stroke="#FFD700" stroke-width="2" opacity="0.3"/>
+        <path d="M0,180 L40,160 L80,140 L120,120 L160,100 L200,90 L240,85 L280,80 L320,75 L360,70 L400,65 L400,200 L0,200 Z" 
+              fill="url(#klineGradient1)"/>
+      </svg>
+      <svg class="kline-chart-global kline-2" viewBox="0 0 400 200" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="klineGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#00FFAE;stop-opacity:0.15" />
+            <stop offset="100%" style="stop-color:#00FFAE;stop-opacity:0" />
+          </linearGradient>
+        </defs>
+        <path d="M0,170 L50,150 L100,130 L150,110 L200,95 L250,88 L300,82 L350,78 L400,75" 
+              fill="none" stroke="#00FFAE" stroke-width="2" opacity="0.25"/>
+        <path d="M0,170 L50,150 L100,130 L150,110 L200,95 L250,88 L300,82 L350,78 L400,75 L400,200 L0,200 Z" 
+              fill="url(#klineGradient2)"/>
+      </svg>
+      <!-- 金钱符号装饰 - 覆盖整个页面 -->
+      <div class="money-symbols-global">
+        <span class="symbol-global">$</span>
+        <span class="symbol-global">₿</span>
+        <span class="symbol-global">€</span>
+        <span class="symbol-global">£</span>
+        <span class="symbol-global">¥</span>
+        <span class="symbol-global">$</span>
+        <span class="symbol-global">₿</span>
+        <span class="symbol-global">€</span>
+      </div>
+      <!-- 网格线 - 覆盖整个页面 -->
+      <div class="grid-overlay-global"></div>
+      <!-- 涨跌箭头装饰 -->
+      <div class="trend-indicators">
+        <span class="trend-arrow up">↑</span>
+        <span class="trend-arrow up">↑</span>
+        <span class="trend-arrow down">↓</span>
+        <span class="trend-arrow up">↑</span>
+        <span class="trend-arrow up">↑</span>
+        <span class="trend-arrow down">↓</span>
+        <span class="trend-arrow up">↑</span>
+      </div>
+    </div>
     <navcomponent />
     <div class="main-content">
-     <div class="section center" style="max-width: 1400px;">
-        <h1 class="gold-text" style="font-size:3.2rem;font-weight:900;letter-spacing:2px;margin-bottom:8px;">
-            Welcome back, esteemed {{ user_info.username }} ({{ user_info.membership_level }})
-        </h1>
-        <div style="color:#b0c4e6;font-size:1.3rem;margin-bottom:20px;">
-            Let professional investment strategies help you grow your wealth
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:24px;">
-            <!-- Top welcome area avatar -->
-            <div style="position:relative;cursor:pointer;" id="avatar-preview-trigger" @click="handleAvatarClick">
+     <!-- VIP Hero Section - 精致欢迎区域 -->
+     <div class="vip-hero-section-compact" :class="getMembershipClass(user_info?.membership_level || '')">
+
+        <div class="vip-hero-content-compact">
+            <!-- 左侧：头像和会员徽章 -->
+            <div class="hero-left-section">
+                <div class="avatar-container-compact">
+                    <div class="avatar-glow-ring"></div>
+                    <div class="avatar-wrapper-compact" @click="handleAvatarClick">
                 <img 
                   :src="user_info?.avatar_url || 'https://lnndxivliqxifhpdpidr.supabase.co/storage/v1/object/public/avatars/avatars/avatars/123456_0868673e94664ac2959bbe029a76675d.webp'" 
                   alt="avatar" 
-                  class="avatar-glow" 
-                  style="width:120px;height:120px;border-radius:50%;background:#232b3e;object-fit:cover;"
+                          class="avatar-compact"
                 >
+                    </div>
                 <input
                   ref="avatarFileInput"
                   type="file"
@@ -26,46 +89,158 @@
                   style="display: none;"
                   @change="handleAvatarFileChange"
                 >
-                <!-- Remove svg icon, no longer displayed -->
             </div>
-            <div style="display:flex;gap:20px;justify-content:center;margin-top:18px;">
-                <button class="ant-btn ant-btn-primary styled-button" style="font-weight:700;border-radius:12px;" @click="handleUploadTradeRecord"><span class="anticon"><svg viewBox="64 64 896 896" focusable="false" data-icon="upload" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M872 474H728V184c0-4.4-3.6-8-8-8H304c-4.4 0-8 3.6-8 8v290H152c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h720c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg></span> Upload Trade Record</button>
-                <button class="ant-btn styled-button" id="settings-btn" style="font-weight:700;border-radius:12px;" @click="handleSettingsClick"><span class="anticon"><svg viewBox="64 64 896 896" focusable="false" data-icon="setting" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M925.8 731.1l-74.2-43.1c3.7-23.2 5.6-46.9 5.6-70.9s-1.9-47.7-5.6-70.9l74.2-43.1c7.7-4.5 11-14.1 7.7-22.3l-48.1-111.2c-3.3-8.2-12.2-12.1-20.4-9.1l-74.2 29.7c-19.6-15.1-40.5-28.1-62.6-38.7l-11.3-78.7c-1.2-8.6-8.6-14.8-17.2-14.8h-120c-8.6 0-16 6.2-17.2 14.8l-11.3 78.7c-22.1 10.6-43 23.6-62.6 38.7l-74.2-29.7c-8.2-3.3-17.1.9-20.4 9.1l-48.1 111.2c-3.3 8.2 0 17.8 7.7 22.3l74.2 43.1c-3.7 23.2-5.6 46.9-5.6 70.9s1.9 47.7 5.6 70.9l-74.2 43.1c-7.7 4.5-11 14.1-7.7 22.3l48.1 111.2c3.3 8.2 12.2 12.1 20.4 9.1l74.2-29.7c19.6 15.1 40.5 28.1 62.6 38.7l11.3 78.7c1.2 8.6 8.6 14.8 17.2 14.8h120c8.6 0 16-6.2 17.2-14.8l11.3-78.7c22.1-10.6 43-23.6 62.6-38.7l74.2 29.7c8.2 3.3 17.1-.9 20.4-9.1l48.1 111.2c3.3 8.2 0 17.8-7.7 22.3zM512 704c-106 0-192-86-192-192s86-192 192-192 192 86 192 192-86 192-192 192z"></path></svg></span> Settings</button>
+                <div class="membership-badge-compact" :class="getMembershipBadgeClass(user_info?.membership_level || '')">
+                    <span class="badge-label">{{ user_info?.membership_level || 'Member' }}</span>
             </div>
+            </div>
+
+            <!-- 中间：欢迎文字和激励语 -->
+            <div class="hero-center-section">
+                <div class="welcome-header">
+                    <span class="welcome-label-compact">Welcome Back</span>
+                    <span class="user-name-compact">{{ user_info?.username || 'Member' }}</span>
+                </div>
+                <p class="hero-subtitle-compact">
+                    {{ getWelcomeMessage(user_info?.membership_level || '') }}
+                </p>
+                <!-- 精简的激励标语 -->
+                <div class="inspiration-compact">
+                    <span class="inspiration-text">Patience • Discipline • Prosperity</span>
+                    <span class="inspiration-divider">|</span>
+                    <span class="inspiration-text highlight">Together We Succeed</span>
         </div>
     </div>
 
-    <!-- Five major data cards -->
-    <div class="glass-stat-card-grid" style="max-width: 1400px;">
-      <div class="glass-stat-card">
-        <div class="glass-stat-label">Initial Capital</div>
-        <div class="glass-stat-value" style="color:#00ffae; font-size: 18px;">{{ formatCurrency(user_info.initial_asset) }}<span class="glass-stat-unit">$</span></div>
+            <!-- 右侧：操作按钮 -->
+            <div class="hero-right-section">
+                <button class="action-btn-compact primary" @click="handleUploadTradeRecord">
+                    <svg viewBox="64 64 896 896" width="18" height="18" fill="currentColor">
+                        <path d="M872 474H728V184c0-4.4-3.6-8-8-8H304c-4.4 0-8 3.6-8 8v290H152c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h720c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path>
+                    </svg>
+                    <span>Upload Trade</span>
+                </button>
+                <button class="action-btn-compact secondary" @click="handleSettingsClick">
+                    <svg viewBox="64 64 896 896" width="18" height="18" fill="currentColor">
+                        <path d="M925.8 731.1l-74.2-43.1c3.7-23.2 5.6-46.9 5.6-70.9s-1.9-47.7-5.6-70.9l74.2-43.1c7.7-4.5 11-14.1 7.7-22.3l-48.1-111.2c-3.3-8.2-12.2-12.1-20.4-9.1l-74.2 29.7c-19.6-15.1-40.5-28.1-62.6-38.7l-11.3-78.7c-1.2-8.6-8.6-14.8-17.2-14.8h-120c-8.6 0-16 6.2-17.2 14.8l-11.3 78.7c-22.1 10.6-43 23.6-62.6 38.7l-74.2-29.7c-8.2-3.3-17.1.9-20.4 9.1l-48.1 111.2c-3.3 8.2 0 17.8 7.7 22.3l74.2 43.1c-3.7 23.2-5.6 46.9-5.6 70.9s1.9 47.7 5.6 70.9l-74.2 43.1c-7.7 4.5-11 14.1-7.7 22.3l48.1 111.2c3.3 8.2 12.2 12.1 20.4 9.1l74.2-29.7c19.6 15.1 40.5 28.1 62.6 38.7l11.3 78.7c1.2 8.6 8.6 14.8 17.2 14.8h120c8.6 0 16-6.2 17.2-14.8l11.3-78.7c22.1-10.6 43-23.6 62.6-38.7l74.2 29.7c8.2 3.3 17.1-.9 20.4-9.1l48.1 111.2c3.3 8.2 0 17.8-7.7 22.3zM512 704c-106 0-192-86-192-192s86-192 192-192 192 86 192 192-86 192-192 192z"></path>
+                    </svg>
+                    <span>Settings</span>
+                </button>
       </div>
-      <div class="glass-stat-card">
-        <div class="glass-stat-label">Total Profit</div>
-        <div class="glass-stat-value" style="color:#ffd700; font-size: 18px;">{{ formatCurrency(user_info.utotle_profit) }}<span class="glass-stat-unit">$</span></div>
       </div>
-      <div class="glass-stat-card">
-        <div class="glass-stat-label">Monthly Profit</div>
-        <div class="glass-stat-value" style="color:#52c41a; font-size: 18px;">{{ formatCurrency(user_info.umonth_profit) }}<span class="glass-stat-unit">$</span></div>
       </div>
-      <div class="glass-stat-card">
-        <div class="glass-stat-label">Last Month Profit</div>
-        <div class="glass-stat-value" style="color:#52c41a; font-size: 18px;">{{ formatCurrency(user_info.uprvmonth_profit) }}<span class="glass-stat-unit">$</span></div>
+
+    <!-- Premium Data Cards Grid - 升级版 -->
+    <div class="premium-cards-grid" style="max-width: 1400px;">
+      <div class="premium-stat-card" data-card="capital">
+        <div class="card-icon-wrapper">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.72-2.81 0-1.81-1.49-2.85-3.65-3.28z"/>
+          </svg>
       </div>
-      <div class="glass-stat-card">
-        <div class="glass-stat-label">Holding Profit</div>
-        <div class="glass-stat-value" id="holding-profit-card" style="color:#faad14; font-size: 18px;">{{ formatCurrency(user_info.hold_profit) }}<span class="glass-stat-unit">$</span></div>
+        <div class="card-content">
+          <div class="card-label">Initial Capital</div>
+          <div class="card-value premium-value" style="color:#00E6A0;">
+            <span class="value-number">{{ formatCurrency(user_info?.initial_asset || 0) }}</span>
+            <span class="value-unit">$</span>
+          </div>
+        </div>
+        <div class="card-glow" style="background: radial-gradient(circle, rgba(0,255,174,0.15) 0%, transparent 70%);"></div>
       </div>
-       <div class="glass-stat-card">
-        <div class="glass-stat-label">Available Points</div>
-        <div class="glass-stat-value" id="holding-profit-card" style="color:#faad14; font-size: 18px;">{{ formatCurrency(user_info.membership_points) }}</div>
+
+      <div class="premium-stat-card" data-card="profit">
+        <div class="card-icon-wrapper">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+            <path d="M7.5 11L12 2l4.5 9h-9zm0 11h9v-9h-9v9z"/>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Total Profit</div>
+          <div class="card-value premium-value" style="color:#FFC107;">
+            <span class="value-number">{{ formatCurrency(user_info?.utotle_profit || 0) }}</span>
+            <span class="value-unit">$</span>
+          </div>
+        </div>
+        <div class="card-glow" style="background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 70%);"></div>
+      </div>
+
+      <div class="premium-stat-card" data-card="monthly">
+        <div class="card-icon-wrapper">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Monthly Profit</div>
+          <div class="card-value premium-value" style="color:#4CAF50;">
+            <span class="value-number">{{ formatCurrency(user_info?.umonth_profit || 0) }}</span>
+            <span class="value-unit">$</span>
+          </div>
+        </div>
+        <div class="card-glow" style="background: radial-gradient(circle, rgba(82,196,26,0.15) 0%, transparent 70%);"></div>
+      </div>
+
+      <div class="premium-stat-card" data-card="last-month">
+        <div class="card-icon-wrapper">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Last Month Profit</div>
+          <div class="card-value premium-value" style="color:#4CAF50;">
+            <span class="value-number">{{ formatCurrency(user_info?.uprvmonth_profit || 0) }}</span>
+            <span class="value-unit">$</span>
+          </div>
+        </div>
+        <div class="card-glow" style="background: radial-gradient(circle, rgba(82,196,26,0.15) 0%, transparent 70%);"></div>
+      </div>
+
+      <div class="premium-stat-card" data-card="holding">
+        <div class="card-icon-wrapper">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Holding Profit</div>
+          <div class="card-value premium-value" style="color:#FF9800;">
+            <span class="value-number">{{ formatCurrency(user_info?.hold_profit || 0) }}</span>
+            <span class="value-unit">$</span>
+          </div>
+        </div>
+        <div class="card-glow" style="background: radial-gradient(circle, rgba(250,173,20,0.15) 0%, transparent 70%);"></div>
+      </div>
+
+      <div class="premium-stat-card" data-card="points">
+        <div class="card-icon-wrapper">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Available Points</div>
+          <div class="card-value premium-value" style="color:#FFC107;">
+            <span class="value-number">{{ formatCurrency(user_info?.membership_points || 0) }}</span>
+            <span class="value-unit">pts</span>
+          </div>
+        </div>
+        <div class="card-glow" style="background: radial-gradient(circle, rgba(250,173,20,0.15) 0%, transparent 70%);"></div>
       </div>
     </div>
 
     <!-- Investment Announcements & Strategies (Enhanced Version) -->
     <div class="section" style="max-width: 1400px;">
+      <div class="section-header-with-confidentiality">
       <h2 class="card-title">Investment Announcements & Strategies</h2>
+        <!-- VIP策略保密提示 -->
+        <div class="confidentiality-badge">
+          <svg class="confidentiality-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+          </svg>
+          <span class="confidentiality-text">VIP Exclusive: Strategies are strictly confidential</span>
+        </div>
+      </div>
       <div v-if="!Vipdata.announcements_List || Vipdata.announcements_List.length === 0" class="no-announcements">
         <div style="text-align: center; padding: 40px; color: #b0c4e6; font-size: 1.1rem;">
           <i class="bi bi-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
@@ -78,7 +253,7 @@
             <span class="announcement-title">{{ value.title }}</span>
             <span class="priority-badge priority-high">Priority: {{ value.priority }}</span>
           </div>
-          <div class="announcement-content">{{ value.content }}</div>
+          <div class="announcement-content" v-html="formatAnnouncementContent(value.content)"></div>
           <div class="announcement-meta">
             <span>Publisher: {{ value.publisher }}</span>
             <span><span class="us-time" data-time="{{ value.publish_time }}">{{ formatUSDate(value.publish_time) }}</span></span>
@@ -185,18 +360,18 @@
         <div class="flex-row mb-24">
             <div class="card" style="flex:1;min-width:220px;">
                 <div class="glass-stat-label">Total Assets</div>
-                <div class="glass-stat-value gold-number">$ {{ formatCurrency(user_info.initial_asset+user_info.utotle_profit+user_info.now_amount-user_info.hold_amount) }}</div>
+                <div class="glass-stat-value gold-number">$ {{ formatCurrency((user_info?.initial_asset || 0)+(user_info?.utotle_profit || 0)+(user_info?.now_amount || 0)-(user_info?.hold_amount || 0)) }}</div>
                 <div class="progress-bar" style="width:85%"></div>
                
             </div>
             <div class="card" style="flex:1;min-width:220px;">
                 <div class="glass-stat-label">Total Market Value</div>
-                <div class="glass-stat-value" style="color:#00ffae;">${{ formatCurrency(user_info.now_amount) }}</div>
+                <div class="glass-stat-value" style="color:#00ffae;">${{ formatCurrency(user_info?.now_amount || 0) }}</div>
                 <div class="progress-bar" style="width:65%;background:#00ffae;"></div>
             </div>
             <div class="card" style="flex:1;min-width:220px;">
                 <div class="glass-stat-label">Available Funds</div>
-                <div class="glass-stat-value" style="color:#faad14;">${{ formatCurrency(user_info.initial_asset+user_info.utotle_profit-user_info.hold_amount) }}</div>
+                <div class="glass-stat-value" style="color:#faad14;">${{ formatCurrency((user_info?.initial_asset || 0)+(user_info?.utotle_profit || 0)-(user_info?.hold_amount || 0)) }}</div>
                 <div class="progress-bar" style="width:50%;background:#faad14;"></div>
             </div>
         </div>
@@ -746,6 +921,7 @@
 
 </template>
 
+
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
@@ -836,6 +1012,55 @@ const formatCurrency = (amount: number | string) => {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
+};
+
+// 格式化公告内容，改善HTML显示
+const formatAnnouncementContent = (content: string) => {
+  if (!content) return '';
+  
+  // 如果内容已经是HTML格式（包含<p>或<br>标签）
+  if (content.includes('<p>') || content.includes('<br') || content.includes('</p>')) {
+    // 清理并格式化现有的HTML
+    let formatted = content
+      // 移除标签间的多余空格和换行
+      .replace(/<\/p>\s*<p>/g, '</p><p>')
+      .replace(/<p>\s+/g, '<p>')
+      .replace(/\s+<\/p>/g, '</p>')
+      // 压缩多个连续空格为单个空格
+      .replace(/\s+/g, ' ')
+      .trim();
+    
+    // 确保每个<p>标签内容都被正确包裹，并添加class
+    formatted = formatted.replace(/<p>(.*?)<\/p>/g, (match, p1) => {
+      const trimmed = p1.trim();
+      if (!trimmed) return '';
+      // 保留原有的emoji和特殊字符
+      return `<p class="announcement-paragraph">${trimmed}</p>`;
+    });
+    
+    // 如果内容中有<br>标签，也处理一下
+    formatted = formatted.replace(/<br\s*\/?>/gi, '<br>');
+    
+    return formatted;
+  }
+  
+  // 如果内容不是HTML格式，尝试智能分割
+  // 先按换行符分割
+  let lines = content.split(/\n+/).filter(line => line.trim().length > 0);
+  
+  // 如果只有一行，尝试按句号、问号、感叹号分割
+  if (lines.length === 1) {
+    lines = content.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 0);
+  }
+  
+  // 将每个部分包装在<p>标签中
+  return lines
+    .map(line => {
+      const trimmed = line.trim();
+      if (!trimmed) return '';
+      return `<p class="announcement-paragraph">${trimmed}</p>`;
+    })
+    .join('');
 };
 
 // Mock data
@@ -971,51 +1196,116 @@ onMounted(()=>{
  }, 30000);
 })
 const gettraderprofiles= async()=>{
-  const res=await gettrader_profiles();
-  if(res.success){
-    traderTerms.value=res.data.trader_profiles.terms.split('\n')
-   if (res.data.trader_profiles) {
-        // 将terms字符串按行分割成数组
+  try {
+    const res=await gettrader_profiles();
+    if(res && res.success && res.data && res.data.trader_profiles){
+      if (res.data.trader_profiles.terms && typeof res.data.trader_profiles.terms === 'string') {
+        traderTerms.value = res.data.trader_profiles.terms.split('\n').filter(term => term.trim() !== '');
+      } else if (typeof res.data.trader_profiles === 'string') {
         traderTerms.value = res.data.trader_profiles.split('\n').filter(term => term.trim() !== '');
-  }
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching trader profiles:', error);
   }
 };
 const get_membership_levels_list=async()=>{
-  const res=await get_membership_levels()
-  if(res.success)
-  {
-    vipList.value=res.data
-    vipList.value.forEach(item => {
-      item.benefits=item.benefits.split(',')
-    });
-    userStore.vipList=vipList.value
+  try {
+    const res=await get_membership_levels()
+    if(res && res.success && res.data && Array.isArray(res.data))
+    {
+      vipList.value=res.data
+      vipList.value.forEach(item => {
+        if(item && item.benefits && typeof item.benefits === 'string') {
+          item.benefits=item.benefits.split(',')
+        }
+      });
+      userStore.vipList=vipList.value
+    }
+  } catch (error) {
+    console.error('Error fetching membership levels:', error);
   }
 }
 const get_user_info=async()=>{
-  const res=await get_userinfo();
-  if(res.success){
-    user_info.value=res.data;
+  try {
+    const res=await get_userinfo();
+    if(res && res.success && res.data){
+      user_info.value=res.data;
+    } else {
+      // 如果API失败，至少保持空对象
+      user_info.value = user_info.value || {};
+    }
+  } catch (error) {
+    console.error('Error fetching user info:', error);
+    user_info.value = user_info.value || {};
   }
 }
-const getVipDashboardData=async()=>{
-  const res=await get_VipDashboardData();
-  if(res.success){
-    Vipdata.value=res.data;
-    userStore.VipData=res.data
-    
-    // 对交易列表进行排序
-    sortTradeLists();
-    
-    // Get real-time prices for all held stocks
-    await updateStockPrices();
-  }
 
+// 会员等级相关函数
+const getMembershipClass = (level: string) => {
+  if (!level) return 'membership-regular';
+  const levelLower = level.toLowerCase();
+  if (levelLower.includes('gold')) return 'membership-gold';
+  if (levelLower.includes('diamond')) return 'membership-diamond';
+  if (levelLower.includes('supreme') || levelLower.includes('platinum') || levelLower.includes('black')) return 'membership-supreme';
+  return 'membership-regular';
+};
+
+const getMembershipBadgeClass = (level: string) => {
+  if (!level) return 'badge-regular';
+  const levelLower = level.toLowerCase();
+  if (levelLower.includes('gold')) return 'badge-gold';
+  if (levelLower.includes('diamond')) return 'badge-diamond';
+  if (levelLower.includes('supreme') || levelLower.includes('platinum') || levelLower.includes('black')) return 'badge-supreme';
+  return 'badge-regular';
+};
+
+const isPremiumMember = (level: string) => {
+  if (!level) return false;
+  const levelLower = level.toLowerCase();
+  return levelLower.includes('gold') || levelLower.includes('diamond') || levelLower.includes('supreme') || levelLower.includes('platinum') || levelLower.includes('black');
+};
+
+const getWelcomeMessage = (level: string) => {
+  if (!level) return 'Let professional investment strategies help you grow your wealth';
+  const levelLower = level.toLowerCase();
+  if (levelLower.includes('gold')) {
+    return 'Your exclusive access to premium strategies and personalized guidance';
+  }
+  if (levelLower.includes('diamond')) {
+    return 'Welcome to the elite tier - experience unparalleled investment excellence';
+  }
+  if (levelLower.includes('supreme') || levelLower.includes('platinum') || levelLower.includes('black')) {
+    return 'The pinnacle of trading excellence - welcome to your exclusive command center';
+  }
+  return 'Let professional investment strategies help you grow your wealth';
+};
+const getVipDashboardData=async()=>{
+  try {
+    const res=await get_VipDashboardData();
+    if(res && res.success && res.data){
+      Vipdata.value=res.data;
+      userStore.VipData=res.data
+      
+      // 对交易列表进行排序
+      sortTradeLists();
+      
+      // Get real-time prices for all held stocks
+      await updateStockPrices();
+    } else {
+      // 如果API失败，至少保持空对象
+      Vipdata.value = Vipdata.value || {};
+    }
+  } catch (error) {
+    console.error('Error fetching VIP dashboard data:', error);
+    Vipdata.value = Vipdata.value || {};
+  }
 }
 
 // 排序交易列表函数
 const sortTradeLists = () => {
   // 对 VIP 交易列表排序
-  if (Vipdata.value.tradelist && Array.isArray(Vipdata.value.tradelist)) {
+  if (Vipdata.value && Vipdata.value.tradelist && Array.isArray(Vipdata.value.tradelist)) {
     Vipdata.value.tradelist.sort((a: any, b: any) => {
       // 首先按持仓状态排序：持仓在前，平仓在后
       const isHoldingA = !a.exit_price;
@@ -1401,7 +1691,7 @@ const handleImageChange = async (event) => {
  }
  
  .app-container {
-  background: linear-gradient(120deg, #181c2b 0%, #23243a 100%);
+         background: linear-gradient(120deg, #0A0E1A 0%, #131722 50%, #1A1F2E 100%);
   color: #ffffff;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   margin: 0;
@@ -1409,7 +1699,7 @@ const handleImageChange = async (event) => {
   position: relative;
   align-items: center;
   overflow-x: hidden;
-  overflow-y: hidden;
+         overflow-y: auto;
   min-height: 100vh;
 }
 
@@ -1523,6 +1813,8 @@ const handleImageChange = async (event) => {
             max-width: 1400px;
             margin: 0 auto;
             padding: 48px 32px 80px 32px;
+            position: relative;
+            z-index: 1;
         }
         @media (max-width: 900px) { .main-content { padding: 24px 8px 40px 8px; } }
         .section {
@@ -1782,16 +2074,37 @@ const handleImageChange = async (event) => {
             transform: translateY(-8px) scale(1.05);
             background: linear-gradient(135deg, #2a3444 60%, #252d3a 100%);
         }
-        .glass-stat-label { color: #b0c4e6; font-size: 1.15rem; margin-bottom: 10px; font-weight: 600;height: 60px; }
+        .glass-stat-label { 
+            color: rgba(200, 210, 230, 1); 
+            font-size: 1rem; 
+            margin-bottom: 16px; 
+            font-weight: 800; 
+            height: auto; 
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 2;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
         .glass-stat-value {
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             font-weight: 900;
             margin-bottom: 10px;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             word-break: break-all;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-family: 'Roboto Mono', 'Courier New', monospace;
+            position: relative;
+            z-index: 2;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-shadow: 
+                0 1px 2px rgba(0, 0, 0, 0.8),
+                0 2px 4px rgba(0, 0, 0, 0.6);
         }
         .glass-stat-sub { color: #ffd700; font-size: 1.1rem; margin-top: 8px; font-weight: 700; }
         .glass-stat-unit { font-size: 1.1rem; margin-left: 4px; color: #b0c4e6; }
@@ -1812,19 +2125,58 @@ const handleImageChange = async (event) => {
         .center { text-align: center; }
         .w-100 { width: 100%; }
         .card {
-            background: linear-gradient(135deg, #232B3E 60%, #222a3a 100%);
-            border-radius: 22px;
-            box-shadow: 0 8px 32px #181F2A33, 0 0 0 2px #FFD70022;
-            border: 1.5px solid rgba(255, 255, 255, 0.10);
-            color: #fff;
-            padding: 36px 28px;
+            background: 
+                linear-gradient(135deg, 
+                    rgba(15, 20, 30, 0.98) 0%, 
+                    rgba(22, 28, 40, 0.98) 50%, 
+                    rgba(28, 35, 48, 0.98) 100%
+                ),
+                radial-gradient(circle at top right, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
+            border-radius: 18px;
+            padding: 32px 28px;
             margin-bottom: 28px;
-            transition: all 0.3s cubic-bezier(.4,2,.6,1);
+            color: #fff;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.8),
+                0 4px 12px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+                inset 2px 2px 4px rgba(255, 215, 0, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.02) 0%, 
+                    transparent 50%,
+                    rgba(0, 0, 0, 0.03) 100%
+                );
+            border-radius: 18px;
+            pointer-events: none;
+            opacity: 0.6;
         }
         .card:hover {
-            box-shadow: 0 16px 64px 0 #FFD70044, 0 0 0 3px #FFD700;
-            border-color: #FFD700;
-            transform: translateY(-6px) scale(1.03);
+            transform: translateY(-4px);
+            border-color: rgba(255, 215, 0, 0.4);
+            box-shadow: 
+                0 16px 64px rgba(255, 215, 0, 0.15),
+                0 6px 20px rgba(0, 0, 0, 0.7),
+                0 0 0 1px rgba(255, 255, 255, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.18),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+                inset 2px 2px 6px rgba(255, 215, 0, 0.08);
         }
         .progress-bar { background: linear-gradient(90deg,#FFD700 0%,#FFB300 100%); height: 10px; border-radius: 8px; box-shadow: 0 2px 8px #FFD70033; }
         .progress-labels { display: flex; justify-content: space-between; color: #b0c4e6; font-size: 1.05rem; margin-top: 10px; font-weight: 600; }
@@ -2774,64 +3126,182 @@ const handleImageChange = async (event) => {
             width: 100%;
             max-width: 100%;
         }
-        /* 投资公告与策略（美化版） */
+        /* 投资公告与策略（高级质感版） */
         .announcement-card {
-          background: linear-gradient(135deg, #232B3E 60%, #232e4a 100%);
-          border-radius: 20px;
-          box-shadow: 0 4px 24px #181F2A33, 0 0 0 2px #FFD70022;
-          border: 1.5px solid rgba(255,215,0,0.10);
-          padding: 28px 24px 20px 24px;
-          margin-bottom: 28px;
+          background: 
+            linear-gradient(135deg, 
+              rgba(15, 20, 30, 0.98) 0%, 
+              rgba(22, 28, 40, 0.98) 50%, 
+              rgba(28, 35, 48, 0.98) 100%
+            ),
+            radial-gradient(circle at top right, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
+          border-radius: 18px;
+          padding: 32px 28px 24px 28px;
+          margin-bottom: 32px;
           position: relative;
           color: #fff;
-          transition: box-shadow 0.2s;
+          border: 2px solid rgba(255, 215, 0, 0.2);
+          box-shadow: 
+            0 10px 40px rgba(0, 0, 0, 0.8),
+            0 4px 12px rgba(0, 0, 0, 0.6),
+            0 0 0 1px rgba(255, 255, 255, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.12),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+            inset 2px 2px 4px rgba(255, 215, 0, 0.05);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          overflow: hidden;
+        }
+        .announcement-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: 
+            linear-gradient(135deg, 
+              rgba(255, 255, 255, 0.02) 0%, 
+              transparent 50%,
+              rgba(0, 0, 0, 0.03) 100%
+            );
+          border-radius: 18px;
+          pointer-events: none;
+          opacity: 0.6;
         }
         .announcement-card:hover {
-          box-shadow: 0 8px 32px #FFD70044, 0 0 0 3px #FFD700;
+          transform: translateY(-4px);
+          border-color: rgba(255, 215, 0, 0.4);
+          box-shadow: 
+            0 16px 64px rgba(255, 215, 0, 0.15),
+            0 6px 20px rgba(0, 0, 0, 0.7),
+            0 0 0 1px rgba(255, 255, 255, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.18),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+            inset 2px 2px 6px rgba(255, 215, 0, 0.08);
         }
         .announcement-header {
           display: flex;
           align-items: flex-start;
           justify-content: space-between;
-          margin-bottom: 12px;
+          margin-bottom: 20px;
+          position: relative;
+          z-index: 2;
         }
         .announcement-title {
-          font-size: 1.35rem;
+          font-size: 1.4rem;
           font-weight: 900;
-          color: #FFD700;
-          letter-spacing: 1px;
+          background: linear-gradient(135deg, #FFD700 0%, #FFE55C 50%, #FFA500 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          letter-spacing: 1.5px;
           flex: 1;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-shadow: none;
+          filter: none;
         }
         .priority-badge {
-          font-size: 0.98rem;
-          font-weight: 900;
-          border-radius: 14px;
-          padding: 4px 18px;
-          margin-left: 12px;
-          box-shadow: 0 2px 8px #FFD70033;
+          font-size: 0.85rem;
+          font-weight: 800;
+          border-radius: 12px;
+          padding: 6px 16px;
+          margin-left: 16px;
           letter-spacing: 1px;
           position: relative;
-          top: 0;
-          right: 0;
           display: inline-block;
+          border: 1.5px solid;
+          box-shadow: 
+            0 2px 8px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
-        .priority-high { background: linear-gradient(90deg,#ff4d4f 60%,#ffb300 100%); color: #fff; }
-        .priority-medium { background: linear-gradient(90deg,#faad14 60%,#ffd700 100%); color: #232B3E; }
-        .priority-low { background: linear-gradient(90deg,#00ffae 60%,#b0c4e6 100%); color: #232B3E; }
+        .priority-high { 
+          background: linear-gradient(135deg, rgba(255, 77, 79, 0.9) 0%, rgba(255, 179, 0, 0.9) 100%);
+          color: #fff;
+          border-color: rgba(255, 77, 79, 0.5);
+        }
+        .priority-medium { 
+          background: linear-gradient(135deg, rgba(255, 152, 0, 0.9) 0%, rgba(255, 215, 0, 0.9) 100%);
+          color: #1a1a1a;
+          border-color: rgba(255, 152, 0, 0.5);
+        }
+        .priority-low { 
+          background: linear-gradient(135deg, rgba(0, 230, 160, 0.9) 0%, rgba(176, 196, 230, 0.9) 100%);
+          color: #1a1a1a;
+          border-color: rgba(0, 230, 160, 0.5);
+        }
         .announcement-content {
-          font-size: 1.08rem;
-          color: #b0c4e6;
-          margin-bottom: 18px;
-          line-height: 1.7;
-          word-break: break-all;
+          font-size: 1.05rem;
+          color: rgba(200, 210, 230, 1);
+          margin-bottom: 20px;
+          line-height: 1.9;
+          word-break: break-word;
+          position: relative;
+          z-index: 2;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .announcement-content p,
+        .announcement-content .announcement-paragraph {
+          margin: 0 0 16px 0;
+          padding: 0;
+          line-height: 1.9;
+          color: rgba(200, 210, 230, 1);
+          display: block;
+          word-wrap: break-word;
+          word-break: break-word;
+        }
+        
+        .announcement-content p:last-child,
+        .announcement-content .announcement-paragraph:last-child {
+          margin-bottom: 0;
+        }
+        
+        /* 美化列表样式 */
+        .announcement-content ul,
+        .announcement-content ol {
+          margin: 16px 0;
+          padding-left: 28px;
+          list-style-position: outside;
+        }
+        
+        .announcement-content li {
+          margin: 10px 0;
+          line-height: 1.85;
+          color: rgba(200, 210, 230, 1);
+        }
+        
+        /* 确保emoji图标显示正常 */
+        .announcement-content {
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+        }
+        
+        /* 改善段落间距和可读性 */
+        .announcement-content p + p {
+          margin-top: 14px;
+        }
+        
+        /* 确保图标和文字正确对齐 */
+        .announcement-content p {
+          text-align: left;
         }
         .announcement-meta {
-          font-size: 0.98rem;
-          color: #b0c4e6;
+          font-size: 0.9rem;
+          color: rgba(180, 195, 220, 0.9);
           display: flex;
           gap: 24px;
           justify-content: flex-end;
           align-items: center;
+          position: relative;
+          z-index: 2;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
         .no-announcements {
           background: linear-gradient(135deg, #232B3E 60%, #232e4a 100%);
@@ -4500,92 +4970,176 @@ const handleImageChange = async (event) => {
           }
         }
      
-        /* 移动端表格样式 */
+        /* 移动端表格样式（高级质感版） */
         .trade-card-list {
-          margin-top: 10px;
+          margin-top: 16px;
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 20px;
         }
         .trade-card {
-          background: #232B3E;
-          border-radius: 16px;
-          box-shadow: 0 2px 12px #FFD70022;
-          border: 1.5px solid #FFD70033;
-          padding: 16px 14px 10px 14px;
+          background: 
+            linear-gradient(135deg, 
+              rgba(15, 20, 30, 0.98) 0%, 
+              rgba(22, 28, 40, 0.98) 50%, 
+              rgba(28, 35, 48, 0.98) 100%
+            ),
+            radial-gradient(circle at top left, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
+          border-radius: 18px;
+          padding: 20px 18px 16px 18px;
           color: #fff;
-          font-size: 1.08rem;
+          font-size: 1.05rem;
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 12px;
+          border: 2px solid rgba(255, 215, 0, 0.15);
+          box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.7),
+            0 4px 12px rgba(0, 0, 0, 0.5),
+            0 0 0 1px rgba(255, 255, 255, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          position: relative;
+          overflow: hidden;
+        }
+        .trade-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: 
+            linear-gradient(135deg, 
+              rgba(255, 255, 255, 0.02) 0%, 
+              transparent 50%,
+              rgba(0, 0, 0, 0.03) 100%
+            );
+          border-radius: 18px;
+          pointer-events: none;
+          opacity: 0.6;
+        }
+        .trade-card:hover {
+          transform: translateY(-3px);
+          border-color: rgba(255, 215, 0, 0.3);
+          box-shadow: 
+            0 12px 48px rgba(255, 215, 0, 0.12),
+            0 6px 20px rgba(0, 0, 0, 0.8),
+            0 0 0 1px rgba(255, 255, 255, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.4);
         }
         .trade-card-header {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 12px;
+          position: relative;
+          z-index: 2;
+          flex-wrap: wrap;
         }
         .trade-symbol {
-          font-weight: 700;
-          color: #FFD700;
+          font-weight: 800;
+          font-size: 1.1rem;
+          background: linear-gradient(135deg, #FFD700 0%, #FFE55C 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          letter-spacing: 0.5px;
         }
         .trade-type {
-          padding: 2px 10px;
-          border-radius: 12px;
-          font-weight: 700;
-          font-size: 0.95rem;
+          padding: 4px 12px;
+          border-radius: 10px;
+          font-weight: 800;
+          font-size: 0.85rem;
+          letter-spacing: 0.5px;
+          border: 1.5px solid;
+          box-shadow: 
+            0 2px 6px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
         .trade-type.buy {
-          background: #00ffae22;
-          color: #00ffae;
-          border: 1px solid #00ffae;
+          background: linear-gradient(135deg, rgba(0, 230, 160, 0.2) 0%, rgba(0, 230, 160, 0.1) 100%);
+          color: #00E6A0;
+          border-color: rgba(0, 230, 160, 0.4);
         }
         .trade-type.sell {
-          background: #cf132222;
-          color: #cf1322;
-          border: 1px solid #cf1322;
+          background: linear-gradient(135deg, rgba(207, 19, 34, 0.2) 0%, rgba(207, 19, 34, 0.1) 100%);
+          color: #FF5252;
+          border-color: rgba(207, 19, 34, 0.4);
         }
         .trade-date {
-          font-size: 0.95rem;
-          color: #b0c4e6;
+          font-size: 0.9rem;
+          color: rgba(180, 195, 220, 0.9);
           margin-left: auto;
+          font-weight: 600;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
         .trade-card-body {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 12px;
+          position: relative;
+          z-index: 2;
         }
         .trade-info-group {
           display: flex;
           justify-content: space-between;
           flex-wrap: wrap;
-          gap: 8px 0;
+          gap: 12px 0;
         }
         .trade-info-group div {
           flex: 1 1 28%;
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 8px;
+          min-width: 120px;
         }
         .trade-info-group .label {
-          color: #b0c4e6;
-          font-size: 0.95rem;
-          min-width: 60px;
+          color: rgba(180, 195, 220, 0.9);
+          font-size: 0.9rem;
+          min-width: 65px;
+          font-weight: 600;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
         .trade-info-group b {
-          color: #fff;
-          font-weight: 700;
+          color: rgba(255, 255, 255, 1);
+          font-weight: 800;
+          font-family: 'Roboto Mono', 'Courier New', monospace;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          letter-spacing: 0.3px;
         }
         .trade-profit-table.profit-positive {
-          color: #00ffae;
+          color: #00E6A0;
           font-weight: 900;
+          font-family: 'Roboto Mono', 'Courier New', monospace;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
         }
         .trade-profit-table.profit-negative {
-          color: #cf1322;
+          color: #FF5252;
           font-weight: 900;
+          font-family: 'Roboto Mono', 'Courier New', monospace;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
         }
         .trade-profit-table.profit-neutral {
-          color: #ffffff;
-          font-weight: 600;
+          color: rgba(255, 255, 255, 1);
+          font-weight: 700;
+          font-family: 'Roboto Mono', 'Courier New', monospace;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
 
         .vip-trade-card-new {
@@ -5158,5 +5712,1476 @@ const handleImageChange = async (event) => {
           background: #CFB53B22;
           color: #CFB53B;
           border: 1px solid #CFB53B;
+        }
+
+        /* ========== 全页面金融背景 ========== */
+        .global-financial-background {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          z-index: 0;
+          overflow: hidden;
+        }
+
+        /* 流动数字 - 全页面 */
+        .flowing-numbers-global {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+        }
+
+        .number-item-global {
+          position: absolute;
+          font-family: 'Roboto Mono', 'Courier New', monospace;
+          font-size: 1rem;
+          font-weight: 700;
+          color: rgba(255, 215, 0, 0.25);
+          opacity: 1;
+          text-shadow: none;
+          filter: none;
+          letter-spacing: 1px;
+          animation: numberFloatGlobal 25s linear infinite;
+        }
+
+        .number-item-global:nth-child(1) { top: 5%; left: 3%; animation-delay: 0s; }
+        .number-item-global:nth-child(2) { top: 15%; left: 12%; animation-delay: 2.5s; }
+        .number-item-global:nth-child(3) { top: 25%; left: 8%; animation-delay: 5s; }
+        .number-item-global:nth-child(4) { top: 35%; left: 18%; animation-delay: 7.5s; }
+        .number-item-global:nth-child(5) { top: 45%; left: 5%; animation-delay: 10s; }
+        .number-item-global:nth-child(6) { top: 55%; left: 15%; animation-delay: 12.5s; }
+        .number-item-global:nth-child(7) { top: 65%; left: 10%; animation-delay: 15s; }
+        .number-item-global:nth-child(8) { top: 75%; left: 20%; animation-delay: 17.5s; }
+        .number-item-global:nth-child(9) { top: 85%; left: 7%; animation-delay: 20s; }
+        .number-item-global:nth-child(10) { top: 95%; left: 25%; animation-delay: 22.5s; }
+
+        /* K线图 - 多个位置 */
+        .kline-chart-global {
+          position: absolute;
+          opacity: 0.15;
+          pointer-events: none;
+          filter: none;
+        }
+
+        .kline-chart-global.kline-1 {
+          bottom: 8%;
+          left: 3%;
+          width: 280px;
+          height: 140px;
+        }
+
+        .kline-chart-global.kline-2 {
+          top: 18%;
+          right: 5%;
+          width: 240px;
+          height: 120px;
+        }
+
+        /* 金钱符号 - 全页面 */
+        .money-symbols-global {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
+
+        .money-symbols-global .symbol-global {
+          position: absolute;
+          font-size: 1.8rem;
+          font-weight: 900;
+          color: rgba(255, 215, 0, 0.15);
+          opacity: 1;
+          text-shadow: none;
+          filter: none;
+          animation: symbolRotateGlobal 40s linear infinite;
+        }
+
+        .money-symbols-global .symbol-global:nth-child(1) { top: 10%; left: 8%; animation-delay: 0s; }
+        .money-symbols-global .symbol-global:nth-child(2) { top: 30%; left: 15%; animation-delay: 5s; }
+        .money-symbols-global .symbol-global:nth-child(3) { top: 50%; left: 25%; animation-delay: 10s; }
+        .money-symbols-global .symbol-global:nth-child(4) { top: 70%; left: 12%; animation-delay: 15s; }
+        .money-symbols-global .symbol-global:nth-child(5) { top: 20%; left: 75%; animation-delay: 20s; }
+        .money-symbols-global .symbol-global:nth-child(6) { top: 45%; left: 82%; animation-delay: 25s; }
+        .money-symbols-global .symbol-global:nth-child(7) { top: 65%; left: 88%; animation-delay: 30s; }
+        .money-symbols-global .symbol-global:nth-child(8) { top: 85%; left: 78%; animation-delay: 35s; }
+
+        /* 网格线 - 全页面 */
+        .grid-overlay-global {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-image: 
+            linear-gradient(rgba(255, 215, 0, 0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 215, 0, 0.04) 1px, transparent 1px);
+          background-size: 60px 60px;
+          opacity: 0.5;
+        }
+
+        /* 涨跌箭头装饰 */
+        .trend-indicators {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+        }
+
+        .trend-arrow {
+          position: absolute;
+          font-size: 1.4rem;
+          font-weight: 900;
+          animation: arrowPulse 4s ease-in-out infinite;
+          opacity: 0.2;
+        }
+
+        .trend-arrow.up {
+          color: rgba(0, 255, 174, 0.25);
+          text-shadow: none;
+        }
+
+        .trend-arrow.down {
+          color: rgba(255, 107, 107, 0.25);
+          text-shadow: none;
+        }
+
+        .trend-arrow:nth-child(1) { top: 12%; left: 20%; animation-delay: 0s; }
+        .trend-arrow:nth-child(2) { top: 35%; left: 30%; animation-delay: 0.5s; }
+        .trend-arrow:nth-child(3) { top: 58%; left: 22%; animation-delay: 1s; }
+        .trend-arrow:nth-child(4) { top: 78%; left: 35%; animation-delay: 1.5s; }
+        .trend-arrow:nth-child(5) { top: 25%; left: 70%; animation-delay: 2s; }
+        .trend-arrow:nth-child(6) { top: 50%; left: 80%; animation-delay: 2.5s; }
+        .trend-arrow:nth-child(7) { top: 72%; left: 75%; animation-delay: 3s; }
+
+        /* ========== VIP Hero Section - 精致欢迎区域 ========== */
+        .vip-hero-section-compact {
+          position: relative;
+          width: 100%;
+          max-width: 1400px;
+          margin: 0 auto 48px auto;
+          padding: 44px 52px;
+          border-radius: 20px;
+          overflow: hidden;
+          background: 
+            linear-gradient(135deg, 
+              rgba(15, 20, 30, 0.98) 0%, 
+              rgba(22, 28, 40, 0.98) 50%, 
+              rgba(28, 35, 48, 0.98) 100%
+            ),
+            radial-gradient(circle at top left, rgba(255, 215, 0, 0.04) 0%, transparent 50%);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          box-shadow: 
+            0 12px 48px rgba(0, 0, 0, 0.8),
+            0 4px 16px rgba(0, 0, 0, 0.6),
+            0 0 0 1px rgba(255, 255, 255, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.12),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+            inset 2px 2px 4px rgba(255, 215, 0, 0.05);
+          animation: heroFadeInCompact 0.8s ease-out;
+          min-height: 200px;
+          z-index: 1;
+          border: 2px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .vip-hero-section-compact.membership-gold {
+          background: linear-gradient(135deg, #1A0F0A 0%, #2A1A15 50%, #3A2A20 100%);
+          box-shadow: 
+            0 12px 48px rgba(255, 215, 0, 0.25),
+            0 0 0 1px rgba(255, 215, 0, 0.2),
+            inset 0 1px 0 rgba(255, 215, 0, 0.1);
+        }
+
+        .vip-hero-section-compact.membership-diamond {
+          background: linear-gradient(135deg, #0A1A1F 0%, #152A35 50%, #1F3A4A 100%);
+          box-shadow: 
+            0 12px 48px rgba(0, 255, 255, 0.25),
+            0 0 0 1px rgba(0, 255, 255, 0.2),
+            inset 0 1px 0 rgba(0, 255, 255, 0.1);
+        }
+
+        .vip-hero-section-compact.membership-supreme {
+          background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 50%, #2A2A2A 100%);
+          box-shadow: 
+            0 12px 48px rgba(255, 215, 0, 0.3),
+            0 0 0 2px rgba(255, 215, 0, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+
+        /* 紧凑内容布局 */
+        .vip-hero-content-compact {
+          position: relative;
+          z-index: 2;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 32px;
+        }
+
+        /* 左侧：头像和徽章 */
+        .hero-left-section {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          flex-shrink: 0;
+        }
+
+        .avatar-container-compact {
+          position: relative;
+          width: 80px;
+          height: 80px;
+        }
+
+        .avatar-glow-ring {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 90px;
+          height: 90px;
+          border-radius: 50%;
+          border: 2px solid rgba(255, 215, 0, 0.4);
+          animation: ringGlow 3s ease-in-out infinite;
+        }
+
+        .avatar-wrapper-compact {
+          position: relative;
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          cursor: pointer;
+          z-index: 2;
+        }
+
+        .avatar-compact {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 3px solid #FFD700;
+          box-shadow: 
+            0 0 20px rgba(255, 215, 0, 0.6),
+            inset 0 0 10px rgba(255, 215, 0, 0.2);
+          transition: all 0.3s ease;
+        }
+
+        .avatar-wrapper-compact:hover .avatar-compact {
+          transform: scale(1.05);
+          box-shadow: 
+            0 0 30px rgba(255, 215, 0, 0.8),
+            inset 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .membership-badge-compact {
+          padding: 6px 16px;
+          border-radius: 20px;
+          background: rgba(26, 31, 46, 0.9);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 215, 0, 0.3);
+          font-size: 0.75rem;
+          font-weight: 700;
+          letter-spacing: 1px;
+          color: #FFD700;
+          text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .membership-badge-compact.badge-gold {
+          border-color: rgba(255, 215, 0, 0.5);
+          background: rgba(255, 215, 0, 0.1);
+        }
+
+        .membership-badge-compact.badge-diamond {
+          border-color: rgba(0, 255, 255, 0.5);
+          background: rgba(0, 255, 255, 0.1);
+          color: #00FFFF;
+        }
+
+        .membership-badge-compact.badge-supreme {
+          border-color: rgba(255, 215, 0, 0.7);
+          background: rgba(255, 215, 0, 0.15);
+        }
+
+        /* 中间：欢迎文字 */
+        .hero-center-section {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          min-width: 0;
+        }
+
+        .welcome-header {
+          display: flex;
+          align-items: baseline;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+
+        .welcome-label-compact {
+          font-size: 0.95rem;
+          font-weight: 800;
+          color: rgba(200, 210, 230, 1);
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          text-shadow: 
+            0 1px 2px rgba(0, 0, 0, 0.6),
+            0 0 1px rgba(255, 255, 255, 0.1);
+          filter: none;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+        .user-name-compact {
+          font-size: 2.6rem;
+          font-weight: 900;
+          letter-spacing: 1.5px;
+          background: linear-gradient(135deg, #FFD700 0%, #FFE55C 40%, #FFD700 80%, #FFA500 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          background-size: 200% 100%;
+          animation: gradientShift 4s ease infinite;
+          text-shadow: none;
+          filter: none;
+          position: relative;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+        .user-name-compact::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, 
+            transparent 0%, 
+            rgba(255, 255, 255, 0.2) 50%, 
+            transparent 100%
+          );
+          animation: shimmer 3s ease-in-out infinite;
+          pointer-events: none;
+          mix-blend-mode: overlay;
+        }
+
+        .hero-subtitle-compact {
+          font-size: 1rem;
+          color: rgba(180, 195, 220, 1);
+          font-weight: 600;
+          line-height: 1.6;
+          margin: 0;
+          text-shadow: 
+            0 1px 2px rgba(0, 0, 0, 0.5),
+            0 0 1px rgba(255, 255, 255, 0.1);
+          filter: none;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+        .inspiration-compact {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-top: 6px;
+          font-size: 0.95rem;
+        }
+
+        .inspiration-text {
+          font-weight: 600;
+          color: rgba(180, 195, 220, 1);
+          text-shadow: 
+            0 1px 2px rgba(0, 0, 0, 0.5),
+            0 0 1px rgba(255, 255, 255, 0.1);
+          filter: none;
+          -webkit-font-smoothing: antialiased;
+        }
+
+        .inspiration-text.highlight {
+          background: linear-gradient(135deg, #FFD700 0%, #FFE55C 50%, #FFA500 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          font-weight: 800;
+          font-size: 1rem;
+          text-shadow: none;
+          filter: none;
+          -webkit-font-smoothing: antialiased;
+        }
+
+        .inspiration-divider {
+          color: rgba(255, 215, 0, 0.3);
+        }
+
+        /* 右侧：操作按钮 */
+        .hero-right-section {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          flex-shrink: 0;
+        }
+
+        .action-btn-compact {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 20px;
+          border-radius: 12px;
+          font-weight: 600;
+          font-size: 0.9rem;
+          border: none;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          white-space: nowrap;
+        }
+
+        .action-btn-compact.primary {
+          background: linear-gradient(135deg, #FFD700 0%, #FFB300 100%);
+          color: #181F2A;
+          box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        }
+
+        .action-btn-compact.primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 24px rgba(255, 215, 0, 0.5);
+        }
+
+        .action-btn-compact.secondary {
+          background: rgba(26, 31, 46, 0.8);
+          color: #FFD700;
+          border: 1px solid rgba(255, 215, 0, 0.3);
+          backdrop-filter: blur(10px);
+        }
+
+        .action-btn-compact.secondary:hover {
+          background: rgba(26, 31, 46, 0.95);
+          border-color: rgba(255, 215, 0, 0.5);
+        }
+
+        /* 动画定义 */
+        @keyframes heroFadeInCompact {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes numberFloatGlobal {
+          0% {
+            transform: translateY(100vh) translateX(0);
+            opacity: 0;
+          }
+          10% {
+            opacity: 0.6;
+          }
+          90% {
+            opacity: 0.6;
+          }
+          100% {
+            transform: translateY(-100px) translateX(100px);
+            opacity: 0;
+          }
+        }
+
+        @keyframes symbolRotateGlobal {
+          0% {
+            transform: rotate(0deg) scale(1);
+            opacity: 0.35;
+          }
+          50% {
+            transform: rotate(180deg) scale(1.3);
+            opacity: 0.5;
+          }
+          100% {
+            transform: rotate(360deg) scale(1);
+            opacity: 0.35;
+          }
+        }
+
+        @keyframes gradientShift {
+          0%, 100% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+
+        @keyframes arrowPulse {
+          0%, 100% {
+            opacity: 0.25;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.4;
+            transform: scale(1.15);
+          }
+        }
+
+        @keyframes ringGlow {
+          0%, 100% {
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+            opacity: 0.4;
+          }
+          50% {
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            opacity: 0.6;
+          }
+        }
+
+        /* 会员徽章 */
+        .membership-badge-large {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 16px 32px;
+          border-radius: 50px;
+          background: rgba(26, 31, 46, 0.9);
+          backdrop-filter: blur(20px);
+          border: 2px solid rgba(255, 215, 0, 0.3);
+          box-shadow: 
+            0 8px 32px rgba(255, 215, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          animation: badgeFloat 3s ease-in-out infinite;
+        }
+
+        .membership-badge-large.badge-gold {
+          border-color: rgba(255, 215, 0, 0.5);
+          box-shadow: 
+            0 8px 32px rgba(255, 215, 0, 0.3),
+            inset 0 1px 0 rgba(255, 215, 0, 0.2);
+        }
+
+        .membership-badge-large.badge-diamond {
+          border-color: rgba(0, 255, 255, 0.5);
+          box-shadow: 
+            0 8px 32px rgba(0, 255, 255, 0.3),
+            inset 0 1px 0 rgba(0, 255, 255, 0.2);
+        }
+
+        .membership-badge-large.badge-supreme {
+          border-color: rgba(255, 215, 0, 0.7);
+          box-shadow: 
+            0 8px 32px rgba(255, 215, 0, 0.4),
+            inset 0 1px 0 rgba(255, 215, 0, 0.3);
+        }
+
+        .badge-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          animation: badgeRotate 8s linear infinite;
+        }
+
+        .badge-text {
+          font-size: 1.3rem;
+          font-weight: 900;
+          letter-spacing: 2px;
+          color: #FFD700;
+          text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        /* 头像容器 */
+        .avatar-container-premium {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .avatar-rings {
+          position: absolute;
+          width: 180px;
+          height: 180px;
+        }
+
+        .ring {
+          position: absolute;
+          border-radius: 50%;
+          border: 2px solid;
+          opacity: 0.3;
+        }
+
+        .ring-1 {
+          width: 140px;
+          height: 140px;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          border-color: #FFD700;
+          animation: ringPulse1 3s ease-in-out infinite;
+        }
+
+        .ring-2 {
+          width: 160px;
+          height: 160px;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          border-color: #00FFAE;
+          animation: ringPulse2 3s ease-in-out infinite 0.5s;
+        }
+
+        .ring-3 {
+          width: 180px;
+          height: 180px;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          border-color: #FFD700;
+          animation: ringPulse3 3s ease-in-out infinite 1s;
+        }
+
+        .avatar-wrapper-premium {
+          position: relative;
+          width: 140px;
+          height: 140px;
+          cursor: pointer;
+          border-radius: 50%;
+          z-index: 2;
+        }
+
+        .avatar-premium {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 4px solid #FFD700;
+          box-shadow: 
+            0 0 40px rgba(255, 215, 0, 0.8),
+            0 0 80px rgba(255, 215, 0, 0.4),
+            inset 0 0 20px rgba(255, 215, 0, 0.2);
+          background: linear-gradient(135deg, #232b3e 0%, #2a3444 100%);
+          transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .avatar-wrapper-premium:hover .avatar-premium {
+          transform: scale(1.05);
+          box-shadow: 
+            0 0 60px rgba(255, 215, 0, 1),
+            0 0 120px rgba(255, 215, 0, 0.6),
+            inset 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .avatar-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          border-radius: 50%;
+          background: rgba(0, 0, 0, 0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .avatar-wrapper-premium:hover .avatar-overlay {
+          opacity: 1;
+        }
+
+        /* 欢迎文字 */
+        .hero-welcome-text {
+          text-align: center;
+          animation: textSlideUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero-title-premium {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          margin-bottom: 16px;
+        }
+
+        .welcome-label {
+          font-size: 1.4rem;
+          font-weight: 600;
+          color: #b0c4e6;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+        }
+
+        .user-name-premium {
+          font-size: 3.5rem;
+          font-weight: 900;
+          letter-spacing: 2px;
+          background: linear-gradient(135deg, #FFD700 0%, #FFE55C 50%, #FFD700 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          text-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+          animation: nameGlow 3s ease-in-out infinite alternate;
+        }
+
+        .hero-subtitle-premium {
+          font-size: 1.3rem;
+          color: #b0c4e6;
+          font-weight: 500;
+          line-height: 1.6;
+          max-width: 600px;
+          margin-bottom: 32px;
+        }
+
+        /* 投资心态与激励标语 */
+        .hero-inspiration-quotes {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          margin-top: 32px;
+          padding: 24px 32px;
+          background: linear-gradient(135deg, rgba(26, 31, 46, 0.6) 0%, rgba(34, 42, 58, 0.6) 100%);
+          border-radius: 20px;
+          border: 1px solid rgba(255, 215, 0, 0.15);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+          animation: quotesFadeIn 0.8s ease-out 0.6s both;
+        }
+
+        .quote-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 0;
+          color: #b0c4e6;
+          font-size: 1.05rem;
+          font-weight: 500;
+          line-height: 1.6;
+          transition: all 0.3s ease;
+        }
+
+        .quote-item:hover {
+          color: #FFD700;
+          transform: translateX(8px);
+        }
+
+        .quote-item.highlight-quote {
+          color: #FFD700;
+          font-weight: 700;
+          font-size: 1.15rem;
+          padding: 16px 20px;
+          margin-top: 8px;
+          background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.05) 100%);
+          border-radius: 12px;
+          border: 1px solid rgba(255, 215, 0, 0.3);
+          box-shadow: 0 4px 16px rgba(255, 215, 0, 0.2);
+          position: relative;
+        }
+
+        .quote-item.highlight-quote::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 4px;
+          background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%);
+          border-radius: 2px 0 0 2px;
+        }
+
+        .quote-icon {
+          flex-shrink: 0;
+          color: #FFD700;
+          opacity: 0.8;
+          transition: all 0.3s ease;
+        }
+
+        .quote-item:hover .quote-icon {
+          opacity: 1;
+          transform: scale(1.1);
+        }
+
+        .quote-text {
+          flex: 1;
+          letter-spacing: 0.5px;
+        }
+
+        /* VIP策略保密提示 */
+        .section-header-with-confidentiality {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 24px;
+          margin-bottom: 32px;
+          flex-wrap: wrap;
+        }
+
+        .confidentiality-badge {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 20px;
+          background: 
+            linear-gradient(135deg, 
+              rgba(255, 152, 0, 0.12) 0%, 
+              rgba(255, 193, 7, 0.12) 100%
+            ),
+            radial-gradient(circle at top left, rgba(255, 215, 0, 0.08) 0%, transparent 50%);
+          border-radius: 12px;
+          border: 2px solid rgba(255, 152, 0, 0.35);
+          box-shadow: 
+            0 4px 16px rgba(0, 0, 0, 0.5),
+            0 2px 8px rgba(255, 152, 0, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.12),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .confidentiality-badge::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: linear-gradient(
+            45deg,
+            transparent 30%,
+            rgba(255, 255, 255, 0.08) 50%,
+            transparent 70%
+          );
+          animation: badgeShine 4s ease-in-out infinite;
+        }
+
+        .confidentiality-icon {
+          color: #FF9800;
+          flex-shrink: 0;
+          filter: none;
+          -webkit-font-smoothing: antialiased;
+          position: relative;
+          z-index: 1;
+        }
+
+        .confidentiality-text {
+          color: rgba(255, 215, 0, 1);
+          font-size: 0.9rem;
+          font-weight: 800;
+          letter-spacing: 1px;
+          text-shadow: 
+            0 1px 2px rgba(0, 0, 0, 0.6),
+            0 0 1px rgba(255, 255, 255, 0.1);
+          position: relative;
+          z-index: 1;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          filter: none;
+        }
+
+        /* 动画定义 */
+        @keyframes quotesFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes badgePulse {
+          0%, 100% {
+            box-shadow: 
+              0 4px 16px rgba(0, 0, 0, 0.5),
+              0 2px 8px rgba(255, 152, 0, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.12),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 152, 0, 0.35);
+          }
+          50% {
+            box-shadow: 
+              0 6px 20px rgba(0, 0, 0, 0.6),
+              0 3px 12px rgba(255, 152, 0, 0.25),
+              inset 0 1px 0 rgba(255, 255, 255, 0.15),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 152, 0, 0.45);
+          }
+        }
+
+        @keyframes badgeShine {
+          0% {
+            transform: translateX(-100%) translateY(-100%) rotate(45deg);
+          }
+          100% {
+            transform: translateX(100%) translateY(100%) rotate(45deg);
+          }
+        }
+
+        @keyframes iconPulse {
+          0%, 100% {
+            transform: scale(1);
+            filter: none;
+          }
+          50% {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 12px rgba(255, 152, 0, 0.8));
+          }
+        }
+
+        /* 操作按钮 */
+        .hero-actions {
+          display: flex;
+          gap: 20px;
+          animation: buttonsFadeIn 0.8s ease-out 0.4s both;
+        }
+
+        .hero-action-btn {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 16px 32px;
+          border-radius: 16px;
+          font-weight: 700;
+          font-size: 1.1rem;
+          border: none;
+          cursor: pointer;
+          transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .hero-action-btn.primary-action {
+          background: linear-gradient(135deg, #FFD700 0%, #FFB300 50%, #FFD700 100%);
+          color: #181F2A;
+          box-shadow: 
+            0 8px 32px rgba(255, 215, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3),
+            0 0 0 1px rgba(255, 215, 0, 0.5);
+        }
+
+        .hero-action-btn.primary-action:hover {
+          transform: translateY(-4px) scale(1.05);
+          box-shadow: 
+            0 16px 48px rgba(255, 215, 0, 0.6),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4),
+            0 0 0 2px rgba(255, 215, 0, 0.7),
+            0 0 60px rgba(255, 215, 0, 0.3);
+        }
+
+        .hero-action-btn.secondary-action {
+          background: rgba(26, 31, 46, 0.9);
+          color: #FFD700;
+          border: 2px solid rgba(255, 215, 0, 0.3);
+          backdrop-filter: blur(20px);
+          box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-action-btn.secondary-action:hover {
+          transform: translateY(-4px) scale(1.05);
+          border-color: rgba(255, 215, 0, 0.6);
+          background: rgba(26, 31, 46, 0.95);
+          box-shadow: 
+            0 16px 48px rgba(255, 215, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* ========== Premium Cards Grid - 现代化高级数据卡片 ========== */
+        .premium-cards-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 28px;
+          margin: 48px auto 64px auto;
+          padding: 0 32px;
+        }
+
+        .premium-stat-card {
+          position: relative;
+          background: 
+            linear-gradient(135deg, 
+              rgba(15, 20, 30, 0.98) 0%, 
+              rgba(22, 28, 40, 0.98) 50%, 
+              rgba(28, 35, 48, 0.98) 100%
+            ),
+            radial-gradient(circle at top right, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
+          border-radius: 18px;
+          padding: 32px 28px;
+          border: 2px solid rgba(255, 215, 0, 0.2);
+          box-shadow: 
+            0 10px 40px rgba(0, 0, 0, 0.8),
+            0 4px 12px rgba(0, 0, 0, 0.6),
+            0 0 0 1px rgba(255, 255, 255, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.12),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+            inset 2px 2px 4px rgba(255, 215, 0, 0.05);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          overflow: hidden;
+          animation: cardFadeIn 0.6s ease-out both;
+          z-index: 1;
+        }
+
+        .premium-stat-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: 
+            linear-gradient(135deg, 
+              rgba(255, 255, 255, 0.02) 0%, 
+              transparent 50%,
+              rgba(0, 0, 0, 0.03) 100%
+            );
+          border-radius: 18px;
+          pointer-events: none;
+          opacity: 0.6;
+          transition: opacity 0.4s ease;
+        }
+
+        .premium-stat-card::after {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+          opacity: 0;
+          transition: opacity 0.4s ease;
+        }
+
+        .premium-stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .premium-stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .premium-stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .premium-stat-card:nth-child(4) { animation-delay: 0.4s; }
+        .premium-stat-card:nth-child(5) { animation-delay: 0.5s; }
+        .premium-stat-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .premium-stat-card:hover {
+          transform: translateY(-6px);
+          border-color: rgba(255, 215, 0, 0.5);
+          box-shadow: 
+            0 16px 64px rgba(255, 215, 0, 0.2),
+            0 6px 20px rgba(0, 0, 0, 0.7),
+            0 0 0 1px rgba(255, 255, 255, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.18),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+            inset 2px 2px 6px rgba(255, 215, 0, 0.08);
+        }
+
+        .premium-stat-card:hover::before {
+          opacity: 1;
+        }
+
+        .premium-stat-card:hover::after {
+          opacity: 1;
+        }
+
+        .card-icon-wrapper {
+          width: 60px;
+          height: 60px;
+          border-radius: 14px;
+          background: 
+            linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.1) 100%),
+            linear-gradient(45deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 20px;
+          color: #FFD700;
+          border: 2px solid rgba(255, 215, 0, 0.3);
+          transition: all 0.4s ease;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 
+            0 2px 8px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .card-icon-wrapper::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.5s ease;
+        }
+
+        .premium-stat-card:hover .card-icon-wrapper {
+          background: linear-gradient(135deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 215, 0, 0.15) 100%);
+          border-color: rgba(255, 215, 0, 0.5);
+          transform: scale(1.08);
+          box-shadow: 
+            0 4px 16px rgba(255, 215, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .premium-stat-card:hover .card-icon-wrapper::before {
+          left: 100%;
+        }
+
+        .card-content {
+          position: relative;
+          z-index: 2;
+        }
+
+        .card-label {
+          font-size: 0.75rem;
+          color: rgba(200, 210, 230, 1);
+          font-weight: 800;
+          margin-bottom: 16px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          text-shadow: 
+            0 1px 2px rgba(0, 0, 0, 0.5),
+            0 0 1px rgba(255, 255, 255, 0.1);
+          filter: none;
+        }
+
+        .card-value {
+          display: flex;
+          align-items: baseline;
+          gap: 6px;
+        }
+
+        .premium-value {
+          font-size: 2.4rem;
+          font-weight: 900;
+          letter-spacing: 0.5px;
+          line-height: 1.1;
+          font-family: 'Roboto Mono', 'Courier New', monospace;
+        }
+
+        .value-number {
+          font-family: 'Roboto Mono', 'Courier New', monospace;
+          font-weight: 900;
+          text-shadow: 
+            0 1px 2px rgba(0, 0, 0, 0.9),
+            0 2px 4px rgba(0, 0, 0, 0.7);
+          filter: none;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-rendering: optimizeLegibility;
+          letter-spacing: 0.5px;
+        }
+
+        .value-unit {
+          font-size: 1.1rem;
+          color: rgba(200, 210, 230, 0.85);
+          font-weight: 700;
+          opacity: 1;
+          margin-left: 2px;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-glow {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 150%;
+          height: 150%;
+          pointer-events: none;
+          opacity: 0;
+          transition: opacity 0.5s ease;
+          border-radius: 50%;
+        }
+
+        .premium-stat-card:hover .card-glow {
+          opacity: 0.6;
+        }
+
+        /* 动画定义 */
+        @keyframes heroFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes backgroundPulse {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 0.8; }
+        }
+
+        @keyframes badgeFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px); }
+        }
+
+        @keyframes badgeRotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
+        @keyframes ringPulse1 {
+          0%, 100% { 
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.3;
+          }
+          50% { 
+            transform: translate(-50%, -50%) scale(1.1);
+            opacity: 0.6;
+          }
+        }
+
+        @keyframes ringPulse2 {
+          0%, 100% { 
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.2;
+          }
+          50% { 
+            transform: translate(-50%, -50%) scale(1.15);
+            opacity: 0.5;
+          }
+        }
+
+        @keyframes ringPulse3 {
+          0%, 100% { 
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.1;
+          }
+          50% { 
+            transform: translate(-50%, -50%) scale(1.2);
+            opacity: 0.4;
+          }
+        }
+
+        @keyframes textSlideUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes nameGlow {
+          0% { 
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+            filter: brightness(1);
+          }
+          100% { 
+            text-shadow: 0 0 60px rgba(255, 215, 0, 0.9);
+            filter: brightness(1.2);
+          }
+        }
+
+        @keyframes buttonsFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes cardFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 900px) {
+          .vip-hero-section-compact {
+            padding: 24px 20px;
+            margin-bottom: 24px;
+          }
+
+          .vip-hero-content-compact {
+            flex-direction: column;
+            gap: 20px;
+            align-items: flex-start;
+          }
+
+          .hero-center-section {
+            width: 100%;
+          }
+
+          .hero-right-section {
+            width: 100%;
+            flex-direction: row;
+          }
+
+          .action-btn-compact {
+            flex: 1;
+          }
+
+          .user-name-compact {
+            font-size: 1.6rem;
+          }
+
+          .kline-chart-global {
+            display: none;
+          }
+          
+          .number-item-global {
+            font-size: 0.9rem;
+            opacity: 0.25;
+          }
+          
+          .symbol-global {
+            font-size: 1.8rem;
+            opacity: 0.15;
+          }
+          
+          .trend-arrow {
+            font-size: 1.3rem;
+            opacity: 0.2;
+          }
+
+          .user-name-premium {
+            font-size: 2.5rem;
+          }
+
+          .hero-subtitle-premium {
+            font-size: 1.1rem;
+          }
+
+          .hero-inspiration-quotes {
+            padding: 20px 24px;
+            gap: 12px;
+          }
+
+          .quote-item {
+            font-size: 0.95rem;
+          }
+
+          .quote-item.highlight-quote {
+            font-size: 1.05rem;
+            padding: 12px 16px;
+          }
+
+          .section-header-with-confidentiality {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          .confidentiality-badge {
+            padding: 12px 20px;
+            font-size: 0.9rem;
+          }
+
+          .hero-actions {
+            flex-direction: column;
+            width: 100%;
+            max-width: 400px;
+          }
+
+          .hero-action-btn {
+            width: 100%;
+            justify-content: center;
+          }
+
+          .premium-cards-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+            padding: 0 16px;
+          }
+
+          .premium-stat-card {
+            padding: 24px 20px;
+          }
+
+          .premium-value {
+            font-size: 2rem;
+          }
+        }
+
+        @media (max-width: 600px) {
+          .vip-hero-section {
+            padding: 32px 16px;
+            border-radius: 20px;
+          }
+
+          .membership-badge-large {
+            padding: 12px 24px;
+            gap: 8px;
+          }
+
+          .badge-text {
+            font-size: 1rem;
+          }
+
+          .avatar-wrapper-premium {
+            width: 120px;
+            height: 120px;
+          }
+
+          .ring-1, .ring-2, .ring-3 {
+            width: 100%;
+            height: 100%;
+          }
+
+          .user-name-premium {
+            font-size: 2rem;
+          }
+
+          .hero-inspiration-quotes {
+            padding: 16px 20px;
+            gap: 10px;
+          }
+
+          .quote-item {
+            font-size: 0.9rem;
+            padding: 8px 0;
+          }
+
+          .quote-item.highlight-quote {
+            font-size: 1rem;
+            padding: 12px 14px;
+          }
+
+          .confidentiality-badge {
+            padding: 10px 16px;
+            font-size: 0.85rem;
+          }
+
+          .confidentiality-text {
+            font-size: 0.85rem;
+          }
         }
 </style>

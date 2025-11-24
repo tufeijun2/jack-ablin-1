@@ -26,3 +26,7 @@ VITE_Web_Trader_UUID = "7c5b1305-c996-4e22-8096-ab8444004a8f"
 [build.upload]
 cache_control = { bypass_cache_on_changes = true, max_age = 3600 }
 compression = "gzip"
+
+# 静态资源目录配置（必需）
+[assets]
+directory = "./dist"

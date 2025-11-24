@@ -112,13 +112,20 @@ onMounted(() => {
   }
   try
   {
-   
-
-  let indexdata=JSON.parse(userStore.indexData || null);
-  if(indexdata){
+  // 检查 indexData 的类型：如果是字符串就 parse，如果是对象就直接使用
+  let indexdata;
+  if (typeof userStore.indexData === 'string') {
+    indexdata = JSON.parse(userStore.indexData || '{}');
+  } else {
+    indexdata = userStore.indexData || {};
+  }
+  
+  if(indexdata && indexdata.trader_profiles){
    
    trader_profiles.value=indexdata.trader_profiles;
-   document.title = indexdata.trader_profiles.website_title;
+   if(indexdata.trader_profiles.website_title){
+     document.title = indexdata.trader_profiles.website_title;
+   }
   }
   }
   catch(error)
@@ -133,10 +140,12 @@ const toadmin=()=>{
 }
 const getindexdata= async()=>{
   const res=await gettrader_profiles();
-  if(res.success){
+  if(res.success && res.data && res.data.trader_profiles){
    
     trader_profiles.value=res.data.trader_profiles;
-    document.title = res.data.trader_profiles.website_title;
+    if(res.data.trader_profiles.website_title){
+      document.title = res.data.trader_profiles.website_title;
+    }
   }
 };
 const loginto=()=>{

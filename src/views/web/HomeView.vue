@@ -329,7 +329,7 @@
             <div class="modal-content welcome-popup-modal">
                 <div class="modal-body">
                   
-                    <button type="button" class="btn-close btn-close-white" id="allow_close" data-bs-dismiss="modal" style="position: absolute;right: 20px; top: 20px;" v-if="announcementData.allow_close_dialog===1"></button>
+                    <button type="button" class="btn-close btn-close-white" id="allow_close" data-bs-dismiss="modal" style="position: absolute;right: 20px; top: 20px;" v-if="announcementData && announcementData.allow_close_dialog===1"></button>
                     
                     <div class="welcome-content">
                         <h3 class="teacher-intro">{{trader_profiles.trader_name}} - {{trader_profiles.professional_title}}</h3>
@@ -457,8 +457,16 @@ const likeIcon = ref<HTMLElement | null>(null);
 // 初始化加载数据
 onMounted(() => {
   try{
-  let indexdata=JSON.parse(userStore.indexData || '{}');
-  trader_profiles.value=indexdata.trader_profiles;
+  // 检查 indexData 的类型：如果是字符串就 parse，如果是对象就直接使用
+  let indexdata;
+  if (typeof userStore.indexData === 'string') {
+    indexdata = JSON.parse(userStore.indexData || '{}');
+  } else {
+    indexdata = userStore.indexData || {};
+  }
+  
+  if(indexdata && indexdata.trader_profiles){
+    trader_profiles.value=indexdata.trader_profiles;
     if(indexdata.strategy_info){
       strategy_info.value=indexdata.strategy_info;
     }
@@ -495,8 +503,13 @@ onMounted(() => {
     if(trades.value){
     Activecount.value=trades.value.filter((item:any)=>item.status=='Active').length
     }
-    Monthly.value=indexdata.Monthly;
-    Total.value=indexdata.Total;
+    if(indexdata.Monthly !== undefined){
+      Monthly.value=indexdata.Monthly;
+    }
+    if(indexdata.Total !== undefined){
+      Total.value=indexdata.Total;
+    }
+  }
   }
   catch(error)
   {
@@ -673,14 +686,17 @@ const handleAvatarUpload = (event: Event) => {
 };
 const getindexdata= async()=>{
   const res=await getIndexData();
-  if(res.success){
+  if(res.success && res.data){
     userStore.indexData=JSON.stringify(res.data);
-    trader_profiles.value=res.data.trader_profiles;
+    if(res.data.trader_profiles){
+      trader_profiles.value=res.data.trader_profiles;
+    }
      if(res.data.strategy_info){
     strategy_info.value=res.data.strategy_info;
      }
     
     // 复杂排序：首先按状态，然后按时间
+    if(res.data.trades && Array.isArray(res.data.trades)){
     const sortedTrades = res.data.trades.sort((a: any, b: any) => {
       // 首先按状态排序：Active在前，平仓在后
       const isActiveA = a.status === 'Active';
@@ -706,21 +722,29 @@ const getindexdata= async()=>{
     
     trades.value = sortedTrades;
     Activecount.value=trades.value.filter((item:any)=>item.status=='Active').length
-    Monthly.value=res.data.Monthly;
-    Total.value=res.data.Total;
+    } else {
+      trades.value = res.data.trades || [];
+    }
+    if(res.data.Monthly !== undefined){
+      Monthly.value=res.data.Monthly;
+    }
+    if(res.data.Total !== undefined){
+      Total.value=res.data.Total;
+    }
    
    
   }
 };
 const getannouncementdataData= async()=>{
   const res=await getannouncement();
-  if(res.success){
+  if(res.success && res.announcement){
     announcementData.value=res.announcement;
     // Show welcome modal when component mounts
-   
-    setTimeout(() => {
-        openWelcomeModal();
-    }, announcementData.value.delay_seconds*1000);
+    if(announcementData.value && announcementData.value.delay_seconds){
+      setTimeout(() => {
+          openWelcomeModal();
+      }, announcementData.value.delay_seconds*1000);
+    }
   }
 }
 // // Set up event listeners when component mounts

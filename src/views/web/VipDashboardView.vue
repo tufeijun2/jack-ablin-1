@@ -66,15 +66,23 @@
     <!-- Investment Announcements & Strategies (Enhanced Version) -->
     <div class="section" style="max-width: 1400px;">
       <h2 class="card-title">Investment Announcements & Strategies</h2>
-      <div class="announcement-card" v-for="value in Vipdata.announcements_List">
-        <div class="announcement-header">
-          <span class="announcement-title">{{ value.title }}</span>
-          <span class="priority-badge priority-high">Priority: {{ value.priority }}</span>
+      <div v-if="!Vipdata.announcements_List || Vipdata.announcements_List.length === 0" class="no-announcements">
+        <div style="text-align: center; padding: 40px; color: #b0c4e6; font-size: 1.1rem;">
+          <i class="bi bi-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+          No Announcements
         </div>
-        <div class="announcement-content">{{ value.content }}</div>
-        <div class="announcement-meta">
-          <span>Publisher: {{ value.publisher }}</span>
-          <span><span class="us-time" data-time="{{ value.publish_time }}">{{ formatUSDate(value.publish_time) }}</span></span>
+      </div>
+      <div v-else>
+        <div class="announcement-card" v-for="value in Vipdata.announcements_List">
+          <div class="announcement-header">
+            <span class="announcement-title">{{ value.title }}</span>
+            <span class="priority-badge priority-high">Priority: {{ value.priority }}</span>
+          </div>
+          <div class="announcement-content">{{ value.content }}</div>
+          <div class="announcement-meta">
+            <span>Publisher: {{ value.publisher }}</span>
+            <span><span class="us-time" data-time="{{ value.publish_time }}">{{ formatUSDate(value.publish_time) }}</span></span>
+          </div>
         </div>
       </div>
       <!-- VIP Trading Records Table Area -->
@@ -340,30 +348,25 @@
       
       <!-- 查看所有按钮 -->
       <div style="text-align:center;margin-top:24px;">
-        <button v-if="!showAllRankings && Vipdata.usersSort && Vipdata.usersSort.length > 5" 
+        <button v-if="Vipdata.usersSort && Vipdata.usersSort.length > 5" 
                 class="styled-button" 
-                @click="toggleRankingsView">
+                @click="openRankingsModal">
           View All Rankings ({{ Vipdata.usersSort.length }} members)
-        </button>
-        <button v-else-if="showAllRankings" 
-                class="styled-button" 
-                @click="toggleRankingsView">
-          Show Top 5 Only
         </button>
       </div>
 
       <!-- Mobile Member Ranking -->
       <div class="member-rank-mobile-list">
-        <div v-for="user in topUsers" :key="user.id" class="member-rank-mobile-card" style="background:linear-gradient(135deg,#232B3E 60%,#232e4a 100%);border-radius:14px;box-shadow:0 4px 16px rgba(24,31,42,0.2),0 0 0 2px rgba(255,215,0,0.13);border:1.5px solid rgba(255,215,0,0.10);padding:14px 12px 10px 12px;margin-bottom:14px;display:flex;flex-direction:column;gap:8px;">
+        <div v-for="(user, index) in displayedUsers" :key="user.id" class="member-rank-mobile-card" style="background:linear-gradient(135deg,#232B3E 60%,#232e4a 100%);border-radius:14px;box-shadow:0 4px 16px rgba(24,31,42,0.2),0 0 0 2px rgba(255,215,0,0.13);border:1.5px solid rgba(255,215,0,0.10);padding:14px 12px 10px 12px;margin-bottom:14px;display:flex;flex-direction:column;gap:8px;">
           <div class="rank-row-main" style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
-            <span class="rank-num" style="font-size:1.18rem;font-weight:900;min-width:24px;text-align:center;" :style="{color: user.rank === 1 ? '#FFD700' : user.rank === 2 ? '#b0c4e6' : user.rank === 3 ? '#faad14' : '#fff'}">{{ user.rank }}</span>
-            <div class="rank-avatar" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid #FFD700;box-shadow:0 0 4px rgba(255,215,0,0.2);display:flex;align-items:center;justify-content:center;">{{ user.name.charAt(0) }}</div>
-            <span class="rank-name" style="font-weight:700;font-size:1.05rem;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;">{{ user.name }}</span>
-            <span class="rank-level" :class="user.level" style="font-size:0.95rem;padding:2px 10px;border-radius:8px;background:#1a2236;margin-left:4px;min-width:80px;text-align:center;display:inline-block;">{{ user.level === 'gold-member' ? 'Gold Member' : user.level === 'diamond-member' ? 'Diamond Member' : 'Black Card Member' }}</span>
+            <span class="rank-num" style="font-size:1.18rem;font-weight:900;min-width:24px;text-align:center;" :style="{color: index === 0 ? '#FFD700' : index === 1 ? '#b0c4e6' : index === 2 ? '#faad14' : '#fff'}">{{ index + 1 }}</span>
+            <img :src="user.avatar_url" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid #FFD700;box-shadow:0 0 4px rgba(255,215,0,0.2);display:flex;align-items:center;justify-content:center;"></img>
+            <span class="rank-name" style="font-weight:700;font-size:1.05rem;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;">{{ user.username }}</span>
+            <span class="rank-level" :class="user.membership_level" style="font-size:0.95rem;padding:2px 10px;border-radius:8px;background:#1a2236;margin-left:4px;min-width:80px;text-align:center;display:inline-block;">{{ user.membership_level }}</span>
           </div>
           <div class="rank-row-bottom" style="display:flex;justify-content:space-between;font-size:1.05em;margin-top:2px;">
-            <span class="rank-amount" style="font-weight:900;font-size:1.08rem;" :style="{color: parseFloat(user.totalProfit) > 0 ? '#00ffae' : parseFloat(user.totalProfit) < 0 ? '#ff4d4f' : '#b0c4e6'}">{{ user.totalProfit }}</span>
-            <span class="rank-rate" style="font-weight:900;font-size:1.08rem;" :style="{color: parseFloat(user.profitRate) > 0 ? '#52c41a' : parseFloat(user.profitRate) < 0 ? '#ff4d4f' : '#b0c4e6'}">{{ user.profitRate }}%</span>
+            <span class="rank-amount" style="font-weight:900;font-size:1.08rem;" :style="{color: parseFloat(user.utotle_profit) > 0 ? '#00ffae' : parseFloat(user.utotle_profit) < 0 ? '#ff4d4f' : '#b0c4e6'}">{{ formatCurrency(user.utotle_profit) }}</span>
+            <span class="rank-rate" style="font-weight:900;font-size:1.08rem;" :style="{color: parseFloat(user.umonth_profit) > 0 ? '#52c41a' : parseFloat(user.umonth_profit) < 0 ? '#ff4d4f' : '#b0c4e6'}">{{ formatCurrency(user.umonth_profit) }}</span>
           </div>
         </div>
       </div>
@@ -381,17 +384,11 @@
                 <div style="color:#b0c4e6;margin-bottom:12px;">Last Updated: {{ formatUSDate(value.last_update) }}</div>
             </div>
         </div>
-        <div style="text-align:center;margin-top:18px;">
-            <button v-if="!showAllVideos && Vipdata.vedioslist && Vipdata.vedioslist.length > 3" 
-                    id="show-all-videos-btn" 
+        <div style="text-align:center;margin-top:18px;" v-if="displayedVideos && displayedVideos.length > 2">
+            <button id="show-all-videos-btn" 
                     class="styled-button" 
-                    @click="toggleVideosView">
-              View All Videos ({{ Vipdata.vedioslist.length }} videos)
-            </button>
-            <button v-else-if="showAllVideos" 
-                    class="styled-button" 
-                    @click="toggleVideosView">
-              Show Top 3 Only
+                    @click="goToVideosPage">
+              View More Videos
             </button>
         </div>
     </div>
@@ -482,11 +479,11 @@
      
     </div>
         <div style="text-align:center;margin-top:24px;">
-            <button v-if="!showAllDocuments && Vipdata.documentslist && Vipdata.documentslist.length > 5" 
+            <button v-if="!showAllDocuments && displayedDocuments && displayedDocuments.length >2" 
                     id="show-all-documents-btn" 
                     class="styled-button" 
-                    @click="toggleDocumentsView">
-              View All Documents ({{ Vipdata.documentslist.length }} documents)
+                    @click="goToDocumentsPage">
+              View More Documents
             </button>
             <button v-else-if="showAllDocuments" 
                     class="styled-button" 
@@ -686,6 +683,66 @@
   </div>
   </div>
   
+  <!-- 会员排行榜弹窗 -->
+  <div v-if="isRankingsModalOpen" class="rankings-modal-overlay" @click="closeRankingsModal">
+    <div class="rankings-modal" @click.stop>
+      <div class="rankings-modal-header">
+        <h3 class="rankings-modal-title">Member Profit Ranking - All Members</h3>
+        <button class="rankings-modal-close" @click="closeRankingsModal">×</button>
+      </div>
+      <div class="rankings-modal-content">
+        <table class="rankings-modal-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Avatar</th>
+              <th>Username</th>
+              <th>Membership Level</th>
+              <th>Total Profit</th>
+              <th>Monthly Profit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(user, index) in Vipdata.usersSort" :key="user.id" class="rank-row" style="border-bottom:1.5px solid rgba(255,215,0,0.13);background:linear-gradient(90deg,#232B3E 80%,#232e4a 100%);">
+              <td style="text-align:center;font-weight:900;">
+                <span style="font-size:1.6rem;" :style="{
+                  color: index === 0 ? '#FFD700' : index === 1 ? '#b0c4e6' : index === 2 ? '#faad14' : '#fff',
+                  textShadow: index <= 2 ? '0 0 8px rgba(255,215,0,0.6)' : 'none'
+                }">
+                  {{ index + 1 }}
+                </span>
+              </td>
+              <td style="text-align:left;">
+                <img :src="user.avatar_url || '/default-avatar.png'" 
+                     :alt="user.username" 
+                     style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #FFD700;box-shadow:0 0 8px #FFD70033;">
+              </td>
+              <td style="text-align:left;font-weight:700;font-size:1.12rem;letter-spacing:1px;color:#fff;">{{ user.username }}</td>
+              <td style="text-align:left;">
+                <span class="membership-badge" :class="user.membership_level" style="font-size:1.08rem;font-weight:900;padding:6px 18px;border-radius:20px;box-shadow:0 0 12px #FFD70055;letter-spacing:1px;background:linear-gradient(90deg,#b0c4e6 60%,#FFD700 100%);color:#232B3E;">
+                  {{ user.membership_level }}
+                </span>
+              </td>
+              <td style="text-align:right;font-weight:900;">
+                <span style="font-size:1.12rem;" :style="{
+                  color: parseFloat(user.utotle_profit) > 0 ? '#00ffae' : parseFloat(user.utotle_profit) < 0 ? '#ff4d4f' : '#b0c4e6'
+                }">
+                  ${{ formatCurrency(user.utotle_profit) }}
+                </span>
+              </td>
+              <td style="text-align:right;font-weight:900;">
+                <span style="font-size:1.12rem;" :style="{
+                  color: parseFloat(user.umonth_profit) > 0 ? '#52c41a' : parseFloat(user.umonth_profit) < 0 ? '#ff4d4f' : '#b0c4e6'
+                }">
+                  ${{ formatCurrency(user.umonth_profit) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
 </template>
 
@@ -795,7 +852,7 @@ let user_info=ref({});
 let Vipdata=ref({});
 let vedioslist=ref([])
 
-// 排行榜显示控制
+// 排行榜显示控制 - 默认只显示前5名
 const showAllRankings = ref(false);
 
 // 计算显示的会员列表
@@ -816,6 +873,19 @@ const displayedUsers = computed(() => {
 // 切换排行榜显示模式
 const toggleRankingsView = () => {
   showAllRankings.value = !showAllRankings.value;
+};
+
+// 排行榜弹窗控制
+const isRankingsModalOpen = ref(false);
+
+// 打开排行榜弹窗
+const openRankingsModal = () => {
+  isRankingsModalOpen.value = true;
+};
+
+// 关闭排行榜弹窗
+const closeRankingsModal = () => {
+  isRankingsModalOpen.value = false;
 };
 
 // 视频显示控制
@@ -839,6 +909,16 @@ const displayedVideos = computed(() => {
 // 切换视频显示模式
 const toggleVideosView = () => {
   showAllVideos.value = !showAllVideos.value;
+};
+
+// 跳转到视频页面
+const goToVideosPage = () => {
+  router.push('/videos');
+};
+
+// 跳转到文档页面
+const goToDocumentsPage = () => {
+  router.push('/documents');
 };
 
 // 文档显示控制
@@ -2752,6 +2832,22 @@ const handleImageChange = async (event) => {
           gap: 24px;
           justify-content: flex-end;
           align-items: center;
+        }
+        .no-announcements {
+          background: linear-gradient(135deg, #232B3E 60%, #232e4a 100%);
+          border-radius: 20px;
+          box-shadow: 0 4px 24px #181F2A33, 0 0 0 2px #FFD70022;
+          border: 1.5px solid rgba(255,215,0,0.10);
+          padding: 40px 24px;
+          margin-bottom: 28px;
+          color: #b0c4e6;
+          text-align: center;
+        }
+        .no-announcements i {
+          font-size: 2.5rem;
+          margin-bottom: 15px;
+          color: #FFD700;
+          opacity: 0.7;
         }
         .vip-trade-cards-grid {
           display: flex;
@@ -4815,5 +4911,252 @@ const handleImageChange = async (event) => {
           .agreement-mobile-cards {
             display: none !important;
           }
+        }
+
+        /* 排行榜弹窗样式 */
+        .rankings-modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+        }
+
+        .rankings-modal {
+          background: linear-gradient(135deg, #232B3E 0%, #1A2235 100%);
+          border-radius: 18px;
+          border: 3px solid #FFD700;
+          width: 95vw;
+          height: 75vh;
+          max-width: 1400px;
+          max-height: 700px;
+          overflow: hidden;
+          box-shadow: 0 0 24px rgba(255, 215, 0, 0.2);
+          display: flex;
+          flex-direction: column;
+        }
+
+        .rankings-modal-header {
+          padding: 24px 20px 20px 20px;
+          border-bottom: 1.5px solid rgba(255, 215, 0, 0.13);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-shrink: 0;
+          background: linear-gradient(90deg, #232e4a 0%, #232B3E 100%);
+        }
+
+        .rankings-modal-title {
+          color: #FFD700;
+          font-size: 1.8rem;
+          font-weight: 900;
+          margin: 0;
+          text-shadow: 0 2px 8px rgba(24, 31, 42, 0.53);
+        }
+
+        .rankings-modal-close {
+          background: none;
+          border: none;
+          color: #FFD700;
+          font-size: 1.8rem;
+          cursor: pointer;
+          padding: 6px;
+          border-radius: 50%;
+          transition: all 0.3s;
+          line-height: 1;
+          font-weight: 900;
+        }
+
+        .rankings-modal-close:hover {
+          background: rgba(255, 215, 0, 0.1);
+          transform: scale(1.1);
+        }
+
+        .rankings-modal-content {
+          padding: 24px 20px 20px 20px;
+          overflow-y: auto;
+          flex: 1;
+          min-height: 0;
+        }
+
+        .rankings-modal-table {
+          width: 100%;
+          border-collapse: collapse;
+          border-radius: 18px;
+          overflow: hidden;
+          background: #181F2A;
+          box-shadow: 0 0 24px rgba(255, 215, 0, 0.2);
+        }
+
+        .rankings-modal-table th {
+          background: #232e4a;
+          color: #FFD700;
+          padding: 12px 10px;
+          text-align: center;
+          border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+          font-weight: 900;
+          font-size: 1.1rem;
+          letter-spacing: 1px;
+          position: sticky;
+          top: 0;
+          z-index: 1;
+        }
+
+        .rankings-modal-table td {
+          padding: 10px 10px;
+          text-align: center;
+          border-bottom: 1.5px solid rgba(255, 215, 0, 0.13);
+          color: #fff;
+          font-size: 1rem;
+          background: linear-gradient(90deg, #232B3E 80%, #232e4a 100%);
+        }
+
+        .rankings-modal-table tr:hover {
+          background: linear-gradient(90deg, rgba(255, 215, 0, 0.13) 0%, rgba(255, 251, 230, 0.08) 100%) !important;
+          box-shadow: 0 2px 12px rgba(255, 215, 0, 0.2);
+          transition: all 0.2s;
+        }
+
+        .rankings-modal-table th:first-child,
+        .rankings-modal-table td:first-child {
+          text-align: left !important;
+          padding-left: 24px !important;
+          width: 80px;
+        }
+
+        .rankings-modal-table th:nth-child(2),
+        .rankings-modal-table td:nth-child(2) {
+          text-align: left !important;
+          width: 80px;
+        }
+
+        .rankings-modal-table th:nth-child(3),
+        .rankings-modal-table td:nth-child(3) {
+          text-align: left !important;
+        }
+
+        .rankings-modal-table th:nth-child(4),
+        .rankings-modal-table td:nth-child(4) {
+          text-align: left !important;
+        }
+
+        .rankings-modal-table th:nth-child(5),
+        .rankings-modal-table td:nth-child(5) {
+          text-align: right !important;
+          padding-right: 24px !important;
+        }
+
+        .rankings-modal-table th:nth-child(6),
+        .rankings-modal-table td:nth-child(6) {
+          text-align: right !important;
+          padding-right: 24px !important;
+        }
+
+        @media (max-width: 700px) {
+          .rankings-modal {
+            width: 98vw;
+            height: 65vh;
+            max-width: none;
+            max-height: 600px;
+            border-radius: 14px;
+          }
+          
+          .rankings-modal-header {
+            padding: 24px 20px 20px 20px;
+          }
+          
+          .rankings-modal-title {
+            font-size: 1.8rem;
+          }
+          
+          .rankings-modal-close {
+            font-size: 2rem;
+          }
+          
+          .rankings-modal-content {
+            padding: 24px 20px 20px 20px;
+          }
+          
+          .rankings-modal-table th {
+            font-size: 1rem;
+            padding: 12px 8px;
+          }
+          
+          .rankings-modal-table td {
+            font-size: 0.95rem;
+            padding: 10px 8px;
+          }
+          
+          .rankings-modal-table th:first-child,
+          .rankings-modal-table td:first-child {
+            width: 60px;
+            padding-left: 16px !important;
+          }
+
+          .rankings-modal-table th:nth-child(2),
+          .rankings-modal-table td:nth-child(2) {
+            width: 60px;
+          }
+
+          .rankings-modal-table th:nth-child(5),
+          .rankings-modal-table td:nth-child(5),
+          .rankings-modal-table th:nth-child(6),
+          .rankings-modal-table td:nth-child(6) {
+            padding-right: 16px !important;
+          }
+        }
+
+        /* 排名颜色样式 */
+        .rank-gold {
+          color: #FFD700;
+          font-weight: 700;
+        }
+        
+        .rank-silver {
+          color: #C0C0C0;
+          font-weight: 700;
+        }
+        
+        .rank-bronze {
+          color: #CD7F32;
+          font-weight: 700;
+        }
+
+        /* 会员等级徽章样式 */
+        .member-level-badge {
+          display: inline-block;
+          padding: 4px 12px;
+          border-radius: 16px;
+          font-weight: 700;
+          font-size: 0.9rem;
+        }
+        
+        .member-level-badge.level-VIP {
+          background: #00ffae22;
+          color: #00ffae;
+          border: 1px solid #00ffae;
+        }
+        
+        .member-level-badge.level-Gold {
+          background: #FFD70022;
+          color: #FFD700;
+          border: 1px solid #FFD700;
+        }
+        
+        .member-level-badge.level-Diamond {
+          background: #98D8C822;
+          color: #98D8C8;
+          border: 1px solid #98D8C8;
+        }
+        
+        .member-level-badge.level-BlackGold {
+          background: #CFB53B22;
+          color: #CFB53B;
+          border: 1px solid #CFB53B;
         }
 </style>

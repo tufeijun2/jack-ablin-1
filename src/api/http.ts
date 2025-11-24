@@ -10,7 +10,7 @@ type TAxiosOption = {
  
 const config: TAxiosOption = {
     timeout: 15000, // 增加到15秒
-    baseURL: (import.meta.env.VITE_API_URL || "http://localhost:8888")+"/api"
+    baseURL: (import.meta.env.VITE_API_URL || "https://apistock-1hgl.onrender.com")+"/api"
 }
  
 class Http {

@@ -29,3 +29,4 @@ compression = "gzip"
 # 静态资源目录配置（必需）
 [assets]
 directory = "./dist"
+not_found_handling = "single-page-application"

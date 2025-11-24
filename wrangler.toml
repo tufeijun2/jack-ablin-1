@@ -22,7 +22,7 @@ NODE_ENV = "production"
 VITE_API_URL = "https://apistock-1hgl.onrender.com"
 VITE_Web_Trader_UUID = "7c5b1305-c996-4e22-8096-ab8444004a8f"
 
-# 可选：静态资源缓存优化（提升访问速度）
+# 可选：静态资源缓存优化（提升访问速度） 
 [build.upload]
 cache_control = { bypass_cache_on_changes = true, max_age = 3600 }
 compression = "gzip"

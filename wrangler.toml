@@ -1,0 +1,15 @@
+name = "stockweb"
+compatibility_date = "2025-11-24"
+
+# 基本配置
+main = "src/worker.js"
+compatibility_flags = ["nodejs_compat"]
+
+# 环境变量（如果需要）
+[vars]
+NODE_ENV = "production"
+
+# 开发环境配置
+[dev]
+ip = "127.0.0.1"
+port = 8787

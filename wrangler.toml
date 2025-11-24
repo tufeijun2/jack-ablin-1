@@ -1,32 +1,16 @@
-# 核心配置：匹配 CI 期望的 Worker 名称，解决之前的名称不匹配警告
+# 改用 Cloudflare Pages 部署配置（更适合静态网站）
 name = "stock-web"
 
-# 必填：兼容性日期（与你之前的配置一致，无需修改）
-compatibility_date = "2025-11-24"
+# 指定部署类型为 Pages
+type = "pages"
 
-# 兼容 Node.js 特性（若前端依赖 Node.js 相关 API，保留；否则可删除）
-compatibility_flags = ["nodejs_compat"]
-
-# 关键修正：指定部署类型为静态资源（而非动态 Worker 脚本）
-type = "static"
-
-# 静态资源构建配置（关联 Vite 构建流程）
+# Pages 构建配置
 [build]
 command = "npm run build"
 dist = "dist"
-publish = "dist"
 
-# 环境变量（前端可通过 import.meta.env 访问，如后端 API 地址）
+# Pages 环境变量配置（支持）
 [vars]
 NODE_ENV = "production"
 VITE_API_URL = "https://apistock-1hgl.onrender.com"
 VITE_Web_Trader_UUID = "7c5b1305-c996-4e22-8096-ab8444004a8f"
-
-# 可选：静态资源缓存优化（提升访问速度）
-[build.upload]
-cache_control = { bypass_cache_on_changes = true, max_age = 3600 }
-compression = "gzip"
-
-# 静态资源目录配置（必需）
-[assets]
-directory = "./dist"

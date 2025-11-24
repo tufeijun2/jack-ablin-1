@@ -1,7 +1,8 @@
-# 1. 入口文件：禁止缓存（确保用户每次获取最新版本）
-/index.html
-  Cache-Control: public, max-age=0, must-revalidate
+# 放行入口文件
+/index.html /index.html 200
 
-# 2. 静态资源：长期缓存（JS/CSS/图片等，通过文件名哈希实现更新）
-/assets/*
-  Cache-Control: public, max-age=31536000, immutable
+# 放行静态资源
+/assets/* /assets/:splat 200
+
+# 前端路由转发（仅匹配剩余路径）
+/* /index.html 200

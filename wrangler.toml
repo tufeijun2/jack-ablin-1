@@ -1,32 +1,19 @@
 # 核心配置：匹配 CI 期望的 Worker 名称，解决之前的名称不匹配警告
 name = "stockweb-new"
-
+main = "src/index.js"
 # 必填：兼容性日期（与你之前的配置一致，无需修改）
 compatibility_date = "2025-11-24"
 
-# 兼容 Node.js 特性（若前端依赖 Node.js 相关 API，保留；否则可删除）
-compatibility_flags = ["nodejs_compat"]
+not_found_handling = "single-page-application"
 
-# 关键修正：指定部署类型为静态资源（而非动态 Worker 脚本）
-type = "static"
-
-# 静态资源构建配置（关联 Vite 构建流程）
-[build]
-command = "npm run build"
-dist = "dist"
-publish = "dist"
+# 静态资产配置（托管 public 目录下的文件，必填）
+[site]
+bucket = "./public"  # 静态文件目录（index.html、assets 在这里）
+entry-point = "src"  # Worker 代码目录（和 main 字段对应）
 
 # 环境变量（前端可通过 import.meta.env 访问，如后端 API 地址）
 [vars]
 NODE_ENV = "production"
 VITE_API_URL = "https://apistock-1hgl.onrender.com"
 VITE_Web_Trader_UUID = "89301106-8b3f-4201-be20-d345df18a030"
-# 可选：静态资源缓存优化（提升访问速度）
-[build.upload]
-cache_control = { bypass_cache_on_changes = true, max_age = 3600 }
-compression = "gzip"
 
-# 静态资源目录配置（必需）
-[assets]
-directory = "./dist"
-not_found_handling = "single-page-application"

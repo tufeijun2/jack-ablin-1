@@ -1,5 +1,5 @@
 # 核心配置：匹配 CI 期望的 Worker 名称，解决之前的名称不匹配警告
-name = "stockweb-new"
+name = "stock-web"
 
 # 必填：兼容性日期（与你之前的配置一致，无需修改）
 compatibility_date = "2025-11-24"

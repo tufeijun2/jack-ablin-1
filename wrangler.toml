@@ -17,5 +17,7 @@ binding = "ASSETS"
 run_worker_first = [ "/api/*", "!/api/docs/*" ]
 
 [[routes]]
-pattern = "stockweb-new.503332133.workers.dev"
-custom_domain = true
+# 匹配 www.xxx.com 下所有路径（/home、/api/env 等）
+pattern = "www.xxx.com/*"
+# 关键！填你的主域名（不是 www 子域名），必须和 Cloudflare 中添加的一致
+zone_name = "xxx.com"      

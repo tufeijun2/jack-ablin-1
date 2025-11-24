@@ -8,7 +8,7 @@ compatibility_date = "2025-11-24"
 compatibility_flags = ["nodejs_compat"]
 
 # 关键修正：指定部署类型为静态资源（而非动态 Worker 脚本）
-type = "static"
+type = "pages"
 
 # 静态资源构建配置（关联 Vite 构建流程）
 [build]
@@ -26,3 +26,14 @@ VITE_Web_Trader_UUID = "7c5b1305-c996-4e22-8096-ab8444004a8f"
 [build.upload]
 cache_control = { bypass_cache_on_changes = true, max_age = 3600 }
 compression = "gzip"
+
+# 静态资源配置（核心）
+[assets]
+directory = "./dist"
+exclude = ["node_modules/*", ".git/*"]
+
+# Pages 额外配置（可选）
+[pages]
+build_command = "npm run build" 
+build_output_dir = "./dist"     
+dev_command = "npm run dev"     

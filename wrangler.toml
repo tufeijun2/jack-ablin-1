@@ -1,5 +1,5 @@
 # 改用 Cloudflare Pages 部署配置（更适合静态网站）
-name = "stock-web"
+name = "stockweb-new"
 
 # 指定部署类型为 Pages
 type = "pages"

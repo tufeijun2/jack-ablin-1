@@ -1,19 +1,11 @@
-# SPA 应用重定向规则（无循环，静态资产 Worker 可用）
-# 核心：先排除所有静态资源 + index.html 本身，避免循环
-!/index.html$       # 关键！排除 index.html 自身，防止转发后再次匹配
-!/assets/*          # 排除 assets 目录（JS/CSS/图片等）
-!/.*\.js$           # 排除 JS 文件（结尾匹配，精准）
-!/.*\.css$          # 排除 CSS 文件
-!/.*\.png$          # 排除图片
-!/.*\.jpg$
-!/.*\.jpeg$
-!/.*\.gif$
-!/.*\.svg$
-!/.*\.ico$          # 排除图标
-!/.*\.json$         # 排除配置文件
-!/.*\.woff2?$       # 可选：排除字体文件
-!/.*\.ttf$
-!/.*\.eot$
+# SPA 终极重定向规则（零循环风险，静态资产 Worker 可用）
+# 第一步：排除所有静态资源 + index.html 本身
+!/index.html$          # 排除 index.html 自身（关键）
+!/assets/*             # 排除静态资源目录
+!/.*\.(js|css|png|jpg|jpeg|gif|svg|ico|json|woff2?|ttf|eot)$  # 合并所有文件后缀排除（更简洁）
 
-# 最后：非静态/非 index.html 的请求，转发到 index.html（前端路由接管）
-/* /index.html 200
+# 第二步：仅匹配「非文件路径」转发到 index.html（核心优化）
+# 匹配逻辑：路径没有后缀（不是文件）且不是根路径（/）、不是静态目录
+# 用 :path 变量匹配，避免 /* 的全局模糊匹配
+/:path*/ /index.html 200  # 匹配带斜杠的路径（如 /home/、/about/123/）
+/:path /index.html 200    # 匹配不带斜杠的路径（如 /home、/about）

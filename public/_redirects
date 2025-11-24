@@ -1,6 +1,14 @@
-# 为SPA应用设置合理的重定向规则，避免无限循环
-# 匹配没有文件扩展名的路径（典型的SPA路由）
-# 但排除已经是/index.html的路径
-!/*\..* /index.html 200
-# 对于/index.html本身不进行重定向
-/index.html /index.html 200
+# 为SPA应用设置的重定向规则
+# 匹配所有非静态资源路径到index.html
+/* /index.html 200
+# 排除静态资源文件（js, css, png, jpg, gif, svg, ico等）
+!/assets/*
+!/.*\.js
+!/.*\.css
+!/.*\.png
+!/.*\.jpg
+!/.*\.jpeg
+!/.*\.gif
+!/.*\.svg
+!/.*\.ico
+!/.*\.json

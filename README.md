@@ -114,6 +114,8 @@ src/
 - ✅ Improved responsive design for mobile devices
 - ✅ Added filtering and search capabilities
 - ✅ Optimized UI/UX with better visual hierarchy
+- ✅ Fixed JSON parsing errors and added null checks
+- ✅ Fixed try-catch syntax errors in HomeView component
 
 ## 📄 License
 

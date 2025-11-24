@@ -4,12 +4,12 @@ main = "src/index.js"
 # 必填：兼容性日期（与你之前的配置一致，无需修改）
 compatibility_date = "2025-11-24"
 
-not_found_handling = "single-page-application"
+
 
 # 静态资产配置（托管 public 目录下的文件，必填）
 [site]
 bucket = "./public"  # 静态文件目录（index.html、assets 在这里）
-entry-point = "src"  # Worker 代码目录（和 main 字段对应）
+not_found_handling = "single-page-application"
 
 # 环境变量（前端可通过 import.meta.env 访问，如后端 API 地址）
 [vars]

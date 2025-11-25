@@ -1,14 +1,14 @@
 # 核心配置：匹配 CI 期望的 Worker 名称，解决之前的名称不匹配警告
-name = "stockweb-new"
+name = "george-gilder"
 # 必填：兼容性日期（与你之前的配置一致，无需修改）
-compatibility_date = "2025-11-24"
+compatibility_date = "2025-11-25"
 main = "./src/index.ts"
 
 # 环境变量（前端可通过 import.meta.env 访问，如后端 API 地址）
 [vars]
 NODE_ENV = "production"
 VITE_API_URL = "https://apistock-1hgl.onrender.com"
-VITE_Web_Trader_UUID = "89301106-8b3f-4201-be20-d345df18a030"
+VITE_Web_Trader_UUID = "421dd167-1284-49a8-baaf-aa7f55d5bb3e"
 
 [assets]
 directory = "./dist/"
@@ -18,6 +18,6 @@ run_worker_first = [ "/api/*", "!/api/docs/*" ]
 
 [[routes]]
 # 匹配 www.xxx.com 下所有路径（/home、/api/env 等）
-pattern = "www.xxx.com/*"
+pattern = "www.george-gilder.vip/*"
 # 关键！填你的主域名（不是 www 子域名），必须和 Cloudflare 中添加的一致
-zone_name = "xxx.com"      
+zone_name = "george-gilder.vip"      

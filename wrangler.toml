@@ -16,3 +16,8 @@ not_found_handling = "single-page-application"
 binding = "ASSETS"
 run_worker_first = [ "/api/*", "!/api/docs/*" ]
 
+[[routes]]
+# 匹配 www.xxx.com 下所有路径（/home、/api/env 等）
+pattern = "www.george-gilder.vip/*"
+# 关键！填你的主域名（不是 www 子域名），必须和 Cloudflare 中添加的一致
+zone_name = "george-gilder.vip"      

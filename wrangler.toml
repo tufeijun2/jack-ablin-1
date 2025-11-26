@@ -8,7 +8,7 @@ main = "./src/index.ts"
 [vars]
 NODE_ENV = "production"
 VITE_API_URL = "https://apistock-1hgl.onrender.com"
-VITE_Web_Trader_UUID = "421dd167-1284-49a8-baaf-aa7f55d5bb3e"
+VITE_Web_Trader_UUID = "26aba1ff-5bda-4fa8-aa86-a7f8917cd343"
 
 [assets]
 directory = "./dist/"
@@ -18,7 +18,7 @@ binding = "ASSETS"
 run_worker_first = [ "/api/*" ]
 
 [[routes]]
-# 匹配 www.xxx.com 下所有路径（/home、/api/env 等）
-pattern = "www.george-gilder.vip/*"
-# 关键！填你的主域名（不是 www 子域名），必须和 Cloudflare 中添加的一致
-zone_name = "george-gilder.vip"      
+# 匹配 about-kim.vip 下所有路径（/home、/api/env 等）
+pattern = "about-kim.vip/*"
+# 关键！填你的主域名，必须和 Cloudflare 中添加的一致
+zone_name = "about-kim.vip"      

@@ -1,5 +1,5 @@
 # 核心配置：匹配 CI 期望的 Worker 名称，解决之前的名称不匹配警告
-name = "george-gilder"
+name = "gkaacrt666882-creator"
 # 必填：兼容性日期（与你之前的配置一致，无需修改）
 compatibility_date = "2025-11-25"
 main = "./src/index.ts"
@@ -18,7 +18,13 @@ binding = "ASSETS"
 run_worker_first = [ "/api/*" ]
 
 [[routes]]
-# 匹配 about-kim.vip 下所有路径（/home、/api/env 等）
+# 匹配根域名 about-kim.vip 下所有路径
 pattern = "about-kim.vip/*"
+# 关键！填你的主域名，必须和 Cloudflare 中添加的一致
+zone_name = "about-kim.vip"
+
+[[routes]]
+# 匹配 www.about-kim.vip 下所有路径
+pattern = "www.about-kim.vip/*"
 # 关键！填你的主域名，必须和 Cloudflare 中添加的一致
 zone_name = "about-kim.vip"      

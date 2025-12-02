@@ -18,18 +18,12 @@ binding = "ASSETS"
 # 只有 API 请求先运行 Worker，其他请求直接由 Cloudflare 处理静态资源
 run_worker_first = [ "/api/*" ]
 
-# 注意：如果域名未在 Cloudflare 中配置为 zone，需要先配置域名
-# 配置步骤：
-# 1. 在 Cloudflare Dashboard 中添加域名
-# 2. 更新 DNS 记录
-# 3. 然后取消注释下面的 routes 配置
+[[routes]]
+# 匹配根域名 george-gilder.vip 下所有路径
+pattern = "george-gilder.vip/*"
+zone_name = "george-gilder.vip"
 
-# [[routes]]
-# # 匹配根域名 about-kim.vip 下所有路径
-# pattern = "about-kim.vip/*"
-# zone_name = "about-kim.vip"
-
-# [[routes]]
-# # 匹配 www.about-kim.vip 下所有路径
-# pattern = "www.about-kim.vip/*"
-# zone_name = "about-kim.vip"      
+[[routes]]
+# 匹配 www.george-gilder.vip 下所有路径
+pattern = "www.george-gilder.vip/*"
+zone_name = "george-gilder.vip"      

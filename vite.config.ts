@@ -52,5 +52,6 @@ export default defineConfig({
       ],
     }),
     vue(),
+    removeCloudflareFiles(), // 添加插件以删除 Cloudflare 不需要的文件
   ],
 });

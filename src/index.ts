@@ -1,5 +1,11 @@
+interface Env {
+  ASSETS: Fetcher;
+  VITE_API_URL?: string;
+  VITE_Web_Trader_UUID?: string;
+}
+
 export default {
-  async fetch(request, env): Promise<Response> {
+  async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
     // 处理 API 请求
@@ -103,4 +109,4 @@ export default {
     // 如果没有 ASSETS binding，返回 404
     return new Response("Not Found - ASSETS binding not available", { status: 404 });
   },
-} satisfies ExportedHandler;
+};

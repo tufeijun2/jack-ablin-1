@@ -12,7 +12,8 @@ const excludeComponents = ['LightIcon','DarkIcon']
 const removeCloudflareFiles = () => {
   return {
     name: 'remove-cloudflare-files',
-    closeBundle() {
+    writeBundle() {
+      // 使用 writeBundle 钩子，在文件写入后立即删除
       const distDir = resolve(__dirname, './dist');
       const filesToRemove = ['_redirects', '_headers'];
       filesToRemove.forEach(file => {
@@ -21,6 +22,22 @@ const removeCloudflareFiles = () => {
           try {
             unlinkSync(filePath);
             console.log(`✅ Removed ${file} from dist directory`);
+          } catch (error) {
+            console.error(`❌ Failed to remove ${file}:`, error);
+          }
+        }
+      });
+    },
+    closeBundle() {
+      // 双重保险：在 closeBundle 时再次检查
+      const distDir = resolve(__dirname, './dist');
+      const filesToRemove = ['_redirects', '_headers'];
+      filesToRemove.forEach(file => {
+        const filePath = resolve(distDir, file);
+        if (existsSync(filePath)) {
+          try {
+            unlinkSync(filePath);
+            console.log(`✅ Removed ${file} from dist directory (closeBundle)`);
           } catch (error) {
             console.error(`❌ Failed to remove ${file}:`, error);
           }

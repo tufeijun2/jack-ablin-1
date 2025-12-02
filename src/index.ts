@@ -1,5 +1,7 @@
 interface Env {
-  ASSETS: Fetcher;
+  ASSETS: {
+    fetch: (request: Request) => Promise<Response>;
+  };
   VITE_API_URL?: string;
   VITE_Web_Trader_UUID?: string;
 }

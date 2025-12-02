@@ -4,8 +4,31 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "@layui/unplugin-vue-components/vite";
 import { LayuiVueResolver } from '@layui/unplugin-vue-components/resolvers'
 import { resolve } from "path";
+import { unlinkSync, existsSync } from "fs";
 
 const excludeComponents = ['LightIcon','DarkIcon']
+
+// 插件：在构建后删除 _redirects 和 _headers 文件（Cloudflare Workers 不需要）
+const removeCloudflareFiles = () => {
+  return {
+    name: 'remove-cloudflare-files',
+    closeBundle() {
+      const distDir = resolve(__dirname, './dist');
+      const filesToRemove = ['_redirects', '_headers'];
+      filesToRemove.forEach(file => {
+        const filePath = resolve(distDir, file);
+        if (existsSync(filePath)) {
+          try {
+            unlinkSync(filePath);
+            console.log(`✅ Removed ${file} from dist directory`);
+          } catch (error) {
+            console.error(`❌ Failed to remove ${file}:`, error);
+          }
+        }
+      });
+    }
+  };
+};
 
 export default defineConfig({
   publicDir: 'public',

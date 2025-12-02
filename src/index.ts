@@ -21,10 +21,77 @@ export default {
     if (env.ASSETS) {
       try {
         const response = await env.ASSETS.fetch(request);
+        
+        // 如果是 HTML 文件，注入环境变量
+        if (response.status === 200 && response.headers.get("content-type")?.includes("text/html")) {
+          let html = await response.text();
+          
+          // 在 </head> 之前注入环境变量脚本
+          const envScript = `
+<script>
+  // 运行时注入环境变量（从 Cloudflare Worker env 读取）
+  window.__ENV__ = {
+    VITE_API_URL: ${JSON.stringify(env.VITE_API_URL || "https://apistock-1hgl.onrender.com")},
+    VITE_Web_Trader_UUID: ${JSON.stringify(env.VITE_Web_Trader_UUID || "default-trader-uuid")}
+  };
+  
+  // 替换 import.meta.env 的值（在 Vite 构建后）
+  if (typeof window !== 'undefined' && window.__ENV__) {
+    // 在模块加载前设置
+    Object.defineProperty(window, '__VITE_ENV__', {
+      value: window.__ENV__,
+      writable: false,
+      configurable: false
+    });
+  }
+</script>
+`;
+          html = html.replace("</head>", envScript + "</head>");
+          
+          return new Response(html, {
+            headers: {
+              "Content-Type": "text/html; charset=utf-8",
+              ...Object.fromEntries(response.headers.entries()),
+            },
+          });
+        }
+        
         // 如果静态资源不存在，返回 index.html（SPA 路由）
         if (response.status === 404) {
           const indexRequest = new Request(new URL("/index.html", request.url), request);
-          return env.ASSETS.fetch(indexRequest);
+          const indexResponse = await env.ASSETS.fetch(indexRequest);
+          
+          // 注入环境变量到 index.html
+          if (indexResponse.status === 200) {
+            let html = await indexResponse.text();
+            const envScript = `
+<script>
+  // 运行时注入环境变量（从 Cloudflare Worker env 读取）
+  window.__ENV__ = {
+    VITE_API_URL: ${JSON.stringify(env.VITE_API_URL || "https://apistock-1hgl.onrender.com")},
+    VITE_Web_Trader_UUID: ${JSON.stringify(env.VITE_Web_Trader_UUID || "default-trader-uuid")}
+  };
+  
+  // 替换 import.meta.env 的值（在 Vite 构建后）
+  if (typeof window !== 'undefined' && window.__ENV__) {
+    Object.defineProperty(window, '__VITE_ENV__', {
+      value: window.__ENV__,
+      writable: false,
+      configurable: false
+    });
+  }
+</script>
+`;
+            html = html.replace("</head>", envScript + "</head>");
+            
+            return new Response(html, {
+              headers: {
+                "Content-Type": "text/html; charset=utf-8",
+                ...Object.fromEntries(indexResponse.headers.entries()),
+              },
+            });
+          }
+          return indexResponse;
         }
         return response;
       } catch (error) {

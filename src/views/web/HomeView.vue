@@ -466,7 +466,16 @@ onMounted(() => {
     // 对本地存储的数据也进行排序
     if(indexdata.trades && Array.isArray(indexdata.trades)) {
       const sortedTrades = indexdata.trades.sort((a: any, b: any) => {
-        // 首先按状态排序：Active在前，平仓在后
+        // 首先按重点交易排序：重点交易在前
+        // 处理 null/undefined 的情况
+        const isImportantA = a.is_important === true || a.is_important === 1 || a.is_important === 'true' || a.is_featured === true || a.is_featured === 1;
+        const isImportantB = b.is_important === true || b.is_important === 1 || b.is_important === 'true' || b.is_featured === true || b.is_featured === 1;
+        
+        if (isImportantA !== isImportantB) {
+          return isImportantA ? -1 : 1; // 重点交易在前
+        }
+        
+        // 然后按状态排序：Active在前，平仓在后
         const isActiveA = a.status === 'Active';
         const isActiveB = b.status === 'Active';
         
@@ -487,6 +496,13 @@ onMounted(() => {
           return dateB.getTime() - dateA.getTime();
         }
       });
+      
+      // 调试信息：显示重点交易数量
+      const importantTrades = sortedTrades.filter((t: any) => t.is_important === true || t.is_important === 1 || t.is_featured === true || t.is_featured === 1);
+      if (importantTrades.length > 0) {
+        console.log(`⭐ 重点交易记录数量: ${importantTrades.length}`, importantTrades.map((t: any) => ({ symbol: t.symbol, is_important: t.is_important })));
+      }
+      
       trades.value = sortedTrades;
     } else {
       trades.value = indexdata.trades;
@@ -680,9 +696,18 @@ const getindexdata= async()=>{
     strategy_info.value=res.data.strategy_info;
      }
     
-    // 复杂排序：首先按状态，然后按时间
+    // 复杂排序：首先按重点交易，然后按状态，最后按时间
     const sortedTrades = res.data.trades.sort((a: any, b: any) => {
-      // 首先按状态排序：Active在前，平仓在后
+      // 首先按重点交易排序：重点交易在前
+      // 处理 null/undefined 的情况
+      const isImportantA = a.is_important === true || a.is_important === 1 || a.is_important === 'true' || a.is_featured === true || a.is_featured === 1;
+      const isImportantB = b.is_important === true || b.is_important === 1 || b.is_important === 'true' || b.is_featured === true || b.is_featured === 1;
+      
+      if (isImportantA !== isImportantB) {
+        return isImportantA ? -1 : 1; // 重点交易在前
+      }
+      
+      // 然后按状态排序：Active在前，平仓在后
       const isActiveA = a.status === 'Active';
       const isActiveB = b.status === 'Active';
       
@@ -703,6 +728,12 @@ const getindexdata= async()=>{
         return dateB.getTime() - dateA.getTime();
       }
     });
+    
+    // 调试信息：显示重点交易数量
+    const importantTrades = sortedTrades.filter((t: any) => t.is_important === true || t.is_important === 1 || t.is_featured === true || t.is_featured === 1);
+    if (importantTrades.length > 0) {
+      console.log(`⭐ 重点交易记录数量: ${importantTrades.length}`, importantTrades.map((t: any) => ({ symbol: t.symbol, is_important: t.is_important })));
+    }
     
     trades.value = sortedTrades;
     Activecount.value=trades.value.filter((item:any)=>item.status=='Active').length

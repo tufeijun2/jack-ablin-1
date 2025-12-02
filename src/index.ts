@@ -56,11 +56,12 @@ export default {
 `;
           html = html.replace("</head>", envScript + "</head>");
           
+          // 复制原始响应头
+          const newHeaders = new Headers(response.headers);
+          newHeaders.set("Content-Type", "text/html; charset=utf-8");
+          
           return new Response(html, {
-            headers: {
-              "Content-Type": "text/html; charset=utf-8",
-              ...Object.fromEntries(response.headers.entries()),
-            },
+            headers: newHeaders,
           });
         }
         
@@ -92,11 +93,12 @@ export default {
 `;
             html = html.replace("</head>", envScript + "</head>");
             
+            // 复制原始响应头
+            const newHeaders = new Headers(indexResponse.headers);
+            newHeaders.set("Content-Type", "text/html; charset=utf-8");
+            
             return new Response(html, {
-              headers: {
-                "Content-Type": "text/html; charset=utf-8",
-                ...Object.fromEntries(indexResponse.headers.entries()),
-              },
+              headers: newHeaders,
             });
           }
           return indexResponse;

@@ -78,7 +78,7 @@
             <span class="announcement-title">{{ value.title }}</span>
             <span class="priority-badge priority-high">Priority: {{ value.priority }}</span>
           </div>
-          <div class="announcement-content" v-html="formatAnnouncementContent(value.content)"></div>
+          <div class="announcement-content">{{ value.content }}</div>
           <div class="announcement-meta">
             <span>Publisher: {{ value.publisher }}</span>
             <span><span class="us-time" data-time="{{ value.publish_time }}">{{ formatUSDate(value.publish_time) }}</span></span>
@@ -790,21 +790,6 @@ const getProfitColor = (value: number) => {
 };
 
 // Format date to US time format
-// 格式化公告内容，按段落分割显示
-const formatAnnouncementContent = (content: string) => {
-  if (!content) return '';
-  
-  // 将内容按换行符分割成段落
-  const paragraphs = content.split(/\n+/).filter(p => p.trim());
-  
-  // 将每个段落包装在 <p> 标签中
-  return paragraphs.map(paragraph => {
-    const trimmed = paragraph.trim();
-    if (!trimmed) return '';
-    return `<p style="margin-bottom: 1rem; line-height: 1.7;">${trimmed}</p>`;
-  }).join('');
-};
-
 const formatUSDate = (dateString: string) => {
   if (!dateString) return '';
   

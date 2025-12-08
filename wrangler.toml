@@ -27,5 +27,5 @@ zone_name = "about-louis.vip"
 # 匹配 www.about-louis.vip 下所有路径
 pattern = "www.about-louis.vip/*"
 
-zone_name = "about-louis.vip"      
+zone_name = "about-louis.vip"
 

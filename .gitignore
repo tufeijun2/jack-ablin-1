@@ -19,4 +19,9 @@ build/
 *.pyc
 *.pyo
 *.pyd
-.Python 
+.Python
+
+# Deployment configuration files (different for each deployment)
+wrangler.toml
+render.yaml
+.env.production

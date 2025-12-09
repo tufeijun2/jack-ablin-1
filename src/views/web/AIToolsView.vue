@@ -459,11 +459,14 @@
         </div>
       </div>
     </div>
+    <!-- 合作单位 -->
+    <PartnerOrganizations />
   </div>
 </template>
 
 <script setup lang="ts">
 import navcomponent from '../component/nav/nav.vue'
+import PartnerOrganizations from '@/components/PartnerOrganizations.vue';
 import { ref, onMounted } from 'vue';
 import { getStockRecommendations, getPortfolioDiagnosis } from '../../api/module/web/ai';
 import { useUserStore } from '@/store';

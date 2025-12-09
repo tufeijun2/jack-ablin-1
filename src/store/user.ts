@@ -160,6 +160,11 @@ export const useUserStore = defineStore({
               id: '/system/questionBank',       
               icon: "layui-icon-list",       
               title: '题库管理',     
+            },
+            {       
+              id: '/system/partnerOrganizations',       
+              icon: "layui-icon-link",       
+              title: '合作单位管理',     
             }             
           ] 
           },{

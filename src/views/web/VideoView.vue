@@ -135,12 +135,15 @@
         </div>
       </div>
     </div>
+    <!-- 合作单位 -->
+    <PartnerOrganizations />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import navcomponent from '../component/nav/nav.vue';
+import PartnerOrganizations from '@/components/PartnerOrganizations.vue';
 import { getvideos } from '../../api/module/web/index';
 import { useUserStore } from '@/store';
 
@@ -201,10 +204,19 @@ const formatUSDate = (dateString: string) => {
 const getVipDashboardData = async () => {
   const res = await getvideos(null);
   if (res.success) {
+    // 确保数据格式一致
+    let videosData = res.data;
+    // 如果是数组，转换为对象格式
+    if (Array.isArray(videosData)) {
+      videosData = videosData.reduce((acc, video, index) => {
+        acc[index] = video;
+        return acc;
+      }, {} as any);
+    }
     // 为每个视频添加播放状态
-    const videosWithState = Object.keys(res.data).reduce((acc, key) => {
+    const videosWithState = Object.keys(videosData).reduce((acc, key) => {
       acc[key] = {
-        ...res.data[key],
+        ...videosData[key],
         isPlaying: false
       };
       return acc;

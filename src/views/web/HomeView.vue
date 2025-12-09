@@ -411,11 +411,14 @@
             </div>
         </div>
     </div>
+    <!-- 合作单位 -->
+    <PartnerOrganizations />
   </div>
 </template>
 
 <script lang="ts" setup>
 import navcomponent from '../component/nav/nav.vue'
+import PartnerOrganizations from '@/components/PartnerOrganizations.vue';
 import moment from 'moment';
 import { ref, reactive, onMounted } from 'vue'
 import { Modal } from 'bootstrap';

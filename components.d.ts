@@ -47,7 +47,9 @@ declare module 'vue' {
     LayTag: typeof import('@layui/layui-vue')['LayTag']
     LayTextarea: typeof import('@layui/layui-vue')['LayTextarea']
     LayUpload: typeof import('@layui/layui-vue')['LayUpload']
+    PartnerOrganizations: typeof import('./src/components/PartnerOrganizations.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    VipPartnerOrganizations: typeof import('./src/components/VipPartnerOrganizations.vue')['default']
   }
 }

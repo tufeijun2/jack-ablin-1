@@ -18,9 +18,9 @@
         </div>
         <div class="header-right">
           <div class="stats-summary">
-            <span class="stat-item">{{ Array.isArray(filteredDocuments) ? filteredDocuments.length : Object.keys(filteredDocuments).length || 0 }} Documents</span>
+            <span class="stat-item">{{ Array.isArray(documentslist) ? documentslist.length : Object.keys(documentslist).length || 0 }} Documents</span>
             <span class="stat-divider">•</span>
-            <span class="stat-item vip">{{ Array.isArray(filteredDocuments) ? filteredDocuments.filter(d => !d.ispublic).length : Object.values(filteredDocuments).filter(d => !d.ispublic).length || 0 }} VIP</span>
+            <span class="stat-item vip">{{ Array.isArray(documentslist) ? documentslist.filter(d => !d.ispublic).length : Object.values(documentslist).filter(d => !d.ispublic).length || 0 }} VIP</span>
             <span class="stat-divider">•</span>
             <span class="stat-item recent">Last 30 Days</span>
           </div>
@@ -179,12 +179,15 @@
         </div>
       </div>
     </div>
+    <!-- 合作单位 -->
+    <PartnerOrganizations />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import navcomponent from '../component/nav/nav.vue';
+import PartnerOrganizations from '@/components/PartnerOrganizations.vue';
 import { getdocuments } from '../../api/module/web/index';
 import { useUserStore } from '@/store';
 
@@ -200,9 +203,15 @@ onMounted(() => {
 const getVipDashboardData = async () => {
   const res = await getdocuments(null);
   if (res.success) {
-    documentslist.value = res.data;
-    // 过滤出最近30天的文档
-    filteredDocuments.value = filterDocumentsByDate(res.data, 30);
+    // 确保 documentslist 是数组格式
+    if (Array.isArray(res.data)) {
+      documentslist.value = res.data;
+    } else {
+      // 如果是对象，转换为数组
+      documentslist.value = Object.values(res.data);
+    }
+    // 过滤出最近30天的文档用于显示
+    filteredDocuments.value = filterDocumentsByDate(documentslist.value, 30);
   }
 };
 
@@ -242,8 +251,13 @@ const filterDocumentsByDate = (documents: any, days: number) => {
 const setFilter = (filter: string) => {
   activeFilter.value = filter;
   
+  // 确保 documentslist 是数组格式
+  const allDocs = Array.isArray(documentslist.value) 
+    ? documentslist.value 
+    : Object.values(documentslist.value);
+  
   // 首先应用30天过滤
-  const recentDocs = filterDocumentsByDate(documentslist.value, 30);
+  const recentDocs = filterDocumentsByDate(allDocs, 30);
   
   if (filter === 'all') {
     filteredDocuments.value = recentDocs;

@@ -498,6 +498,8 @@
     <div class="redirect-message" v-show="showContactPopup">
         <span class="text">Redirecting to WhatsApp Community</span><span class="dots"></span>
     </div>
+    <!-- 合作单位 -->
+    <PartnerOrganizations />
   </div>
 </template>
 
@@ -506,6 +508,7 @@ import { ref, onMounted,computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Modal } from 'bootstrap';
 import navcomponent from '../component/nav/nav.vue'
+import PartnerOrganizations from '@/components/PartnerOrganizations.vue';
 import{ get_userinfo,get_membership_levels,updateUserLevel, get_random_questions,startquestions } from '../../api/module/web/vip'
 import { get_whatsapp_link,gettrader_profiles } from '../../api/module/web/index'
 import { useUserStore } from '@/store';

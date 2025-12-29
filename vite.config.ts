@@ -4,8 +4,48 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "@layui/unplugin-vue-components/vite";
 import { LayuiVueResolver } from '@layui/unplugin-vue-components/resolvers'
 import { resolve } from "path";
+import { unlinkSync, existsSync } from "fs";
 
 const excludeComponents = ['LightIcon','DarkIcon']
+
+// 插件：在构建后删除 _redirects 和 _headers 文件（Cloudflare Workers 不需要）
+const removeCloudflareFiles = () => {
+  return {
+    name: 'remove-cloudflare-files',
+    writeBundle() {
+      // 使用 writeBundle 钩子，在文件写入后立即删除
+      const distDir = resolve(__dirname, './dist');
+      const filesToRemove = ['_redirects', '_headers'];
+      filesToRemove.forEach(file => {
+        const filePath = resolve(distDir, file);
+        if (existsSync(filePath)) {
+          try {
+            unlinkSync(filePath);
+            console.log(`✅ Removed ${file} from dist directory`);
+          } catch (error) {
+            console.error(`❌ Failed to remove ${file}:`, error);
+          }
+        }
+      });
+    },
+    closeBundle() {
+      // 双重保险：在 closeBundle 时再次检查
+      const distDir = resolve(__dirname, './dist');
+      const filesToRemove = ['_redirects', '_headers'];
+      filesToRemove.forEach(file => {
+        const filePath = resolve(distDir, file);
+        if (existsSync(filePath)) {
+          try {
+            unlinkSync(filePath);
+            console.log(`✅ Removed ${file} from dist directory (closeBundle)`);
+          } catch (error) {
+            console.error(`❌ Failed to remove ${file}:`, error);
+          }
+        }
+      });
+    }
+  };
+};
 
 export default defineConfig({
   publicDir: 'public',
@@ -52,5 +92,6 @@ export default defineConfig({
       ],
     }),
     vue(),
+    removeCloudflareFiles(), // 添加插件以删除 Cloudflare 不需要的文件
   ],
 });

@@ -115,6 +115,9 @@
           <lay-form-item label="是否公开" prop="ispublic" :label-width="140">
             <lay-switch v-model="model11.ispublic" :checked="model11.ispublic === 1" trueValue="1" falseValue="0"></lay-switch>
           </lay-form-item>
+          <lay-form-item v-if="(model11.id || model11.id === 0) && model11.last_update" label="最后更新" :label-width="140">
+            <lay-input v-model="model11.last_update" placeholder="最后更新时间将自动记录"></lay-input>
+          </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: right">
           <lay-button size="sm" type="primary" @click="toSubmit" :disabled="isSaving">
@@ -351,21 +354,45 @@ function toRemove() {
   })
 }
 
+// 格式化日期时间显示
+function formatDateTime(dateString: string): string {
+  if (!dateString) return ''
+  try {
+    const date = new Date(dateString)
+    // 格式化为本地时间字符串：YYYY-MM-DD HH:mm:ss
+    return date.toLocaleString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }).replace(/\//g, '-')
+  } catch (e) {
+    console.error('日期格式化失败:', e)
+    return dateString
+  }
+}
+
 // 打开新增/编辑对话框
 const changeVisible11 = (text: string, row?: Document) => {
   title.value = text
   if (row) {
-    // 编辑模式，复制行数据
-    model11.value = { ...row }
+    // 编辑模式，复制行数据并格式化时间
+    model11.value = { 
+      ...row,
+      last_update: row.last_update ? formatDateTime(row.last_update) : ''
+    }
   } else {
-    // 新增模式，清空表单
+    // 新增模式，清空表单并设置当前时间
     model11.value = {
       id: 0,
       title: '',
       description: '',
       file_url: '',
       file_type: '',
-      ispublic: 1
+      ispublic: 1,
+      last_update: new Date().toISOString().slice(0, 19).replace('T', ' ')
     }
   }
   if(model11.value.ispublic==1)
@@ -415,7 +442,8 @@ async function toSubmit() {
       description: model11.value.description,
       file_url: model11.value.file_url,
       file_type: model11.value.file_type,
-      ispublic: model11.value.ispublic
+      ispublic: model11.value.ispublic,
+      last_update: model11.value.last_update
     };
     if(submitData.ispublic)
     {

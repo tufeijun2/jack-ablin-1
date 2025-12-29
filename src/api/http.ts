@@ -8,9 +8,17 @@ type TAxiosOption = {
     baseURL: string;
 }
  
+// 优先从运行时环境变量读取（Cloudflare Worker 注入），否则使用构建时变量
+const getApiUrl = () => {
+  if (typeof window !== 'undefined' && (window as any).__ENV__?.VITE_API_URL) {
+    return (window as any).__ENV__.VITE_API_URL;
+  }
+  return import.meta.env.VITE_API_URL || "https://apistock-1hgl.onrender.com";
+};
+
 const config: TAxiosOption = {
     timeout: 15000, // 增加到15秒
-    baseURL: (import.meta.env.VITE_API_URL || "https://apistock-1hgl.onrender.com")+"/api"
+    baseURL: getApiUrl() + "/api"
 }
  
 class Http {
@@ -21,7 +29,11 @@ class Http {
         /* 请求拦截 */
         this.service.interceptors.request.use((config: InternalAxiosRequestConfig) => {
             const userInfoStore = useUserStore();
-            config.headers['Web-Trader-UUID'] = import.meta.env.VITE_Web_Trader_UUID || "default-trader-uuid"
+            // 优先从运行时环境变量读取（Cloudflare Worker 注入），否则使用构建时变量
+            const traderUUID = (typeof window !== 'undefined' && (window as any).__ENV__?.VITE_Web_Trader_UUID) 
+              || import.meta.env.VITE_Web_Trader_UUID 
+              || "default-trader-uuid";
+            config.headers['Web-Trader-UUID'] = traderUUID;
             if (userInfoStore.token) {
                 
               

@@ -111,6 +111,9 @@
           <lay-form-item label="是否公开" prop="ispublic">
             <lay-switch v-model="model11.ispublic" :checked="model11.ispublic === 1" trueValue="1" falseValue="0"></lay-switch>
           </lay-form-item>
+          <lay-form-item label="最后更新" prop="last_update" v-if="(model11.id || model11.id === 0) && model11.last_update">
+            <lay-input v-model="model11.last_update" placeholder="最后更新时间将自动记录"></lay-input>
+          </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: right">
           <lay-button size="sm" type="primary" @click="toSubmit" :disabled="isSaving">
@@ -169,7 +172,8 @@ const model11 = ref<any>({
   title: '',
   description: '',
   video_url: '',
-  ispublic: 1
+  ispublic: 1,
+  last_update: ''
 })
 const layFormRef11 = ref()
 const visible11 = ref(false)
@@ -344,16 +348,20 @@ function toRemove() {
 const changeVisible11 = (text: string, row?: Video) => {
   title.value = text
   if (row) {
-    // 编辑模式，复制行数据
-    model11.value = { ...row }
+    // 编辑模式，复制行数据并格式化时间
+    model11.value = { 
+      ...row, 
+      last_update: row.last_update ? formatDateTime(row.last_update) : '' 
+    }
   } else {
-    // 新增模式，清空表单
+    // 新增模式，设置当前时间
     model11.value = {
       id: 0,
       title: '',
       description: '',
       video_url: '',
-      ispublic: 1
+      ispublic: 1,
+      last_update: new Date().toISOString().slice(0, 19).replace('T', ' ')
     }
   }
   visible11.value = true
@@ -393,7 +401,8 @@ async function toSubmit() {
       title: model11.value.title,
       description: model11.value.description,
       video_url: model11.value.video_url,
-      ispublic: model11.value.ispublic
+      ispublic: model11.value.ispublic,
+      last_update: model11.value.last_update
     };
     if(submitData.ispublic)
     {
@@ -471,6 +480,19 @@ async function confirm(data: Video) {
 // 取消删除
 function cancel() {
   layer.msg('您已取消操作')
+}
+
+// 格式化日期时间
+function formatDateTime(dateTime: string | Date): string {
+  if (!dateTime) return '';
+  const date = new Date(dateTime);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 // 视频上传前校验

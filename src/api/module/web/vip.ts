@@ -54,3 +54,8 @@ export const startquestions = function(questionData: any) {
 export const get_stock_prices = function(symbols: string[]) {
     return Http.post('/web/vip/stock-prices', { symbols })
 }
+
+// 创建支付记录接口
+export const createPaymentRecord = function(paymentData: any) {
+    return Http.post('/web/vip/create-payment-record', paymentData)
+}

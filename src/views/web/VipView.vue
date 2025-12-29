@@ -194,12 +194,22 @@
             <i class="bi bi-star-fill card-icon"></i>
             <h3 class="h3Height">{{ level.name }}</h3>
             <div class="card-requirement">>=${{ formatNumber(level.min_trading_volume) }}</div>
-            <ul class="feature-list">
-              <li v-for="(benefit, i) in level.benefits" :key="i">
+            <ul class="feature-list">              <li v-for="(benefit, i) in level.benefits" :key="i">
                 <i class="bi bi-check-circle-fill"></i> {{ benefit }}
               </li>
             </ul>
-            <div class="upgrade-info"></div>
+         
+            <div v-if="level.vip_price>0" class="upgrade-info">
+              <div class="vip-price">
+                <span class="price-value">
+                  {{ formatNumber(level.vip_price || 0) }}
+                  <span class="price-currency">USDT</span>
+                </span>
+              </div>
+              <button class="btn-purchase" @click="openPaymentModal(level)">
+                Purchase Now
+              </button>
+            </div>          
           </div>
         </div>
       </div>
@@ -302,6 +312,126 @@
           <div class="modal-footer justify-content-center">
             <button type="button" class="btn-community-primary" @click="joinCommunity">
               I already know
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title display-6 text-gold" id="paymentModalLabel">
+              <i class="bi bi-crown me-2"></i>VIP Payment
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Payment QR Code Section -->
+            <div class="payment-section mb-5 p-4 bg-gradient-radial" style="background: rgba(255, 215, 0, 0.05); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.1);">
+              <!-- Amount -->
+              <div class="text-center mb-4">
+                <h4 class="section-title" style="color: #ffd700; font-weight: 700; margin-bottom: 0.5rem;">
+                  Amount
+                </h4>
+                <div class="payment-detail-item">
+                  <span class="font-weight-bold text-gold" style="font-size: 1.8rem;">
+                    {{ formatNumber(selectedVipLevel?.vip_price || 0) }}
+                    <span style="font-size: 1rem;"> USDT</span>
+                  </span>
+                </div>
+              </div>
+              
+              <!-- QR Code -->
+              <div class="text-center">
+                <h4 class="section-title mb-3" style="color: #ffd700; font-weight: 700;">
+                  QR Code
+                </h4>
+                <div class="qr-code-container p-4" style="background: rgba(255, 255, 255, 0.05); border-radius: 15px; display: inline-block; max-width: 100%;">
+                  <img 
+                    v-if="paymentQrCode" 
+                    :src="paymentQrCode" 
+                    alt="Payment QR Code" 
+                    class="payment-qr-code"
+                  >
+                  <div v-else class="qr-code-placeholder">
+                    <i class="bi bi-qr-code display-1 text-gold"></i>
+                    <p class="text-muted mt-2">Loading QR Code...</p>
+                  </div>
+                  
+                </div>
+              </div>
+               <div class="qr-code-placeholder">
+                    wallet:<i class="bi display-1 text-gold" style="font-size: 13px;">{{ paycode }}</i> <a @click="copypaycode" style="cursor: pointer;">copy</a>
+                  </div>
+            </div>
+
+            <!-- Payment Proof Upload Section -->
+            <div class="upload-section p-4 bg-gradient-radial" style="background: rgba(255, 215, 0, 0.05); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.1);">
+              <h4 class="section-title mb-4 text-center" style="color: #ffd700; font-weight: 700;">
+                <i class="bi bi-upload me-2"></i>Upload Payment Proof
+              </h4>
+              
+              <div class="upload-container text-center">
+                <input 
+                  type="file" 
+                  id="paymentProof" 
+                  ref="paymentProofUpload" 
+                  class="payment-proof-input" 
+                  accept="image/*" 
+                  @change="handlePaymentProofUpload"
+                >
+                
+                <div v-if="!paymentProofPreview" class="upload-placeholder">
+                  <button 
+                    type="button" 
+                    class="btn-upload"
+                    @click="triggerPaymentProofUpload"
+                  >
+                    <i class="bi bi-cloud-arrow-up-fill display-3 mb-3 text-gold"></i>
+                    <h5 class="mb-2" style="font-weight: 600;">Click or Drag to Upload</h5>
+                    <p class="text-muted mb-1">Upload your payment screenshot here</p>
+                    <small class="text-muted">Supports JPG, PNG, GIF • Max 5MB</small>
+                  </button>
+                </div>
+                
+                <!-- Preview uploaded image -->
+                <div v-else class="proof-preview-container mt-4">
+                  <div class="proof-preview">
+                    <img :src="paymentProofPreview" alt="Payment Proof Preview" class="preview-image">
+                    <button 
+                      type="button" 
+                      class="btn-remove-preview"
+                      @click="removePaymentProofPreview"
+                    >
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                  <div class="proof-preview-info mt-3">
+                    <h6 class="mb-0" style="font-weight: 600;">Payment Proof Uploaded</h6>
+                    <p class="text-muted text-sm mb-0">Click the <i class="bi bi-x"></i> button to replace the image</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center gap-3 py-4">
+            <button type="button" class="btn-secondary" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle me-2"></i>Cancel
+            </button>
+            <button 
+              type="button" 
+              class="btn-community-primary" 
+              @click="submitPayment"
+              :disabled="!paymentProofPreview"
+              style="min-width: 200px;"
+            >
+              <i v-if="!isSubmitting" class="bi bi-check-circle me-2"></i>
+              <i v-else class="bi bi-hourglass-split me-2"></i>
+              <span v-if="!isSubmitting">Submit Payment</span>
+              <span v-else>Processing...</span>
             </button>
           </div>
         </div>
@@ -498,6 +628,8 @@
     <div class="redirect-message" v-show="showContactPopup">
         <span class="text">Redirecting to WhatsApp Community</span><span class="dots"></span>
     </div>
+    <!-- 合作单位 -->
+    <PartnerOrganizations />
   </div>
 </template>
 
@@ -506,8 +638,10 @@ import { ref, onMounted,computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Modal } from 'bootstrap';
 import navcomponent from '../component/nav/nav.vue'
-import{ get_userinfo,get_membership_levels,updateUserLevel, get_random_questions,startquestions } from '../../api/module/web/vip'
+import PartnerOrganizations from '@/components/PartnerOrganizations.vue';
+import{ get_userinfo,get_membership_levels,updateUserLevel, get_random_questions,startquestions, createPaymentRecord } from '../../api/module/web/vip'
 import { get_whatsapp_link,gettrader_profiles } from '../../api/module/web/index'
+import { uploadImage } from '../../api/module/commone'
 import { useUserStore } from '@/store';
 const userStore = useUserStore()
 const router = useRouter();
@@ -531,6 +665,153 @@ const toggleContactPopup = async () => {
     {
       showContactPopup.value = !showContactPopup.value;
     }
+};
+
+// Payment Modal state
+const selectedVipLevel = ref(null);
+const paymentQrCode = ref('');
+const paycode = ref('');
+const paymentProofPreview = ref('');
+const isSubmitting = ref(false);
+const isUploading = ref(false); // Upload status flag
+const paymentProofUpload = ref(null);
+const traderProfiles=ref({})
+let paymentModalInstance = null;
+let uploadedImageUrl = ref(''); // Store the uploaded image URL
+
+// Open payment modal
+const openPaymentModal = (level) => {
+  selectedVipLevel.value = level;
+  isSubmitting.value = false;
+  paymentProofPreview.value = '';
+  
+  // Get payment QR code
+  getPaymentQrCode();
+  
+  // Show modal
+  if (!paymentModalInstance) {
+    const modalElement = document.getElementById('paymentModal');
+    if (modalElement) {
+      paymentModalInstance = new Modal(modalElement);
+    }
+  }
+  paymentModalInstance?.show();
+};
+
+// Get payment QR code from traderProfiles
+const getPaymentQrCode = () => {
+  console.log(traderProfiles.value)
+  // Use the pay_qr_code_img from the loaded traderProfiles
+  paymentQrCode.value = traderProfiles.value.pay_qr_code_img || '';
+  paycode.value = traderProfiles.value.paycode || '';
+};
+
+// Trigger payment proof upload
+const triggerPaymentProofUpload = () => {
+  paymentProofUpload.value?.click();
+};
+
+// Handle payment proof upload
+const handlePaymentProofUpload = async (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB');
+      return;
+    }
+    
+    // Create preview URL
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      paymentProofPreview.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    
+    // Set uploading state
+    isUploading.value = true;
+    
+    try {
+      // Create FormData object
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      // Call uploadImage API to upload image
+      const response = await uploadImage(formData);
+      
+      // Store the uploaded image URL
+      uploadedImageUrl.value = response.data.url;
+      console.log('Payment proof uploaded successfully:', uploadedImageUrl.value);
+    } catch (error) {
+      console.error('Failed to upload payment proof:', error);
+      alert('Failed to upload payment proof. Please try again later.');
+      // Clear preview if upload fails
+      removePaymentProofPreview();
+    } finally {
+      // Reset upload state
+      isUploading.value = false;
+      // Clear input to allow selecting the same file again
+      event.target.value = '';
+    }
+  }
+};
+
+// Remove payment proof preview
+const removePaymentProofPreview = () => {
+  paymentProofPreview.value = '';
+  uploadedImageUrl.value = ''; // Clear the uploaded image URL
+  if (paymentProofUpload.value) {
+    paymentProofUpload.value.value = '';
+  }
+};
+
+// Submit payment
+const submitPayment = async () => {
+  if (!paymentProofPreview.value) {
+    alert('Please upload payment proof first');
+    return;
+  }
+  
+  if (!uploadedImageUrl.value) {
+    alert('Please wait for the payment proof to upload successfully');
+    return;
+  }
+  
+  isSubmitting.value = true;
+  
+  try {
+    // Create payment record data
+    const paymentData = {
+      vip_level_id: selectedVipLevel.value.id,
+      vip_level_name: selectedVipLevel.value.name,
+      amount: selectedVipLevel.value.vip_price,
+      payment_screenshot: uploadedImageUrl.value,
+      trader_uuid: traderProfiles.value.trader_uuid || '' // 添加trader_uuid字段
+    };
+    
+    // Call API to create payment record
+    const response = await createPaymentRecord(paymentData);
+    
+    if (response.success) {
+      console.log('Payment record created successfully:', paymentData);
+      alert('Payment submitted successfully! We will review your payment and upgrade your VIP level within 24 hours.');
+      
+      // Close modal
+      paymentModalInstance?.hide();
+      
+      // Reset form
+      removePaymentProofPreview();
+      selectedVipLevel.value = null;
+      paymentQrCode.value = '';
+    } else {
+      throw new Error(response.message || 'Failed to create payment record');
+    }
+  } catch (error) {
+    console.error('Failed to submit payment:', error);
+    alert('Failed to submit payment. Please try again later.');
+  } finally {
+    isSubmitting.value = false;
+  }
 };
 
 // Function to handle joining community (same as HomeView.vue)
@@ -604,6 +885,8 @@ const loadTraderTerms = async () => {
     if (response.success && response.data) {
       // 获取第一个交易员档案的terms数据
       const traderProfile = response.data.trader_profiles;
+      // 保存完整的交易员档案数据
+      traderProfiles.value = traderProfile;
       
       if (traderProfile.terms) {
         // 将terms字符串按行分割成数组
@@ -951,6 +1234,27 @@ const goToNextQuestion = () => {
   }
 };
 
+// 复制钱包地址
+const copypaycode = () => {
+  if (paycode.value) {
+    navigator.clipboard.writeText(paycode.value).then(() => {
+      showNotification.value = true;
+      notificationType.value = 'success';
+      notificationMessage.value = 'Paycode copied to clipboard!';
+      setTimeout(() => {
+        showNotification.value = false;
+      }, 2000);
+    }).catch(err => {
+      showNotification.value = true;
+      notificationType.value = 'error';
+      notificationMessage.value = 'Failed to copy paycode!';
+      setTimeout(() => {
+        showNotification.value = false;
+      }, 2000);
+    });
+  }
+};
+
 // 重新开始答题
 const restartQuiz = () => {
   startQuestion.value=false;
@@ -1220,6 +1524,81 @@ const createFirework = () => {
 .modal-header {
   border-bottom: 1px solid rgba(255, 215, 0, 0.1);
   padding: 1.5rem;
+}
+
+/* Responsive Image Styles */
+.payment-qr-code {
+  max-width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.preview-image {
+  max-width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin: 0 auto;
+  display: block;
+}
+
+.proof-preview {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.btn-remove-preview {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(220, 53, 69, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.btn-remove-preview:hover {
+  background: rgba(220, 53, 69, 1);
+  transform: scale(1.1);
+}
+
+/* Upload Section Fix */
+.upload-placeholder {
+  margin: 0 auto;
+}
+
+/* Hide the file input */
+.payment-proof-input {
+  display: none;
+}
+
+.btn-upload {
+  width: 100%;
+  max-width: 400px;
+  padding: 1rem;
+  background: transparent;
+  border: 2px dashed rgba(255, 215, 0, 0.3);
+  color: white;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-upload:hover {
+  background: rgba(255, 215, 0, 0.1);
+  border-color: rgba(255, 215, 0, 0.6);
 }
 
 .modal-header .btn-close {
@@ -2402,15 +2781,147 @@ const createFirework = () => {
 }
 
 .upgrade-info {
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(255, 215, 0, 0.1);
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 215, 0, 0.15);
+  text-align: center;
 }
 
 .upgrade-info p {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.25rem;
   margin: 0;
+  line-height: 1.6;
+}
+
+/* VIP Price Styles */
+.vip-price {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  padding: 1.25rem;
+  background: rgba(35, 36, 58, 0.8);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.vip-price:hover {
+  background: rgba(35, 36, 58, 0.9);
+  border-color: rgba(255, 215, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.price-value {
+  font-size: 3.2rem;
+  font-weight: 900;
+  color: #ffd700;
+  text-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 0 0 10px rgba(255, 215, 0, 0.4);
+  display: block;
+  line-height: 1;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
+.price-currency {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 215, 0, 0.8);
+  text-shadow: none;
+  margin-left: 0.25rem;
+  vertical-align: super;
+  opacity: 0.9;
+}
+
+.membership-card:hover .price-value {
+  color: #ffed4e;
+  text-shadow: 0 0 40px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+/* Purchase Button Styles */
+.btn-purchase {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #000000;
+  border: 2px solid #ffd700;
+  padding: 1.1rem 2.5rem;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+
+.btn-purchase:hover {
+  background: linear-gradient(135deg, #ffed4e 0%, #ffd700 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(255, 215, 0, 0.5);
+  border-color: #ffed4e;
+}
+
+.btn-purchase:active {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.btn-purchase:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2);
+}
+
+/* 增强卡片悬停效果 */
+.membership-card:hover .vip-price {
+  background: rgba(35, 36, 58, 0.9);
+  border-color: rgba(255, 215, 0, 0.3);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .vip-price {
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .price-value {
+    font-size: 2.8rem;
+  }
+  
+  .btn-purchase {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .vip-price {
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .price-label {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .price-value {
+    font-size: 2.4rem;
+  }
+  
+  .btn-purchase {
+    padding: 0.9rem 1.8rem;
+    font-size: 1rem;
+  }
 }
 
 .vip-badge {
@@ -3947,6 +4458,33 @@ html {
   transform: translateY(0);
 }
 
+/* Secondary Button Style */
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
 /* Responsive Design */
  @media (max-width: 768px) {
    .agreement-content {
@@ -4176,3 +4714,4 @@ html {
   }
 }
 </style>
+

@@ -180,6 +180,16 @@ export default [
         path: '/system/membershipPointsRules',
         component: () => import('../../views/system/membershipPointsRules/index.vue'),
         meta: { title: '积分规则管理', requireAuth: true }
+      },
+      {
+        path: '/system/partnerOrganizations',
+        component: () => import('../../views/system/partnerOrganizations/index.vue'),
+        meta: { title: '合作单位管理', requireAuth: true }
+      },
+      {
+        path: '/system/paymentRecords',
+        component: () => import('../../views/system/paymentRecords/index.vue'),
+        meta: { title: '支付记录管理', requireAuth: true }
       }
     ]
   },
@@ -194,3 +204,4 @@ export default [
     meta: { title: 'Documents', requireAuth: false },
   }
 ];
+

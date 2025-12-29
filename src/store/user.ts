@@ -110,6 +110,11 @@ export const useUserStore = defineStore({
               id: '/system/trade',
               icon: "layui-icon-rmb",
               title: '会员交易记录',
+            },
+            {
+              id: '/system/paymentRecords',
+              icon: "layui-icon-dollar",
+              title: '支付记录管理',
             },     
             {
               id: '/system/membershipPointsRules',
@@ -160,6 +165,11 @@ export const useUserStore = defineStore({
               id: '/system/questionBank',       
               icon: "layui-icon-list",       
               title: '题库管理',     
+            },
+            {       
+              id: '/system/partnerOrganizations',       
+              icon: "layui-icon-link",       
+              title: '合作单位管理',     
             }             
           ] 
           },{

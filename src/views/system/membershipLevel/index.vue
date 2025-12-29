@@ -82,7 +82,7 @@
       </lay-table>
     </div>
 
-    <lay-layer v-model="visible11" :title="title" :area="['600px', '670px']">
+    <lay-layer v-model="visible11" :title="title" :area="['600px', '720px']">
       <div style="padding: 20px">
         <lay-form :model="model11" :pane="true" :label-width="160" ref="layFormRef11" required>
           <lay-form-item label="等级" prop="level">
@@ -115,6 +115,9 @@
           <lay-form-item label="补偿比例(%)" prop="compensation_ratio">
             <lay-input v-model="model11.compensation_ratio" type="number"></lay-input>
           </lay-form-item>
+          <lay-form-item label="VIP价格" prop="vip_price">
+            <lay-input v-model="model11.vip_price" type="number"></lay-input>
+          </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: right">
           <lay-button size="sm" type="primary" @click="toSubmit" :disabled="isSaving">
@@ -144,6 +147,7 @@ interface MembershipLevel {
   commission_ratio: number;
   risk_ratio: number;
   compensation_ratio: number;
+  vip_price: number;
   created_at: string;
 }
 
@@ -171,6 +175,7 @@ const columns = ref([
   { title: '佣金比例(%)', width: '100px', key: 'commission_ratio' },
   { title: '风险比例(%)', width: '100px', key: 'risk_ratio' },
   { title: '补偿比例(%)', width: '100px', key: 'compensation_ratio' },
+  { title: 'VIP价格', width: '100px', key: 'vip_price' },
   { title: '创建时间', width: '150px', key: 'created_at' },
   { title: '操作', width: '120px', customSlot: 'operator', key: 'operator', fixed: 'right' }
 ])
@@ -362,7 +367,8 @@ const changeVisible11 = (text: string, row?: MembershipLevel) => {
       monthly_profit_ratio: 0,
       commission_ratio: 0,
       risk_ratio: 0,
-      compensation_ratio: 0
+      compensation_ratio: 0,
+      vip_price: 0
     }
     benefitsList.value = [''];
   }
@@ -397,7 +403,8 @@ async function toSubmit() {
       monthly_profit_ratio: model11.value.monthly_profit_ratio,
       commission_ratio: model11.value.commission_ratio,
       risk_ratio: model11.value.risk_ratio,
-      compensation_ratio: model11.value.compensation_ratio
+      compensation_ratio: model11.value.compensation_ratio,
+      vip_price: model11.value.vip_price
     };
     
     if (model11.value.id) {

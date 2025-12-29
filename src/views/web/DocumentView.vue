@@ -18,9 +18,9 @@
         </div>
         <div class="header-right">
           <div class="stats-summary">
-            <span class="stat-item">{{ Array.isArray(filteredDocuments) ? filteredDocuments.length : Object.keys(filteredDocuments).length || 0 }} Documents</span>
+            <span class="stat-item">{{ Array.isArray(documentslist) ? documentslist.length : Object.keys(documentslist).length || 0 }} Documents</span>
             <span class="stat-divider">•</span>
-            <span class="stat-item vip">{{ Array.isArray(filteredDocuments) ? filteredDocuments.filter(d => !d.ispublic).length : Object.values(filteredDocuments).filter(d => !d.ispublic).length || 0 }} VIP</span>
+            <span class="stat-item vip">{{ Array.isArray(documentslist) ? documentslist.filter(d => !d.ispublic).length : Object.values(documentslist).filter(d => !d.ispublic).length || 0 }} VIP</span>
             <span class="stat-divider">•</span>
             <span class="stat-item recent">Last 30 Days</span>
           </div>
@@ -129,12 +129,12 @@
                   </svg>
                   Preview
                 </button>
-                <a :href="value.file_url" download class="action-btn secondary">
+                <button @click="downloadDocument(value)" class="action-btn secondary">
                   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15M7 10L12 15L17 10M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                     </svg>
                     Download
-                  </a>
+                  </button>
               </div>
 
               <!-- Progress Bar (if applicable) -->
@@ -179,16 +179,21 @@
         </div>
       </div>
     </div>
+    <!-- 合作单位 -->
+    <PartnerOrganizations />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import navcomponent from '../component/nav/nav.vue';
+import PartnerOrganizations from '@/components/PartnerOrganizations.vue';
 import { getdocuments } from '../../api/module/web/index';
 import { useUserStore } from '@/store';
 
 const userStore = useUserStore();
+const router = useRouter();
 let documentslist = ref({});
 let filteredDocuments = ref({});
 let activeFilter = ref('all');
@@ -200,9 +205,15 @@ onMounted(() => {
 const getVipDashboardData = async () => {
   const res = await getdocuments(null);
   if (res.success) {
-    documentslist.value = res.data;
-    // 过滤出最近30天的文档
-    filteredDocuments.value = filterDocumentsByDate(res.data, 30);
+    // 确保 documentslist 是数组格式
+    if (Array.isArray(res.data)) {
+      documentslist.value = res.data;
+    } else {
+      // 如果是对象，转换为数组
+      documentslist.value = Object.values(res.data);
+    }
+    // 过滤出最近30天的文档用于显示
+    filteredDocuments.value = filterDocumentsByDate(documentslist.value, 30);
   }
 };
 
@@ -242,8 +253,13 @@ const filterDocumentsByDate = (documents: any, days: number) => {
 const setFilter = (filter: string) => {
   activeFilter.value = filter;
   
+  // 确保 documentslist 是数组格式
+  const allDocs = Array.isArray(documentslist.value) 
+    ? documentslist.value 
+    : Object.values(documentslist.value);
+  
   // 首先应用30天过滤
-  const recentDocs = filterDocumentsByDate(documentslist.value, 30);
+  const recentDocs = filterDocumentsByDate(allDocs, 30);
   
   if (filter === 'all') {
     filteredDocuments.value = recentDocs;
@@ -345,6 +361,13 @@ const formatUSDate = (dateString: string) => {
 };
 
 const previewDocument = (document: any) => {
+  // 如果是VIP文档，检查登录状态
+  if (!document.ispublic && !userStore.token) {
+    alert('Please login to preview VIP documents');
+    router.push('/userlogin');
+    return;
+  }
+  
   if (!document.file_url) {
     console.error('No file URL available');
     return;
@@ -533,6 +556,28 @@ const previewDocument = (document: any) => {
     previewWindow.document.write(previewContent);
     previewWindow.document.close();
   }
+};
+
+const downloadDocument = (document: any) => {
+  // 如果是VIP文档，检查登录状态
+  if (!document.ispublic && !userStore.token) {
+    alert('Please login to download VIP documents');
+    router.push('/userlogin');
+    return;
+  }
+  
+  if (!document.file_url) {
+    console.error('No file URL available');
+    return;
+  }
+  
+  // 创建临时链接并触发下载
+  const link = document.createElement('a');
+  link.href = document.file_url;
+  link.download = document.title || 'document';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };
 </script>
 

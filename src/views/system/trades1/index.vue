@@ -136,6 +136,10 @@
           <lay-form-item label="出场日期" prop="exit_date" v-if="model11.id>0">
             <lay-input v-model="model11.exit_date" type="datetime-local" placeholder="请输入出场日期"></lay-input>
           </lay-form-item>
+          <lay-form-item label="重点交易" prop="is_important">
+            <lay-switch v-model="model11.is_important"></lay-switch>
+            <span style="margin-left: 10px; color: #666; font-size: 12px;">标记为重点交易后，将在首页置顶显示</span>
+          </lay-form-item>
           <lay-form-item label="交易图片" prop="image_url" :label-width="100" mode="inline" :inlineWidth="350" v-if="model11.id>0">
             <lay-input v-model="model11.image_url" placeholder="交易图片URL" :readonly="true"></lay-input>
           </lay-form-item>
@@ -182,6 +186,7 @@ interface Trade1 {
   trade_market: string;
   direction: number;
   trader_uuid?: string;
+  is_important?: boolean;
 }
 
 // 搜索条件
@@ -275,7 +280,8 @@ const model11 = ref<any>({
   current_price: null,
   image_url: '',
   trade_market: 'US',
-  direction: 1
+  direction: 1,
+  is_important: false
 })
 
 // 保存状态
@@ -393,6 +399,11 @@ const change = async (pageData: any) => {
     if (success) {
       // 更新数据源
       dataSource.value = data || []
+      // 调试：检查第一条数据的 is_important 字段
+      if (data && data.length > 0) {
+        console.log('📋 列表数据第一条记录的 is_important:', data[0].is_important, '类型:', typeof data[0].is_important);
+        console.log('📋 列表数据第一条记录:', data[0]);
+      }
       // 处理分页逻辑
       page.total = total || 0;
     } else {
@@ -466,7 +477,16 @@ const changeVisible11 = (text: string, row?: Trade1) => {
   title.value = text
   if (row) {
     // 编辑模式，复制行数据
-    model11.value = { ...row }
+    console.log('📖 打开编辑对话框，原始 row 数据:', row);
+    console.log('📖 row.is_important 原始值:', row.is_important, '类型:', typeof row.is_important);
+    const isImportantValue = row.is_important === true || row.is_important === 1 || row.is_important === 'true' || row.is_important === '1';
+    console.log('📖 转换后的 is_important 值:', isImportantValue);
+    model11.value = { 
+      ...row,
+      // 确保 is_important 是 boolean 类型
+      is_important: isImportantValue
+    }
+    console.log('📖 model11.value.is_important 最终值:', model11.value.is_important);
   } else {
     // 新增模式，清空表单
     model11.value = {
@@ -480,7 +500,8 @@ const changeVisible11 = (text: string, row?: Trade1) => {
       current_price: null,
       image_url: '',
       trade_market: 'US',
-      direction: 1
+      direction: 1,
+      is_important: false
     }
   }
   visible11.value = true
@@ -520,7 +541,15 @@ async function toSubmit() {
     }
     
     // 创建提交数据对象
-    const submitData = {
+    // 确保 is_important 字段总是被发送（即使是 false）
+    const isImportantValue = model11.value.is_important === true || 
+                             model11.value.is_important === 1 || 
+                             model11.value.is_important === 'true' ||
+                             model11.value.is_important === '1';
+    
+    console.log('提交 is_important 值:', model11.value.is_important, '转换为:', isImportantValue);
+    
+    const submitData: any = {
       symbol: model11.value.symbol,
       entry_date: model11.value.entry_date,
       entry_price: parseFloat(model11.value.entry_price),
@@ -530,12 +559,18 @@ async function toSubmit() {
       current_price: model11.value.current_price ? parseFloat(model11.value.current_price) : null,
       image_url: model11.value.image_url || null,
       trade_market: model11.value.trade_market,
-      direction: parseInt(model11.value.direction)
+      direction: parseInt(model11.value.direction),
+      is_important: isImportantValue  // 明确设置为 boolean
     };
     
     if (model11.value.id) {
       // 编辑交易记录
       const response = await updateTrade1(model11.value.id, submitData);
+      console.log('✅ 后端返回的响应:', response);
+      // 修复：response.data 可能是数组，需要访问第一个元素
+      const responseData = Array.isArray(response.data) ? response.data[0] : response.data;
+      console.log('✅ 后端返回的 is_important:', responseData?.is_important);
+      console.log('✅ 后端返回的完整数据:', responseData);
       if (response.success) {
         layer.msg(response.message || '更新成功', { icon: 1 });
         visible11.value = false;

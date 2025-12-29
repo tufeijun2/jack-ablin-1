@@ -88,10 +88,14 @@
           <lay-avatar :src="row.avatar_url || row.avatar"></lay-avatar>
         </template>
          <template #signing="{ row }">
-          <lay-tag type="primary" v-if="row.signing">已签署</lay-tag>
-          <lay-tag type="danger" v-else>未签署</lay-tag>
-        </template>
-        <template v-slot:toolbar>
+           <lay-tag type="primary" v-if="row.signing">已签署</lay-tag>
+           <lay-tag type="danger" v-else>未签署</lay-tag>
+         </template>
+         <template #vipStatus="{ row }">
+           <lay-tag type="primary" v-if="row.is_vip">VIP</lay-tag>
+           <lay-tag type="default" v-else>普通</lay-tag>
+         </template>
+         <template v-slot:toolbar>
           <lay-button size="sm" type="primary" @click="changeVisible11('新增')">
             <lay-icon class="layui-icon-addition"></lay-icon>
             新增</lay-button
@@ -253,6 +257,8 @@ interface User {
   created_at: string;
   updated_at?: string;
   last_login?: string;
+  is_vip?: boolean;
+  vip_expire_at?: string;
   // 前端展示用字段
   name?: string;
   avatar?: string;
@@ -291,6 +297,8 @@ const columns = ref([
   { title: '状态', width: '80px', key: 'status'},
   { title: '邮箱', width: '150px', key: 'email' },
   { title: '会员等级', width: '100px', key: 'membership_level' },
+  { title: 'VIP状态', width: '80px', key: 'is_vip', customSlot: 'vipStatus' },
+  { title: 'VIP过期时间', width: '150px', key: 'vip_expire_at' },
   { title: '签署协议', width: '150px', key: 'signing', customSlot: 'signing'},
    { title: '会员积分', width: '100px', key: 'membership_points' },
   { title: '初始资产', width: '100px', key: 'initial_asset' },

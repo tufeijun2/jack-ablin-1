@@ -28,6 +28,7 @@ declare module 'vue' {
     LayHeader: typeof import('@layui/layui-vue')['LayHeader']
     LayIcon: typeof import('@layui/icons-vue')['LayIcon']
     LayInput: typeof import('@layui/layui-vue')['LayInput']
+    LayInputNumber: typeof import('@layui/layui-vue')['LayInputNumber']
     LayLayer: typeof import('@layui/layer-vue')['LayLayer']
     LayLayout: typeof import('@layui/layui-vue')['LayLayout']
     LayLine: typeof import('@layui/layui-vue')['LayLine']
@@ -35,6 +36,8 @@ declare module 'vue' {
     LayMenu: typeof import('@layui/layui-vue')['LayMenu']
     LayMenuItem: typeof import('@layui/layui-vue')['LayMenuItem']
     LayPopconfirm: typeof import('@layui/layui-vue')['LayPopconfirm']
+    LayRadio: typeof import('@layui/layui-vue')['LayRadio']
+    LayRadioGroup: typeof import('@layui/layui-vue')['LayRadioGroup']
     LayRow: typeof import('@layui/layui-vue')['LayRow']
     LaySelect: typeof import('@layui/layui-vue')['LaySelect']
     LaySelectOption: typeof import('@layui/layui-vue')['LaySelectOption']
@@ -47,7 +50,9 @@ declare module 'vue' {
     LayTag: typeof import('@layui/layui-vue')['LayTag']
     LayTextarea: typeof import('@layui/layui-vue')['LayTextarea']
     LayUpload: typeof import('@layui/layui-vue')['LayUpload']
+    PartnerOrganizations: typeof import('./src/components/PartnerOrganizations.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    VipPartnerOrganizations: typeof import('./src/components/VipPartnerOrganizations.vue')['default']
   }
 }

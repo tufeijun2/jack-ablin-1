@@ -114,7 +114,13 @@ onMounted(() => {
   {
    
 
-  let indexdata=JSON.parse(userStore.indexData || null);
+  // 检查 indexData 是否已经是对象，如果是则直接使用，否则解析 JSON
+  let indexdata;
+  if (typeof userStore.indexData === 'string') {
+    indexdata = JSON.parse(userStore.indexData || '{}');
+  } else {
+    indexdata = userStore.indexData || {};
+  }
   if(indexdata){
    
    trader_profiles.value=indexdata.trader_profiles;

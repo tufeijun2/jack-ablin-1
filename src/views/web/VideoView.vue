@@ -76,7 +76,7 @@
             <!-- Video Thumbnail -->
             <div class="video-thumbnail" @click="playVideo($event, value)">
               <video 
-                :src="value.video_url" 
+                :src="(value.ispublic || userStore.token) ? value.video_url : ''" 
                 :poster="value.thumbnail || ''"
                 preload="metadata"
                 class="video-player"
@@ -135,16 +135,21 @@
         </div>
       </div>
     </div>
+    <!-- 合作单位 -->
+    <PartnerOrganizations />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import navcomponent from '../component/nav/nav.vue';
+import PartnerOrganizations from '@/components/PartnerOrganizations.vue';
 import { getvideos } from '../../api/module/web/index';
 import { useUserStore } from '@/store';
 
 const userStore = useUserStore();
+const router = useRouter();
 let vedioslist = ref({});
 let filteredVideos = ref({});
 let activeFilter = ref('all');
@@ -201,10 +206,19 @@ const formatUSDate = (dateString: string) => {
 const getVipDashboardData = async () => {
   const res = await getvideos(null);
   if (res.success) {
+    // 确保数据格式一致
+    let videosData = res.data;
+    // 如果是数组，转换为对象格式
+    if (Array.isArray(videosData)) {
+      videosData = videosData.reduce((acc, video, index) => {
+        acc[index] = video;
+        return acc;
+      }, {} as any);
+    }
     // 为每个视频添加播放状态
-    const videosWithState = Object.keys(res.data).reduce((acc, key) => {
+    const videosWithState = Object.keys(videosData).reduce((acc, key) => {
       acc[key] = {
-        ...res.data[key],
+        ...videosData[key],
         isPlaying: false
       };
       return acc;
@@ -239,6 +253,13 @@ const setFilter = (filter: string) => {
 const playVideo = (event: Event, videoData: any) => {
   event.preventDefault();
   event.stopPropagation();
+  
+  // 如果是VIP视频，检查登录状态
+  if (!videoData.ispublic && !userStore.token) {
+    alert('Please login to watch VIP videos');
+    router.push('/userlogin');
+    return;
+  }
   
   const thumbnail = event.currentTarget as HTMLElement;
   const video = thumbnail.querySelector('video') as HTMLVideoElement;
@@ -295,6 +316,13 @@ const playVideo = (event: Event, videoData: any) => {
 
 const watchVideo = (videoData: any) => {
   console.log('观看视频:', videoData);
+  
+  // 如果是VIP视频，检查登录状态
+  if (!videoData.ispublic && !userStore.token) {
+    alert('Please login to watch VIP videos');
+    router.push('/userlogin');
+    return;
+  }
   
   if (videoData.video_url) {
     // 创建一个全屏播放模态框或直接在新窗口打开

@@ -163,7 +163,23 @@
           <lay-form-item label="首页顶部标题链接" prop="home_top_title_link" :label-width="200">
             <lay-input v-model="model11.home_top_title_link" placeholder="请输入跳转链接，如：https://www.baidu.com"></lay-input>
           </lay-form-item>
-            <lay-form-item label="会员协议" prop="terms" :label-width="200">
+          <lay-form-item label="支付二维码图片" prop="pay_qr_code_img" :label-width="200" mode="inline" :inlineWidth="400">
+            <lay-input v-model="model11.pay_qr_code_img" placeholder="支付二维码图片URL" :readonly="true"></lay-input>
+          </lay-form-item>
+          
+            <lay-upload
+              :beforeUpload="beforeUpload10"
+              :url="uploadImageUrl"
+              v-model="payQrCodeFile"
+              field="file"
+              :auto="true"
+              @done="handlePayQrCodeUploadSuccess"
+            mode="inline"
+            />
+            <lay-form-item label="钱包地址" prop="paycode" :label-width="200">
+            <lay-input v-model="model11.paycode" placeholder="请输入钱包地址"></lay-input>
+          </lay-form-item>
+          <lay-form-item label="会员协议" prop="terms" :label-width="200">
             <lay-textarea v-model="model11.terms" placeholder="请输入会员协议"></lay-textarea>
           </lay-form-item>
         </lay-form>
@@ -197,6 +213,7 @@ interface TraderProfile {
   agreement?: string;
   members_count: number;
   likes_count: number;
+  pay_qr_code_img?: string;
 }
 const uploadImageUrl=import.meta.env.VITE_API_URL?import.meta.env.VITE_API_URL+"/api/upload/images":"https://apistock-1hgl.onrender.com/api/upload/images"
 const uploaddocumentsUrl=import.meta.env.VITE_API_URL?import.meta.env.VITE_API_URL+"/api/upload/documents":"https://apistock-1hgl.onrender.com/api/upload/documents"
@@ -251,6 +268,7 @@ const visibleImport = ref(false)
 const file1 = ref<any[]>([])
 const avatarFile = ref<any[]>([])
 const agreementFile = ref<any[]>([])
+const payQrCodeFile = ref<any[]>([])
 const uploading = ref(false)
 
 // 保存状态
@@ -437,7 +455,9 @@ const changeVisible11 = (text: string, row?: TraderProfile) => {
       likes_count: 0,
       status: 'active',
       remark: '',
-      terms: ''
+      terms: '',
+      pay_qr_code_img: '',
+      paycode: ''
     }
   }
   visible11.value = true
@@ -534,6 +554,22 @@ function handleAgreementUploadSuccess(response: any) {
     layer.msg('协议上传成功', { icon: 1 });
   } else {
     layer.msg('协议上传失败', { icon: 2 });
+  }
+}
+
+// 处理支付二维码上传成功后的回调
+function handlePayQrCodeUploadSuccess(response: any) {
+  uploading.value = false;
+  let updataData=JSON.parse(response.data)
+  layer.closeAll('loading'); // 关闭上传提示
+  if (updataData.success) {
+    
+    // 将上传成功后的支付二维码图片URL赋值给pay_qr_code_img字段
+    model11.value.pay_qr_code_img = updataData.data.url; // 假设返回的数据直接是图片URL
+    console.log(model11.value.pay_qr_code_img)
+    layer.msg('支付二维码上传成功', { icon: 1 });
+  } else {
+    layer.msg('支付二维码上传失败', { icon: 2 });
   }
 }
 

@@ -134,17 +134,17 @@
       <!-- Stock Trading Cards - Active Trades -->
      
       <div class="row">
-        <div class="col-md-6 col-lg-4" v-for="value in trades">
+        <div class="col-md-6 col-lg-4" v-for="value in trades" :key="value.id || value.symbol">
           <div class="card">
             <div class="stock-info">
               <div class="country-badge-container">
                 <span class="country-badge" :class="getCountryClass(value.trade_market)">
                   <span class="country-flag">{{ getCountryFlag(value.trade_market) }}</span>
-                  <span class="country-text">{{value.trade_market.toUpperCase()}}</span>
+                  <span class="country-text">{{(value.trade_market || '').toUpperCase()}}</span>
                 </span>
               </div>
               <div class="stock-center">
-                <div class="stock-symbol">{{value.symbol}}</div>
+                <div class="stock-symbol">{{value.symbol || '-'}}</div>
               </div>
               <div class="status-badge-container">
                 <span class="status-badge-enhanced" :class="getStatusClass(value.status, value.Ratio)">
@@ -154,7 +154,7 @@
               </div>
             </div>
 
-            <img :src="value.image_url" alt="AAPL" class="trade-screenshot" @click="openImageModal(value.symbol,value.image_url)">
+            <img :src="value.image_url || ''" alt="AAPL" class="trade-screenshot" @click="openImageModal(value.symbol,value.image_url)" v-if="value.image_url">
             
             <div class="secondary-info">
               <div class="secondary-info-item" >
@@ -187,22 +187,22 @@
             <div class="main-stats">
               <div class="main-stat-item">
                 <div class="main-stat-label">Entry Amount</div>
-                <div class="main-stat-value">{{value.currency}}{{formatCurrency(value.entry_price*value.size)}}</div>
+                <div class="main-stat-value">{{value.currency || ''}}{{formatCurrency((value.entry_price || 0) * (value.size || 0))}}</div>
                
               </div>
               <div class="main-stat-item">
                 <div class="main-stat-label">Market Value</div>
-                <div class="main-stat-value">{{value.currency}}{{formatCurrency(value.Market_Value)}}</div>
+                <div class="main-stat-value">{{value.currency || ''}}{{formatCurrency(value.Market_Value || 0)}}</div>
                
               </div>
               <div class="main-stat-item">
                 <div class="main-stat-label" >P&L Ratio</div>
-                <div :class="['main-stat-value',value.Ratio > 0? 'profit-positive': 'profit-negative']">{{value.Ratio}}%</div>
+                <div :class="['main-stat-value',(value.Ratio || 0) > 0? 'profit-positive': 'profit-negative']">{{value.Ratio || 0}}%</div>
                
               </div>
               <div class="main-stat-item">
                 <div class="main-stat-label">P&L Amount</div>
-                <div :class="['main-stat-value',value.Ratio > 0? 'profit-positive': 'profit-negative']">{{value.currency}}{{formatCurrency(value.Amount)}}</div>
+                <div :class="['main-stat-value',(value.Ratio || 0) > 0? 'profit-positive': 'profit-negative']">{{value.currency || ''}}{{formatCurrency(value.Amount || 0)}}</div>
                
               </div>
             </div>
@@ -329,7 +329,7 @@
             <div class="modal-content welcome-popup-modal">
                 <div class="modal-body">
                   
-                    <button type="button" class="btn-close btn-close-white" id="allow_close" data-bs-dismiss="modal" style="position: absolute;right: 20px; top: 20px;" v-if="announcementData.allow_close_dialog===1"></button>
+                    <button type="button" class="btn-close btn-close-white" id="allow_close" data-bs-dismiss="modal" style="position: absolute;right: 20px; top: 20px;" v-if="announcementData && announcementData.allow_close_dialog===1"></button>
                     
                     <div class="welcome-content">
                         <h3 class="teacher-intro">{{trader_profiles.trader_name}} - {{trader_profiles.professional_title}}</h3>
@@ -376,10 +376,10 @@
                                 <div class="announcement-content" id="announcement-content">
                                     <div style="margin-bottom: 0.5rem;">
                                         <div style="font-weight: 600; color: #ffd700; margin-bottom: 0.5rem; font-size: 1rem;">
-                                            {{ announcementData.title }}
+                                            {{ announcementData?.title || '' }}
                                         </div>
                                         <div style="color: #e0e0e0; line-height: 1.6; font-size: 0.9rem;">
-                                            {{ announcementData.content }}
+                                            {{ announcementData?.content || '' }}
                                         </div>
                                     </div>
                                 </div>
@@ -439,7 +439,7 @@ const strategy_info=ref({
     "warntype": 0,
     "warn_path": ""
 });
-const trades=ref({});
+const trades=ref([]);
 const Activecount=ref(0)
 const Monthly=ref(0)
 const Total=ref(0)
@@ -474,21 +474,27 @@ onMounted(() => {
     
     // 对本地存储的数据也进行过滤和排序
     if(indexdata.trades && Array.isArray(indexdata.trades)) {
-      // 首先过滤出3个月内的交易记录
-      const threeMonthsAgo = new Date();
-      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      // 调试：显示原始交易记录数量
+      console.log(`📊 [本地存储] 原始交易记录数量: ${indexdata.trades.length}`);
+      console.log(`📊 [本地存储] 交易记录详情:`, indexdata.trades.map((t: any) => ({
+        symbol: t.symbol,
+        status: t.status,
+        entry_date: t.entry_date,
+        exit_date: t.exit_date
+      })));
       
+      // 暂时移除时间限制，显示所有交易记录（仅过滤无效数据）
       const filteredTrades = indexdata.trades.filter((trade: any) => {
-        const entryDate = new Date(trade.entry_date);
-        // 如果交易记录有退出日期，也要检查退出日期是否在3个月内
-        if (trade.exit_date) {
-          const exitDate = new Date(trade.exit_date);
-          // 只要entry_date或exit_date在3个月内，就显示
-          return entryDate >= threeMonthsAgo || exitDate >= threeMonthsAgo;
+        // 只过滤掉没有entry_date的记录
+        if (!trade.entry_date) {
+          console.warn('⚠️ 发现无效交易记录（缺少entry_date）:', trade);
+          return false;
         }
-        // 如果没有退出日期（Active状态），只检查entry_date
-        return entryDate >= threeMonthsAgo;
+        return true;
       });
+      
+      // 调试：显示过滤后的交易记录数量
+      console.log(`📊 [本地存储] 过滤后交易记录数量: ${filteredTrades.length} (过滤掉 ${indexdata.trades.length - filteredTrades.length} 条无效记录)`);
       
       const sortedTrades = filteredTrades.sort((a: any, b: any) => {
         // 首先按重点交易排序：重点交易在前
@@ -529,12 +535,18 @@ onMounted(() => {
       }
       
       trades.value = sortedTrades;
+      console.log(`✅ [本地存储] 最终trades.value数量: ${trades.value.length}`);
+      console.log(`✅ [本地存储] 最终trades.value内容:`, trades.value.map((t: any) => t.symbol));
     } else {
-      trades.value = indexdata.trades;
+      trades.value = indexdata.trades || [];
+      console.log(`⚠️ [本地存储] 使用原始trades数据，数量: ${trades.value.length}`);
     }
    
     if(trades.value){
-    Activecount.value=trades.value.filter((item:any)=>item.status=='Active').length
+      Activecount.value=trades.value.filter((item:any)=>item.status=='Active').length
+      console.log(`📈 Active交易数量: ${Activecount.value}`);
+    } else {
+      console.warn('⚠️ trades.value为空或undefined');
     }
     Monthly.value=indexdata.Monthly;
     Total.value=indexdata.Total;
@@ -713,29 +725,48 @@ const handleAvatarUpload = (event: Event) => {
   alert('Avatar upload functionality would be implemented here');
 };
 const getindexdata= async()=>{
-  const res=await getIndexData();
-  if(res.success && res.data){
-    userStore.indexData=JSON.stringify(res.data);
-    trader_profiles.value=res.data.trader_profiles;
-     if(res.data.strategy_info){
-    strategy_info.value=res.data.strategy_info;
-     }
+  try {
+    const res=await getIndexData();
+    console.log(`🔍 [API] 完整API响应:`, res);
+    console.log(`🔍 [API] res.success:`, res.success);
+    console.log(`🔍 [API] res.data:`, res.data);
     
-    // 首先过滤出3个月内的交易记录
-    const threeMonthsAgo = new Date();
-    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-    
-    const filteredTrades = res.data.trades.filter((trade: any) => {
-      const entryDate = new Date(trade.entry_date);
-      // 如果交易记录有退出日期，也要检查退出日期是否在3个月内
-      if (trade.exit_date) {
-        const exitDate = new Date(trade.exit_date);
-        // 只要entry_date或exit_date在3个月内，就显示
-        return entryDate >= threeMonthsAgo || exitDate >= threeMonthsAgo;
+    if(res.success && res.data){
+      userStore.indexData=JSON.stringify(res.data);
+      trader_profiles.value=res.data.trader_profiles;
+       if(res.data.strategy_info){
+      strategy_info.value=res.data.strategy_info;
+       }
+      
+      // 调试：显示原始交易记录数量
+      console.log(`📊 [API] 原始交易记录数量: ${res.data.trades?.length || 0}`);
+      console.log(`📊 [API] res.data.trades 类型:`, Array.isArray(res.data.trades) ? 'Array' : typeof res.data.trades);
+      console.log(`📊 [API] res.data 所有键:`, Object.keys(res.data));
+      
+      if (res.data.trades && Array.isArray(res.data.trades)) {
+        console.log(`📊 [API] 交易记录详情（前10条）:`, res.data.trades.slice(0, 10).map((t: any) => ({
+          symbol: t.symbol,
+          status: t.status,
+          entry_date: t.entry_date,
+          exit_date: t.exit_date,
+          id: t.id
+        })));
+      } else {
+        console.warn(`⚠️ [API] res.data.trades 不是数组:`, res.data.trades);
       }
-      // 如果没有退出日期（Active状态），只检查entry_date
-      return entryDate >= threeMonthsAgo;
+    
+    // 暂时移除时间限制，显示所有交易记录（仅过滤无效数据）
+    const filteredTrades = (res.data.trades || []).filter((trade: any) => {
+      // 只过滤掉没有entry_date的记录
+      if (!trade.entry_date) {
+        console.warn('⚠️ 发现无效交易记录（缺少entry_date）:', trade);
+        return false;
+      }
+      return true;
     });
+    
+    // 调试：显示过滤后的交易记录数量
+    console.log(`📊 [API] 过滤后交易记录数量: ${filteredTrades.length} (过滤掉 ${(res.data.trades?.length || 0) - filteredTrades.length} 条无效记录)`);
     
     // 复杂排序：首先按重点交易，然后按状态，最后按时间
     const sortedTrades = filteredTrades.sort((a: any, b: any) => {
@@ -777,22 +808,43 @@ const getindexdata= async()=>{
     }
     
     trades.value = sortedTrades;
+    console.log(`✅ [API] 最终trades.value数量: ${trades.value.length}`);
+    console.log(`✅ [API] 最终trades.value内容:`, trades.value.map((t: any) => t.symbol));
+    
     Activecount.value=trades.value.filter((item:any)=>item.status=='Active').length
+    console.log(`📈 Active交易数量: ${Activecount.value}`);
+    
     Monthly.value=res.data.Monthly;
     Total.value=res.data.Total;
    
-   
+    } else {
+      console.warn(`⚠️ [API] API返回失败或数据为空:`, {
+        success: res.success,
+        hasData: !!res.data,
+        dataKeys: res.data ? Object.keys(res.data) : []
+      });
+    }
+  } catch (error) {
+    console.error(`❌ [API] 获取数据异常:`, error);
   }
 };
 const getannouncementdataData= async()=>{
-  const res=await getannouncement();
-  if(res.success){
-    announcementData.value=res.announcement;
-    // Show welcome modal when component mounts
-   
-    setTimeout(() => {
-        openWelcomeModal();
-    }, announcementData.value.delay_seconds*1000);
+  try {
+    const res=await getannouncement();
+    if(res.success && res.announcement){
+      announcementData.value=res.announcement;
+      // Show welcome modal when component mounts
+      const delaySeconds = announcementData.value?.delay_seconds || 0;
+      if (delaySeconds > 0) {
+        setTimeout(() => {
+            openWelcomeModal();
+        }, delaySeconds * 1000);
+      }
+    }
+  } catch (error) {
+    console.error('获取公告数据失败:', error);
+    // 设置默认值避免后续错误
+    announcementData.value = announcementData.value || {};
   }
 }
 // // Set up event listeners when component mounts
@@ -843,6 +895,7 @@ const joinCommunity = () => {
 
 // 获取国家标识的样式类
 const getCountryClass = (market: string) => {
+  if (!market) return 'country-default';
   const marketUpper = market.toUpperCase();
   switch(marketUpper) {
     case 'USA':
@@ -868,6 +921,7 @@ const getCountryFlag = (market: string) => {
 
 // 获取状态样式类
 const getStatusClass = (status: string, ratio: number) => {
+  if (!status) return 'status-default';
   if (status.toLowerCase() === 'active') {
     return 'status-active';
   } else {
@@ -887,6 +941,7 @@ const getStatusIcon = (status: string) => {
 
 // 获取状态文本（根据盈亏情况显示止盈/止损）
 const getStatusText = (status: string, ratio: number) => {
+  if (!status) return 'Unknown';
   if (status.toLowerCase() === 'active') {
     return 'Active';
   } else {
